@@ -1,17 +1,15 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Windows.Storage;
+using Windows.UI;
+using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
@@ -22,14 +20,48 @@ namespace SoftwareUpdateChecker
     /// </summary>
     sealed partial class App : Application
     {
+        public static UISettings uiSettings = new UISettings();
+        public static new App Current;
+        public static List<Software> SoftwareList = new List<Software>();
+        private static StorageFolder appFolder = ApplicationData.Current.LocalFolder;
+        private static readonly string SOFTWARES_FILE = "softwareList.json";
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         public App()
         {
+            Current = this;
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+        }
+        
+        public async Task AddSoftware(Software software)
+        {
+            SoftwareList.Add(software);
+            await SaveSoftwares();
+        }
+
+        public async Task RemoveSoftware(Software software)
+        {
+            if (SoftwareList.Contains(software))
+            {
+                SoftwareList.Remove(software);
+            }
+            await SaveSoftwares();
+        }
+
+        public async Task SaveSoftwares()
+        {
+            await FileUtil.SaveArrayToFileAsJson(SoftwareList, SOFTWARES_FILE);
+        }
+
+        public async Task<List<Software>> ReadSavedSoftwares()
+        {
+            StorageFile file = await appFolder.GetFileAsync(SOFTWARES_FILE);
+            String softwaresString = await FileIO.ReadTextAsync(file);
+            return JsonConvert.DeserializeObject<List<Software>>(softwaresString);
         }
 
         /// <summary>
@@ -37,8 +69,12 @@ namespace SoftwareUpdateChecker
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
+            uiSettings.ColorValuesChanged += ColorValuesChanged;
+
+
+            SoftwareList = await FileUtil.ReadJsonArrayFromFile<Software>(SOFTWARES_FILE);
             Frame rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,
@@ -71,6 +107,35 @@ namespace SoftwareUpdateChecker
                 // Ensure the current window is active
                 Window.Current.Activate();
             }
+
+            await SetTitleBarColor(Application.Current.RequestedTheme);
+        }
+
+        private async void ColorValuesChanged(UISettings sender, object args)
+        {
+            Color backgroundColor = sender.GetColorValue(UIColorType.Background);
+            bool isDarkMode = backgroundColor == Colors.Black;
+            await SetTitleBarColor(isDarkMode ? ApplicationTheme.Dark : ApplicationTheme.Light);
+        }
+
+        private async Task SetTitleBarColor(ApplicationTheme theme)
+        {
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
+            {
+                ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
+                string resourceName = "AppTitleBar";
+                string themeName = theme == ApplicationTheme.Light ? "Light" : "Dark";
+                string backgroundName = resourceName + "Background" + themeName;
+                titleBar.BackgroundColor = ((SolidColorBrush)Resources[backgroundName]).Color;
+                titleBar.InactiveBackgroundColor = ((SolidColorBrush)Resources[backgroundName]).Color;
+                titleBar.ButtonBackgroundColor = ((SolidColorBrush)Resources[backgroundName]).Color;
+                titleBar.ButtonInactiveBackgroundColor = ((SolidColorBrush)Resources[backgroundName]).Color;
+                string foregroundName = resourceName + "Foreground" + themeName;
+                titleBar.ForegroundColor = ((SolidColorBrush)Resources[foregroundName]).Color;
+                titleBar.InactiveForegroundColor = ((SolidColorBrush)Resources[foregroundName]).Color;
+                titleBar.ButtonForegroundColor = ((SolidColorBrush)Resources[foregroundName]).Color;
+                titleBar.ButtonInactiveForegroundColor = ((SolidColorBrush)Resources[foregroundName]).Color;
+            });
         }
 
         /// <summary>
