@@ -14,6 +14,7 @@ namespace SoftwareUpdateChecker
         Fixed,
         Dynamic
     }
+
     public class Software
     {
         public string Name { get; private set; }
@@ -152,7 +153,8 @@ namespace SoftwareUpdateChecker
                 if (error != "")
                 {
                     tcs.SetException(new Exception(error));
-                } else
+                }
+                else
                 {
                     tcs.SetResult(output);
                 }

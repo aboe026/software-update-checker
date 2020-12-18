@@ -1,18 +1,16 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
 
 namespace SoftwareUpdateChecker
 {
-    static class FileUtil
+    internal static class FileUtil
     {
         private static StorageFolder appFolder = ApplicationData.Current.LocalFolder;
-        
+
         public static async Task SaveArrayToFileAsJson(object json, string fileName)
         {
             StorageFile file = await appFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);

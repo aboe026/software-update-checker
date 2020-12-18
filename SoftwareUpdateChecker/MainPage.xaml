@@ -19,72 +19,61 @@
                 x:Name="AddSoftwareButton"
                 Content="Add"
                 Click="AddSoftwareButton_Click"
-                HorizontalAlignment="Left"
-            />
+                HorizontalAlignment="Left" />
             <Grid HorizontalAlignment="Right">
                 <ProgressRing
                     x:Name="RefreshAllLoadingSpinner"
-                    IsActive="False"
-                />
+                    IsActive="False" />
                 <Button
                     x:Name="RefreshAllButton"
                     Content="&#xE72C;"
                     FontFamily="Segoe MDL2 Assets"
                     ToolTipService.ToolTip="Refresh All"
-                    Click="RefreshAllButton_Click"            
-                />                            
+                    Click="RefreshAllButton_Click" />
             </Grid>
         </Grid>
         <ProgressRing
             x:Name="SoftwareLoading"
             IsActive="False"
-            Grid.Row="1"    
-            Height="100"
-            Width="100"
-        />
-        <Grid
-            x:Name="SoftwareGrid"    
             Grid.Row="1"
-        >
+            Height="100"
+            Width="100" />
+        <Grid
+            x:Name="SoftwareGrid"
+            Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="75"/>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="75" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <TextBlock
                 Grid.Column="0"
                 Text="Name"
-                FontWeight="Bold"
-            />
+                FontWeight="Bold" />
             <TextBlock
                 Grid.Column="1"
                 Text="Installed"
-                FontWeight="Bold"
-            />
+                FontWeight="Bold" />
             <TextBlock
                 Grid.Column="2"
                 Text="Latest"
-                FontWeight="Bold"
-            />
+                FontWeight="Bold" />
             <TextBlock
                 Grid.Column="3"
                 Text="Actions"
-                FontWeight="Bold"
-            />
+                FontWeight="Bold" />
         </Grid>
         <ScrollViewer
             Grid.Row="2"
-            MaxHeight="30"
-        >
+            MaxHeight="30">
             <TextBlock
                 x:Name="Message"
                 IsTextSelectionEnabled="True"
-                TextWrapping="WrapWholeWords"
-            />            
+                TextWrapping="WrapWholeWords" />
         </ScrollViewer>
     </Grid>
 </Page>

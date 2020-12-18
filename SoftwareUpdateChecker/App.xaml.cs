@@ -36,7 +36,7 @@ namespace SoftwareUpdateChecker
             this.InitializeComponent();
             this.Suspending += OnSuspending;
         }
-        
+
         public async Task AddSoftware(Software software)
         {
             SoftwareList.Add(software);
@@ -72,7 +72,6 @@ namespace SoftwareUpdateChecker
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
             uiSettings.ColorValuesChanged += ColorValuesChanged;
-
 
             SoftwareList = await FileUtil.ReadJsonArrayFromFile<Software>(SOFTWARES_FILE);
             Frame rootFrame = Window.Current.Content as Frame;
@@ -143,7 +142,7 @@ namespace SoftwareUpdateChecker
         /// </summary>
         /// <param name="sender">The Frame which failed navigation</param>
         /// <param name="e">Details about the navigation failure</param>
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+        private void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }

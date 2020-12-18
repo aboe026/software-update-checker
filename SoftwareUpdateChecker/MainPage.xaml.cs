@@ -17,6 +17,7 @@ namespace SoftwareUpdateChecker
     public sealed partial class MainPage : Page
     {
         public static MainPage Current;
+
         public MainPage()
         {
             Current = this;
@@ -139,7 +140,7 @@ namespace SoftwareUpdateChecker
                     ActionsCell actions = GetGridCellOfType(SoftwareGrid, i, 3, typeof(ActionsCell)) as ActionsCell;
                     actions.SetRow(actions.Row - 1);
                 }
-            } 
+            }
             catch (Exception ex)
             {
                 Message.Foreground = new SolidColorBrush(Colors.Red);

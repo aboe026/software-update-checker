@@ -11,18 +11,17 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <ProgressRing
             x:Name="LoadingSpinner"
             Grid.Row="0"
             Grid.Column="0"
-            IsActive="False"
-        />
+            IsActive="False" />
         <Button
             x:Name="RefreshButton"
             Grid.Row="0"
@@ -30,8 +29,7 @@
             Content="&#xE72C;"
             FontFamily="Segoe MDL2 Assets"
             ToolTipService.ToolTip="Refresh"
-            Click="RefreshButton_Click"
-        />
+            Click="RefreshButton_Click" />
         <Button
             x:Name="MoreButton"
             Grid.Row="0"
@@ -39,20 +37,17 @@
             Content="&#xE712;"
             FontFamily="Segoe MDL2 Assets"
             ToolTipService.ToolTip="More"
-            Margin="5,0,0,0"
-        >
+            Margin="5,0,0,0">
             <Button.Flyout>
                 <MenuFlyout Placement="BottomEdgeAlignedRight">
                     <MenuFlyoutItem
                         Text="Edit"
                         Icon="Edit"
-                        Click="EditItem_Click" 
-                    />
+                        Click="EditItem_Click" />
                     <MenuFlyoutItem
                         Text="Delete"
                         Icon="Delete"
-                        Click="DeleteItem_Click" 
-                    />
+                        Click="DeleteItem_Click" />
                 </MenuFlyout>
             </Button.Flyout>
         </Button>

@@ -13,6 +13,7 @@ namespace SoftwareUpdateChecker
     public sealed partial class ActionsCell : UserControl
     {
         public int Row { get; private set; }
+
         public ActionsCell(int row)
         {
             this.Row = row;
@@ -135,7 +136,6 @@ namespace SoftwareUpdateChecker
             {
                 await MainPage.Current.RemoveSoftware(Row);
             }
-            
         }
     }
 }

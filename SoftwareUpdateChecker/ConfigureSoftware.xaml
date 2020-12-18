@@ -16,34 +16,28 @@
         </Grid.RowDefinitions>
         <StackPanel
             Grid.Row="0"
-            Margin="0,0,0,24"
-        >
+            Margin="0,0,0,24">
             <TextBlock
                 x:Name="Title"
                 Text="New Software"
-                Style="{StaticResource HeaderTextBlockStyle}"
-            />
+                Style="{StaticResource HeaderTextBlockStyle}" />
             <TextBox
                 x:Name="SoftwareName"
-                Header="Name"
-            />
+                Header="Name" />
         </StackPanel>
         <ScrollViewer Grid.Row="1">
             <StackPanel>
                 <TextBlock
                     Text="Installed Version"
-                    Style="{StaticResource SubheaderTextBlockStyle}"
-                />
+                    Style="{StaticResource SubheaderTextBlockStyle}" />
                 <Pivot
                     x:Name="ExecutablePivot"
                     Title="Executable"
-                    Margin="-12,0,-12,0"
-                >
+                    Margin="-12,0,-12,0">
                     <PivotItem Header="Command Name">
                         <TextBox
                             x:Name="CommandName"
-                            Header="Command"
-                        />
+                            Header="Command" />
                     </PivotItem>
                     <PivotItem Header="Fixed File Name">
                         <Grid>
@@ -56,16 +50,14 @@
                                 Header="Executable File Path"
                                 Grid.Column="0"
                                 IsEnabled="False"
-                                Margin="0,0,10,0"
-                            />
+                                Margin="0,0,10,0" />
                             <Button
                                 x:Name="ChooseFixedFileButton"
                                 Content="Choose File"
                                 Grid.Column="1"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Bottom"
-                                Click="ChooseFixedFileButton_Click"
-                            />
+                                Click="ChooseFixedFileButton_Click" />
                         </Grid>
                     </PivotItem>
                     <PivotItem Header="Dynamic File Name">
@@ -85,17 +77,14 @@
                                     Header="Executable File Folder"
                                     Grid.Column="0"
                                     IsEnabled="False"
-                                    Margin="0,0,10,0"
-                                
-                                />
+                                    Margin="0,0,10,0" />
                                 <Button
                                     x:Name="ChooseDynamicFolderButton"
                                     Content="Browse..."
                                     Grid.Column="1"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Bottom"
-                                    Click="ChooseDynamicFolderButton_Click"
-                                />
+                                    Click="ChooseDynamicFolderButton_Click" />
                             </Grid>
                             <TextBox
                                 x:Name="DynamicFolderFilter"
@@ -103,8 +92,7 @@
                                 Grid.Row="1"
                                 Grid.Column="0"
                                 Margin="0,0,10,0"
-                                PlaceholderText=".*\.exe"
-                            />
+                                PlaceholderText=".*\.exe" />
                             <Grid Grid.Row="2" Margin="0,10,0,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -115,25 +103,21 @@
                                     Grid.Column="0"
                                     VerticalAlignment="Top"
                                     Content="Test"
-                                    Click="DynamicFolderTestButton_Click"
-                                
-                                />
+                                    Click="DynamicFolderTestButton_Click" />
                                 <ProgressBar
                                     x:Name="DynamicFolderTestProgress"
                                     Grid.Column="1"
                                     VerticalAlignment="Center"
                                     Margin="10,0,0,0"
                                     IsIndeterminate="True"
-                                    Visibility="Collapsed"
-                                />
+                                    Visibility="Collapsed" />
                                 <TextBlock
                                     x:Name="DynamicFolderTestMessage"
                                     Grid.Column="1"
                                     VerticalAlignment="Center"
                                     Margin="10,0,0,0"
                                     IsTextSelectionEnabled="True"
-                                    TextWrapping="WrapWholeWords"
-                                />
+                                    TextWrapping="WrapWholeWords" />
                             </Grid>
                         </Grid>
                     </PivotItem>
@@ -141,13 +125,11 @@
                 <TextBox
                     x:Name="Arguments"
                     Header="Arguments"
-                    Margin="0,24,0,0"
-                />
+                    Margin="0,24,0,0" />
                 <TextBox
                     x:Name="InstallRegex"
                     Header="Command Output Regular Expression Filter"
-                    Margin="0,24,0,0"
-                />
+                    Margin="0,24,0,0" />
                 <Grid Margin="0,10,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -158,40 +140,33 @@
                         Grid.Column="0"
                         VerticalAlignment="Top"
                         Content="Test"
-                        Click="InstallTestButton_Click"
-                                
-                    />
+                        Click="InstallTestButton_Click" />
                     <ProgressBar
                         x:Name="InstallTestProgress"
                         Grid.Column="1"
                         VerticalAlignment="Center"
                         Margin="10,0,0,0"
                         IsIndeterminate="True"
-                        Visibility="Collapsed"
-                    />
+                        Visibility="Collapsed" />
                     <TextBlock
                         x:Name="InstallTestMessage"
                         Grid.Column="1"
                         VerticalAlignment="Center"
                         Margin="10,0,0,0"
                         IsTextSelectionEnabled="True"
-                        TextWrapping="WrapWholeWords"
-                    />
+                        TextWrapping="WrapWholeWords" />
                 </Grid>
                 <TextBlock
                     Text="Latest Version"
                     Style="{StaticResource SubheaderTextBlockStyle}"
-                    Margin="0,48,0,0"
-                />
+                    Margin="0,48,0,0" />
                 <TextBox
                     x:Name="LatestUrl"
-                    Header="URL"
-                />
+                    Header="URL" />
                 <TextBox
                     x:Name="LatestRegex"
                     Header="Webpage Regular Expression Filter"
-                    Margin="0,24,0,0"
-                />
+                    Margin="0,24,0,0" />
                 <Grid Margin="0,10,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -202,53 +177,46 @@
                         Content="Test"
                         Grid.Column="0"
                         VerticalAlignment="Top"
-                        Click="LatestTestButton_Click"
-                    />
+                        Click="LatestTestButton_Click" />
                     <ProgressBar
                         x:Name="LatestTestProgress"
                         Grid.Column="1"
                         VerticalAlignment="Center"
                         Margin="10,0,0,0"
                         IsIndeterminate="True"
-                        Visibility="Collapsed"
-                    />
+                        Visibility="Collapsed" />
                     <TextBlock
                         x:Name="LatestTestMessage"
                         Grid.Column="1"
                         VerticalAlignment="Center"
                         Margin="10,0,0,0"
                         IsTextSelectionEnabled="True"
-                        TextWrapping="WrapWholeWords"
-                    />
+                        TextWrapping="WrapWholeWords" />
                 </Grid>
             </StackPanel>
         </ScrollViewer>
         <Grid
             Grid.Row="2"
             Margin="0,10,0,0"
-            MaxHeight="35"
-        >
+            MaxHeight="35">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Grid
                 Grid.Column="0"
-                VerticalAlignment="Top"
-            >
+                VerticalAlignment="Top">
                 <Button
                     x:Name="Save"
                     Grid.Column="0"
                     VerticalAlignment="Top"
                     Content="Save"
-                    Click="Save_Click"
-                 />
+                    Click="Save_Click" />
                 <ProgressRing
                     x:Name="SaveProgress"
                     Grid.Column="0"
-                    IsAccessKeyScope="False"
-                />
+                    IsAccessKeyScope="False" />
             </Grid>
             <Button
                 x:Name="Cancel"
@@ -256,19 +224,16 @@
                 VerticalAlignment="Top"
                 Content="Cancel"
                 Margin="10,0,0,0"
-                Click="Cancel_Click"
-            />
+                Click="Cancel_Click" />
             <ScrollViewer
-                 Grid.Column="3"   
-            >
+                 Grid.Column="3">
                 <TextBlock
                     x:Name="SaveError"
                     VerticalAlignment="Center"
                     Margin="10,0,0,0"
-                    Foreground="Red" 
+                    Foreground="Red"
                     IsTextSelectionEnabled="True"
-                    TextWrapping="WrapWholeWords"
-                />                
+                    TextWrapping="WrapWholeWords" />
             </ScrollViewer>
         </Grid>
     </Grid>

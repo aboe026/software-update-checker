@@ -18,6 +18,7 @@ namespace SoftwareUpdateChecker
     {
         private StorageFolder executableFolder;
         private Software existingSoftware;
+
         public ConfigureSoftware()
         {
             this.InitializeComponent();
@@ -44,6 +45,7 @@ namespace SoftwareUpdateChecker
                             DynamicFolderFilter.Text = existingSoftware.ExecutableRegex;
                         }
                         break;
+
                     case ExecutableType.Fixed:
                         ExecutablePivot.SelectedIndex = 1;
                         if (existingSoftware.ExecutableIdentifier != null)
@@ -51,6 +53,7 @@ namespace SoftwareUpdateChecker
                             FixedFilePath.Text = existingSoftware.ExecutableIdentifier;
                         }
                         break;
+
                     default:
                         ExecutablePivot.SelectedIndex = 0;
                         if (existingSoftware.ExecutableIdentifier != null)
@@ -124,10 +127,12 @@ namespace SoftwareUpdateChecker
                     type = ExecutableType.Command;
                     executable = CommandName.Text;
                     break;
+
                 case 1:
                     type = ExecutableType.Fixed;
                     executable = FixedFilePath.Text;
                     break;
+
                 case 2:
                     type = ExecutableType.Dynamic;
                     if (executableFolder != null)
@@ -281,7 +286,8 @@ namespace SoftwareUpdateChecker
                 try
                 {
                     await software.DetermineLatestVersion();
-                } catch (Exception)
+                }
+                catch (Exception)
                 {
                     throw new Exception("Could not determine latest software, test above to troubleshoot");
                 }
