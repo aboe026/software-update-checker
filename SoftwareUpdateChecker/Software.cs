@@ -25,6 +25,8 @@ namespace SoftwareUpdateChecker
         public string InstalledRegex { get; private set; }
         public string LatestUrl { get; private set; }
         public string LatestRegex { get; private set; }
+        public string InstalledError { get; private set; }
+        public string LatestError { get; private set; }
         public string InstalledVersion { get; private set; }
         public string LatestVersion { get; private set; }
 
@@ -90,44 +92,81 @@ namespace SoftwareUpdateChecker
 
         public async Task<string> DetermineInstalledVersion()
         {
-            if (ExecutableIdentifier == null || ExecutableIdentifier == "")
+            try
             {
-                throw new Exception("Installed Executable not specified");
+                InstalledVersion = null;
+                InstalledError = null;
+                if (ExecutableIdentifier == null || ExecutableIdentifier == "")
+                {
+                    throw new Exception("Installed Executable not specified");
+                }
+                if (InstalledRegex == null || InstalledRegex == "")
+                {
+                    throw new Exception("Installed Regex not specified");
+                }
+                string output = await RunCmdAsync(await GetExecutable(), InstalledArguments);
+                MatchCollection matches = new Regex(InstalledRegex).Matches(output);
+                if (matches.Count < 1)
+                {
+                    throw new Exception("Could not find RegEx match in output: \"" + output + "\"");
+                }
+                InstalledVersion = matches[0].Groups[1].Value.Trim();
             }
-            if (InstalledRegex == null || InstalledRegex == "")
+            catch (Exception ex)
             {
-                throw new Exception("Installed Regex not specified");
+                InstalledError = ex.Message;
             }
-            string output = await RunCmdAsync(await GetExecutable(), InstalledArguments);
-            MatchCollection matches = new Regex(InstalledRegex).Matches(output);
-            if (matches.Count < 1)
-            {
-                throw new Exception("Could not find RegEx match in output: \"" + output + "\"");
-            }
-            InstalledVersion = matches[0].Groups[1].Value.Trim();
             return InstalledVersion;
         }
 
         public async Task<string> DetermineLatestVersion()
         {
-            if (LatestUrl == null || LatestUrl == "")
+            try
             {
-                throw new Exception("Latest URL not specified");
+                LatestVersion = null;
+                LatestError = null;
+                if (LatestUrl == null || LatestUrl == "")
+                {
+                    throw new Exception("Latest URL not specified");
+                }
+                if (LatestRegex == null || LatestRegex == "")
+                {
+                    throw new Exception("Latest Regex not specified");
+                }
+                HttpClient http = new HttpClient();
+                HttpResponseMessage response = await http.GetAsync(LatestUrl);
+                string webpage = await response.Content.ReadAsStringAsync();
+                MatchCollection matches = new Regex(LatestRegex).Matches(webpage);
+                if (matches.Count < 1)
+                {
+                    throw new Exception("Could not find RegEx match in webpage: \"" + webpage + "\"");
+                }
+                LatestVersion = matches[0].Groups[1].Value.Trim();
             }
-            if (LatestRegex == null || LatestRegex == "")
+            catch (Exception ex)
             {
-                throw new Exception("Latest Regex not specified");
+                LatestError = ex.Message;
             }
-            HttpClient http = new HttpClient();
-            HttpResponseMessage response = await http.GetAsync(LatestUrl);
-            string webpage = await response.Content.ReadAsStringAsync();
-            MatchCollection matches = new Regex(LatestRegex).Matches(webpage);
-            if (matches.Count < 1)
-            {
-                throw new Exception("Could not find RegEx match in webpage: \"" + webpage + "\"");
-            }
-            LatestVersion = matches[0].Groups[1].Value.Trim();
             return LatestVersion;
+        }
+
+        public bool HasInstalledError()
+        {
+            return InstalledError != null && InstalledError != "";
+        }
+
+        public bool HasLatestError()
+        {
+            return LatestError != null && LatestError != "";
+        }
+
+        public bool UpdateAvailable()
+        {
+            return (InstalledError == null || InstalledError == "") &&
+                   (LatestError == null || LatestError == "") &&
+                   (InstalledVersion != null && InstalledVersion != "") &&
+                   (LatestVersion != null && LatestVersion != "") &&
+                   InstalledVersion != LatestVersion;
         }
 
         public static Task<string> RunCmdAsync(string executable, string arguments)

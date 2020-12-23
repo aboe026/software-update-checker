@@ -37,9 +37,20 @@ namespace SoftwareUpdateChecker
             this.Suspending += OnSuspending;
         }
 
+        public static Color GetDefaultTextColor()
+        {
+            return ((SolidColorBrush)Current.Resources["TextColor"]).Color;
+        }
+
         public async Task AddSoftware(Software software)
         {
             SoftwareList.Add(software);
+            await SaveSoftwares();
+        }
+
+        public async Task EditSoftware(Software oldSoftware, Software newSoftware)
+        {
+            SoftwareList[SoftwareList.IndexOf(oldSoftware)] = newSoftware;
             await SaveSoftwares();
         }
 
@@ -122,18 +133,17 @@ namespace SoftwareUpdateChecker
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
             {
                 ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
-                string resourceName = "AppTitleBar";
-                string themeName = theme == ApplicationTheme.Light ? "Light" : "Dark";
-                string backgroundName = resourceName + "Background" + themeName;
+
+                string backgroundName = "AppTitleBarBackgroundColor";
                 titleBar.BackgroundColor = ((SolidColorBrush)Resources[backgroundName]).Color;
                 titleBar.InactiveBackgroundColor = ((SolidColorBrush)Resources[backgroundName]).Color;
                 titleBar.ButtonBackgroundColor = ((SolidColorBrush)Resources[backgroundName]).Color;
                 titleBar.ButtonInactiveBackgroundColor = ((SolidColorBrush)Resources[backgroundName]).Color;
-                string foregroundName = resourceName + "Foreground" + themeName;
-                titleBar.ForegroundColor = ((SolidColorBrush)Resources[foregroundName]).Color;
-                titleBar.InactiveForegroundColor = ((SolidColorBrush)Resources[foregroundName]).Color;
-                titleBar.ButtonForegroundColor = ((SolidColorBrush)Resources[foregroundName]).Color;
-                titleBar.ButtonInactiveForegroundColor = ((SolidColorBrush)Resources[foregroundName]).Color;
+                Color foregroundColor = GetDefaultTextColor();
+                titleBar.ForegroundColor = foregroundColor;
+                titleBar.InactiveForegroundColor = foregroundColor;
+                titleBar.ButtonForegroundColor = foregroundColor;
+                titleBar.ButtonInactiveForegroundColor = foregroundColor;
             });
         }
 
@@ -159,6 +169,15 @@ namespace SoftwareUpdateChecker
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
+        }
+
+        public void SetTextBlockColor(TextBlock block)
+        {
+            Color existingColor = (block.Foreground as SolidColorBrush).Color;
+            if (existingColor != Colors.Red && existingColor != Colors.Green)
+            {
+                block.Foreground = new SolidColorBrush(GetDefaultTextColor());
+            }
         }
     }
 }

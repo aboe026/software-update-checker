@@ -46,19 +46,10 @@ namespace SoftwareUpdateChecker
                 installedBlock.Visibility = Visibility.Collapsed;
 
                 installedBlock.Text = "";
-                bool installedError = false;
-                string installedText = "";
-                try
-                {
-                    installedText = await software.DetermineInstalledVersion();
-                }
-                catch (Exception ex)
-                {
-                    installedError = true;
-                    installedText = ex.Message;
-                }
-                installedBlock.Foreground = new SolidColorBrush(installedError ? Colors.Red : Colors.White);
-                installedBlock.Text = installedText;
+                await software.DetermineInstalledVersion();
+                bool error = software.HasInstalledError();
+                installedBlock.Foreground = new SolidColorBrush(error ? Colors.Red : App.GetDefaultTextColor());
+                installedBlock.Text = error ? software.InstalledError : software.InstalledVersion;
 
                 installedProgress.Visibility = Visibility.Collapsed;
                 installedBlock.Visibility = Visibility.Visible;
@@ -71,24 +62,25 @@ namespace SoftwareUpdateChecker
                 latestProgress.Visibility = Visibility.Visible;
 
                 latestBlock.Text = "";
-                bool latestError = false;
-                string latestText = "";
-                try
-                {
-                    latestText = await software.DetermineLatestVersion();
-                }
-                catch (Exception ex)
-                {
-                    latestError = true;
-                    latestText = ex.Message;
-                }
-                latestBlock.Foreground = new SolidColorBrush(latestError ? Colors.Red : Colors.White);
-                latestBlock.Text = latestText;
+                await software.DetermineLatestVersion();
+                bool error = software.HasLatestError();
+                latestBlock.Foreground = new SolidColorBrush(error ? Colors.Red : App.GetDefaultTextColor());
+                latestBlock.Text = error ? software.LatestError : software.LatestVersion;
 
                 latestProgress.Visibility = Visibility.Collapsed;
                 latestBlock.Visibility = Visibility.Visible;
             });
             await Task.WhenAll(new Task[] { installedTask, latestTask });
+
+            if (software.UpdateAvailable())
+            {
+                TextBlock nameBlock = MainPage.GetGridCellOfType(GetSoftwareGrid(RefreshButton), Row, 0, typeof(TextBlock)) as TextBlock;
+                TextBlock installedBlock = MainPage.GetGridCellOfType(GetSoftwareGrid(RefreshButton), Row, 1, typeof(TextBlock)) as TextBlock;
+                TextBlock latestBlock = MainPage.GetGridCellOfType(GetSoftwareGrid(RefreshButton), Row, 2, typeof(TextBlock)) as TextBlock;
+                nameBlock.Foreground = new SolidColorBrush(Colors.Green);
+                installedBlock.Foreground = new SolidColorBrush(Colors.Green);
+                latestBlock.Foreground = new SolidColorBrush(Colors.Green);
+            }
 
             RefreshButton.IsEnabled = true;
             LoadingSpinner.IsActive = false;

@@ -7,14 +7,14 @@
     <!-- ######################################################################### -->
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Dark">
-            <SolidColorBrush x:Key="AppTitleBarBackgroundDark" Color="#1a1a1a" />
             <!-- {ThemeResource SystemListLowColor} -->
-            <SolidColorBrush x:Key="AppTitleBarForegroundDark" Color="White" />
+            <SolidColorBrush x:Key="AppTitleBarBackgroundColor" Color="#191919" />
+            <SolidColorBrush x:Key="TextColor" Color="White" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
-            <SolidColorBrush x:Key="AppTitleBarBackgroundLight" Color="#e6e6e6" />
             <!-- {ThemeResource SystemListLowColor} -->
-            <SolidColorBrush x:Key="AppTitleBarForegroundLight" Color="Black" />
+            <SolidColorBrush x:Key="AppTitleBarBackgroundColor" Color="#e6e6e6" />
+            <SolidColorBrush x:Key="TextColor" Color="Black" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 </ResourceDictionary>

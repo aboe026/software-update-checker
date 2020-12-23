@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Core;
 using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -17,44 +19,65 @@ namespace SoftwareUpdateChecker
     public sealed partial class MainPage : Page
     {
         public static MainPage Current;
+        public static UISettings uiSettings = new UISettings();
 
         public MainPage()
         {
             Current = this;
+            uiSettings.ColorValuesChanged += ColorValuesChanged;
             this.InitializeComponent();
             this.DataContext = this;
             PopulateSoftwareGrid();
-            //this.RequestedTheme = ElementTheme.Light;
         }
 
         private void PopulateSoftwareGrid()
         {
             foreach (Software software in App.SoftwareList)
             {
-                AddSoftwareRow(software.Name, software.InstalledVersion, software.LatestVersion);
+                int newRowIndex = SoftwareGrid.RowDefinitions.Count;
+                SoftwareGrid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
+
+                AddTextCell(software.Name, newRowIndex, 0, software.UpdateAvailable() ? Colors.Green : App.GetDefaultTextColor(), false);
+                string installedText = software.InstalledVersion;
+                Color installedColor = App.GetDefaultTextColor();
+                if (software.HasInstalledError())
+                {
+                    installedText = software.InstalledError;
+                    installedColor = Colors.Red;
+                }
+                else if (software.UpdateAvailable())
+                {
+                    installedColor = Colors.Green;
+                }
+                AddTextCell(installedText, newRowIndex, 1, installedColor, true);
+                string latestText = software.LatestVersion;
+                Color latestColor = App.GetDefaultTextColor();
+                if (software.HasLatestError())
+                {
+                    latestText = software.LatestError;
+                    latestColor = Colors.Red;
+                }
+                else if (software.UpdateAvailable())
+                {
+                    latestColor = Colors.Green;
+                }
+                AddTextCell(latestText, newRowIndex, 2, latestColor, true);
+
+                ActionsCell actions = new ActionsCell(newRowIndex);
+                actions.Tag = newRowIndex.ToString();
+                SoftwareGrid.Children.Add(actions);
+                Grid.SetRow(actions, newRowIndex);
+                Grid.SetColumn(actions, 3);
             }
         }
 
-        public void AddSoftwareRow(string name, string installed, string latest)
-        {
-            int newRowIndex = SoftwareGrid.RowDefinitions.Count;
-            SoftwareGrid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
-            AddTextCell(name, newRowIndex, 0, false);
-            AddTextCell(installed, newRowIndex, 1, true);
-            AddTextCell(latest, newRowIndex, 2, true);
-
-            ActionsCell actions = new ActionsCell(newRowIndex);
-            actions.Tag = newRowIndex.ToString();
-            SoftwareGrid.Children.Add(actions);
-            Grid.SetRow(actions, newRowIndex);
-            Grid.SetColumn(actions, 3);
-        }
-
-        private void AddTextCell(string text, int row, int column, bool progressBar)
+        private void AddTextCell(string text, int row, int column, Color color, bool progressBar)
         {
             TextBlock block = new TextBlock();
             block.TextWrapping = TextWrapping.WrapWholeWords;
             block.Text = text != null ? text : "";
+            block.Foreground = new SolidColorBrush(color);
+            App.Current.SetTextBlockColor(block);
             SoftwareGrid.Children.Add(block);
             Grid.SetRow(block, row);
             Grid.SetColumn(block, column);
@@ -147,6 +170,30 @@ namespace SoftwareUpdateChecker
                 Message.Text = ex.Message;
             }
             SoftwareLoading.IsActive = false;
+        }
+
+        private async void ColorValuesChanged(UISettings sender, object args)
+        {
+            Color backgroundColor = sender.GetColorValue(UIColorType.Background);
+            bool isDarkMode = backgroundColor == Colors.Black;
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                SetTextBlockColors();
+            });
+        }
+
+        private void SetTextBlockColors()
+        {
+            for (int i = 1; i < SoftwareGrid.RowDefinitions.Count; i++)
+            {
+                TextBlock name = GetGridCellOfType(SoftwareGrid, i, 0, typeof(TextBlock)) as TextBlock;
+                TextBlock installed = GetGridCellOfType(SoftwareGrid, i, 1, typeof(TextBlock)) as TextBlock;
+                TextBlock latest = GetGridCellOfType(SoftwareGrid, i, 2, typeof(TextBlock)) as TextBlock;
+
+                App.Current.SetTextBlockColor(name);
+                App.Current.SetTextBlockColor(installed);
+                App.Current.SetTextBlockColor(latest);
+            }
         }
     }
 }

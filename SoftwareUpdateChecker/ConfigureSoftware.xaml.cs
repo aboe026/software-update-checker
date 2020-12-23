@@ -1,7 +1,10 @@
 ﻿using System;
+using Windows.ApplicationModel.Core;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI;
+using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -18,9 +21,11 @@ namespace SoftwareUpdateChecker
     {
         private StorageFolder executableFolder;
         private Software existingSoftware;
+        public static UISettings uiSettings = new UISettings();
 
         public ConfigureSoftware()
         {
+            uiSettings.ColorValuesChanged += ColorValuesChanged;
             this.InitializeComponent();
         }
 
@@ -117,7 +122,7 @@ namespace SoftwareUpdateChecker
             }
         }
 
-        private Software GetSoftwareFromInputs(Software softwareToEdit = null)
+        private Software GetSoftwareFromInputs()
         {
             ExecutableType type = ExecutableType.Command;
             string executable = "";
@@ -141,10 +146,6 @@ namespace SoftwareUpdateChecker
                     }
                     break;
             }
-            if (softwareToEdit != null)
-            {
-                return softwareToEdit.Edit(SoftwareName.Text, type, executable, DynamicFolderFilter.Text, Arguments.Text, InstallRegex.Text, LatestUrl.Text, LatestRegex.Text);
-            }
             return new Software(SoftwareName.Text, type, executable, DynamicFolderFilter.Text, Arguments.Text, InstallRegex.Text, LatestUrl.Text, LatestRegex.Text);
         }
 
@@ -153,7 +154,7 @@ namespace SoftwareUpdateChecker
             SetDynamicFolderEnabled(false);
             DynamicFolderTestProgress.Visibility = Visibility.Visible;
             DynamicFolderTestMessage.Text = "";
-            DynamicFolderTestMessage.Foreground = new SolidColorBrush(Colors.White);
+            DynamicFolderTestMessage.Foreground = new SolidColorBrush(App.GetDefaultTextColor());
             try
             {
                 if (executableFolder == null)
@@ -195,12 +196,16 @@ namespace SoftwareUpdateChecker
             SetInstallEnabled(false);
             InstallTestProgress.Visibility = Visibility.Visible;
             InstallTestMessage.Text = "";
-            InstallTestMessage.Foreground = new SolidColorBrush(Colors.White);
+            InstallTestMessage.Foreground = new SolidColorBrush(App.GetDefaultTextColor());
             try
             {
                 Software software = GetSoftwareFromInputs();
-                string version = await software.DetermineInstalledVersion();
-                InstallTestMessage.Text = "Installed version: '" + version + "'";
+                await software.DetermineInstalledVersion();
+                if (software.HasInstalledError())
+                {
+                    throw new Exception(software.InstalledError);
+                }
+                InstallTestMessage.Text = "Installed version: '" + software.InstalledVersion + "'";
             }
             catch (Exception ex)
             {
@@ -231,12 +236,16 @@ namespace SoftwareUpdateChecker
             SetLatestEnabled(false);
             LatestTestProgress.Visibility = Visibility.Visible;
             LatestTestMessage.Text = "";
-            LatestTestMessage.Foreground = new SolidColorBrush(Colors.White);
+            LatestTestMessage.Foreground = new SolidColorBrush(App.GetDefaultTextColor());
             try
             {
                 Software software = GetSoftwareFromInputs();
-                string latestVersion = await software.DetermineLatestVersion();
-                LatestTestMessage.Text = "Latest Version: '" + latestVersion + "'";
+                await software.DetermineLatestVersion();
+                if (software.HasLatestError())
+                {
+                    throw new Exception(software.LatestError);
+                }
+                LatestTestMessage.Text = "Latest Version: '" + software.LatestVersion + "'";
             }
             catch (Exception ex)
             {
@@ -274,20 +283,14 @@ namespace SoftwareUpdateChecker
                 {
                     throw new Exception("Must specify name above");
                 }
-                Software software = GetSoftwareFromInputs(existingSoftware);
-                try
-                {
-                    await software.DetermineInstalledVersion();
-                }
-                catch (Exception)
+                Software software = GetSoftwareFromInputs();
+                await software.DetermineInstalledVersion();
+                if (software.HasInstalledError())
                 {
                     throw new Exception("Could not determine installed version, test above to troubleshoot");
                 }
-                try
-                {
-                    await software.DetermineLatestVersion();
-                }
-                catch (Exception)
+                await software.DetermineLatestVersion();
+                if (software.HasLatestError())
                 {
                     throw new Exception("Could not determine latest software, test above to troubleshoot");
                 }
@@ -297,7 +300,7 @@ namespace SoftwareUpdateChecker
                 }
                 else
                 {
-                    await App.Current.SaveSoftwares();
+                    await App.Current.EditSoftware(existingSoftware, software);
                 }
                 success = true;
             }
@@ -326,6 +329,18 @@ namespace SoftwareUpdateChecker
         {
             Save.IsEnabled = enabled;
             Cancel.IsEnabled = enabled;
+        }
+
+        private async void ColorValuesChanged(UISettings sender, object args)
+        {
+            Color backgroundColor = sender.GetColorValue(UIColorType.Background);
+            bool isDarkMode = backgroundColor == Colors.Black;
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                App.Current.SetTextBlockColor(DynamicFolderTestMessage);
+                App.Current.SetTextBlockColor(InstallTestMessage);
+                App.Current.SetTextBlockColor(LatestTestMessage);
+            });
         }
     }
 }
