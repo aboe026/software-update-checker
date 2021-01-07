@@ -1,10 +1,8 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -23,7 +21,6 @@ namespace SoftwareUpdateChecker
         public static UISettings uiSettings = new UISettings();
         public static new App Current;
         public static List<Software> SoftwareList = new List<Software>();
-        private static StorageFolder appFolder = ApplicationData.Current.LocalFolder;
         private static readonly string SOFTWARES_FILE = "softwareList.json";
 
         /// <summary>
@@ -66,13 +63,6 @@ namespace SoftwareUpdateChecker
         public async Task SaveSoftwares()
         {
             await FileUtil.SaveArrayToFileAsJson(SoftwareList, SOFTWARES_FILE);
-        }
-
-        public async Task<List<Software>> ReadSavedSoftwares()
-        {
-            StorageFile file = await appFolder.GetFileAsync(SOFTWARES_FILE);
-            String softwaresString = await FileIO.ReadTextAsync(file);
-            return JsonConvert.DeserializeObject<List<Software>>(softwaresString);
         }
 
         /// <summary>
@@ -118,17 +108,15 @@ namespace SoftwareUpdateChecker
                 Window.Current.Activate();
             }
 
-            await SetTitleBarColor(Application.Current.RequestedTheme);
+            await SetTitleBarColor();
         }
 
         private async void ColorValuesChanged(UISettings sender, object args)
         {
-            Color backgroundColor = sender.GetColorValue(UIColorType.Background);
-            bool isDarkMode = backgroundColor == Colors.Black;
-            await SetTitleBarColor(isDarkMode ? ApplicationTheme.Dark : ApplicationTheme.Light);
+            await SetTitleBarColor();
         }
 
-        private async Task SetTitleBarColor(ApplicationTheme theme)
+        private async Task SetTitleBarColor()
         {
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
             {

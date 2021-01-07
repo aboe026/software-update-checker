@@ -97,9 +97,11 @@ namespace SoftwareUpdateChecker
 
         private async void ChooseFixedFileButton_Click(object sender, RoutedEventArgs e)
         {
-            FileOpenPicker filePicker = new FileOpenPicker();
-            filePicker.ViewMode = PickerViewMode.List;
-            filePicker.SuggestedStartLocation = PickerLocationId.ComputerFolder;
+            FileOpenPicker filePicker = new FileOpenPicker
+            {
+                ViewMode = PickerViewMode.List,
+                SuggestedStartLocation = PickerLocationId.ComputerFolder
+            };
             filePicker.FileTypeFilter.Add(".exe");
             StorageFile file = await filePicker.PickSingleFileAsync();
             if (file != null)
@@ -110,9 +112,11 @@ namespace SoftwareUpdateChecker
 
         private async void ChooseDynamicFolderButton_Click(object sender, RoutedEventArgs e)
         {
-            FolderPicker folderPicker = new FolderPicker();
-            folderPicker.ViewMode = PickerViewMode.List;
-            folderPicker.SuggestedStartLocation = PickerLocationId.ComputerFolder;
+            FolderPicker folderPicker = new FolderPicker
+            {
+                ViewMode = PickerViewMode.List,
+                SuggestedStartLocation = PickerLocationId.ComputerFolder
+            };
             folderPicker.FileTypeFilter.Add("*");
             StorageFolder folder = await folderPicker.PickSingleFolderAsync();
             if (folder != null)
@@ -205,7 +209,7 @@ namespace SoftwareUpdateChecker
                 {
                     throw new Exception(software.InstalledError);
                 }
-                InstallTestMessage.Text = "Installed version: '" + software.InstalledVersion + "'";
+                InstallTestMessage.Text = "Installed Version: '" + software.InstalledVersion + "'";
             }
             catch (Exception ex)
             {

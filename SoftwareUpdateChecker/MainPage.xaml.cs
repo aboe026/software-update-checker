@@ -63,8 +63,10 @@ namespace SoftwareUpdateChecker
                 }
                 AddTextCell(latestText, newRowIndex, 2, latestColor, true);
 
-                ActionsCell actions = new ActionsCell(newRowIndex);
-                actions.Tag = newRowIndex.ToString();
+                ActionsCell actions = new ActionsCell(newRowIndex)
+                {
+                    Tag = newRowIndex.ToString()
+                };
                 SoftwareGrid.Children.Add(actions);
                 Grid.SetRow(actions, newRowIndex);
                 Grid.SetColumn(actions, 3);
@@ -73,19 +75,23 @@ namespace SoftwareUpdateChecker
 
         private void AddTextCell(string text, int row, int column, Color color, bool progressBar)
         {
-            TextBlock block = new TextBlock();
-            block.TextWrapping = TextWrapping.WrapWholeWords;
-            block.Text = text != null ? text : "";
-            block.Foreground = new SolidColorBrush(color);
+            TextBlock block = new TextBlock
+            {
+                TextWrapping = TextWrapping.WrapWholeWords,
+                Text = text ?? "",
+                Foreground = new SolidColorBrush(color)
+            };
             App.Current.SetTextBlockColor(block);
             SoftwareGrid.Children.Add(block);
             Grid.SetRow(block, row);
             Grid.SetColumn(block, column);
             if (progressBar)
             {
-                ProgressBar bar = new ProgressBar();
-                bar.Visibility = Visibility.Collapsed;
-                bar.IsIndeterminate = true;
+                ProgressBar bar = new ProgressBar
+                {
+                    Visibility = Visibility.Collapsed,
+                    IsIndeterminate = true
+                };
                 SoftwareGrid.Children.Add(bar);
                 Grid.SetRow(bar, row);
                 Grid.SetColumn(bar, column);

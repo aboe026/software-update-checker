@@ -72,14 +72,18 @@ namespace SoftwareUpdateChecker
             });
             await Task.WhenAll(new Task[] { installedTask, latestTask });
 
+            TextBlock nameBlock = MainPage.GetGridCellOfType(GetSoftwareGrid(RefreshButton), Row, 0, typeof(TextBlock)) as TextBlock;
             if (software.UpdateAvailable())
             {
-                TextBlock nameBlock = MainPage.GetGridCellOfType(GetSoftwareGrid(RefreshButton), Row, 0, typeof(TextBlock)) as TextBlock;
                 TextBlock installedBlock = MainPage.GetGridCellOfType(GetSoftwareGrid(RefreshButton), Row, 1, typeof(TextBlock)) as TextBlock;
                 TextBlock latestBlock = MainPage.GetGridCellOfType(GetSoftwareGrid(RefreshButton), Row, 2, typeof(TextBlock)) as TextBlock;
                 nameBlock.Foreground = new SolidColorBrush(Colors.Green);
                 installedBlock.Foreground = new SolidColorBrush(Colors.Green);
                 latestBlock.Foreground = new SolidColorBrush(Colors.Green);
+            }
+            else
+            {
+                nameBlock.Foreground = new SolidColorBrush(Colors.White);
             }
 
             RefreshButton.IsEnabled = true;
