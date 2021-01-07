@@ -9,7 +9,7 @@
   <Identity
     Name="59608AdamBoe.SoftwareUpdateChecker"
     Publisher="CN=8D06F663-BC29-4EB6-8132-EDD6F1F21B53"
-    Version="1.0.4.0" />
+    Version="1.0.6.0" />
 
   <mp:PhoneIdentity PhoneProductId="ca008cd1-0908-4cc5-a2c7-0a60294b6326" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
