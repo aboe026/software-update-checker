@@ -22,70 +22,77 @@ To see a list of available targets and flags, run the executable with the `--hel
 
 ### Example Configurations
 
-* [Docker](https://www.docker.com/)
-    - type: `Static`
-    - command: `docker`
-    - arguments: `--version`
-    - installed regex: `version (.*),`
-    - latest URL: `https://docs.docker.com/engine/release-notes/`,
-    - latest regex: `\>(.*)\<\/h2\>`
+- [Docker](https://www.docker.com/)
 
-* [Firefox](https://www.mozilla.org/)
-    - type: `Static`
-    - command: `C:\Program Files\Mozilla Firefox\firefox.exe`
-    - arguments: `--version`
-    - installed regex: `Firefox (.*)`
-    - latest URL: `https://www.mozilla.org/en-US/firefox/releasenotes/`
-    - latest regex: `Version (\d+\.\d+(\.\d+)?)`
+  - type: `Static`
+  - command: `docker`
+  - arguments: `--version`
+  - installed regex: `version (.*),`
+  - latest URL: `https://docs.docker.com/engine/release-notes/`,
+  - latest regex: `\>(.*)\<\/h2\>`
 
-* [GIMP](https://www.gimp.org/)
-    - type: `Dynamic`
-    - command directory: `C:\Program Files\GIMP 2\bin`
-    - directory regex: `gimp-\d+\.\d+\.exe`
-    - arguments: `--version`
-    - installed regex: `version (.*)`
-    - latest URL: `https://www.gimp.org/downloads/`
-    - latest regex: `The current stable release of GIMP is <b>(.*)<\/b>`
+- [Firefox](https://www.mozilla.org/)
 
-* [Git](https://git-scm.com/)
-    - type: `Static`
-    - command: `git`
-    - arguments: `--version`
-    - installed regex: `version (.*)`
-    - latest URL: `https://github.com/git-for-windows/git/releases/latest`
-    - latest regex: `\/tag\/v(.*?)&quot`
+  - type: `Static`
+  - command: `C:\Program Files\Mozilla Firefox\firefox.exe`
+  - arguments: `--version`
+  - installed regex: `Firefox (.*)`
+  - latest URL: `https://www.mozilla.org/en-US/firefox/releasenotes/`
+  - latest regex: `Version (\d+\.\d+(\.\d+)?)`
 
-* [Inkscape](https://inkscape.org/)
-    - type: `Static`
-    - command: `C:\Program Files\Inkscape\bin\inkscape.com`
-    - arguments: `--version`
-    - installed regex: `Inkscape (.*) \(`,
-    - latest URL: `https://inkscape.org/release/`
-    - latest regex: `Download Inkscape (.*) \|`
+- [GIMP](https://www.gimp.org/)
 
-* [MongoDB](https://www.mongodb.com/)
-    - type: `Static`
-    - command: `mongod`
-    - arguments: `--version`
-    - installed regex: `version v(.*)`
-    - latest URL: `https://www.mongodb.com/try/download/community`
-    - latest regex: `(\d+.\d+.\d+) \(current\)`
+  - type: `Dynamic`
+  - command directory: `C:\Program Files\GIMP 2\bin`
+  - directory regex: `gimp-\d+\.\d+\.exe`
+  - arguments: `--version`
+  - installed regex: `version (.*)`
+  - latest URL: `https://www.gimp.org/downloads/`
+  - latest regex: `The current stable release of GIMP is <b>(.*)<\/b>`
 
-* [NVM](https://github.com/coreybutler/nvm-windows)
-    - type: `Static`
-    - command: `nvm`
-    - arguments: `version`
-    - installed regex: `(.*)`
-    - latest URL: `https://github.com/coreybutler/nvm-windows/releases/latest`
-    - latest regex: `\/tag\/(.*?)&quot`
+- [Git](https://git-scm.com/)
 
-* [VS Code](https://code.visualstudio.com/)
-    - type: `Static`
-    - command: `code`
-    - arguments: `--version`
-    - installed regex: `(.*)`
-    - latest URL: `https://github.com/microsoft/vscode/releases/latest`
-    - latest regex: `\/tag\/(.*?)&quot`
+  - type: `Static`
+  - command: `git`
+  - arguments: `--version`
+  - installed regex: `version (.*)`
+  - latest URL: `https://github.com/git-for-windows/git/releases/latest`
+  - latest regex: `\/tag\/v(.*?)&quot`
+
+- [Inkscape](https://inkscape.org/)
+
+  - type: `Static`
+  - command: `C:\Program Files\Inkscape\bin\inkscape.com`
+  - arguments: `--version`
+  - installed regex: `Inkscape (.*) \(`,
+  - latest URL: `https://inkscape.org/release/`
+  - latest regex: `Download Inkscape (.*) \|`
+
+- [MongoDB](https://www.mongodb.com/)
+
+  - type: `Static`
+  - command: `mongod`
+  - arguments: `--version`
+  - installed regex: `version v(.*)`
+  - latest URL: `https://www.mongodb.com/try/download/community`
+  - latest regex: `(\d+.\d+.\d+) \(current\)`
+
+- [NVM](https://github.com/coreybutler/nvm-windows)
+
+  - type: `Static`
+  - command: `nvm`
+  - arguments: `version`
+  - installed regex: `(.*)`
+  - latest URL: `https://github.com/coreybutler/nvm-windows/releases/latest`
+  - latest regex: `\/tag\/(.*?)&quot`
+
+- [VS Code](https://code.visualstudio.com/)
+  - type: `Static`
+  - command: `code`
+  - arguments: `--version`
+  - installed regex: `(.*)`
+  - latest URL: `https://github.com/microsoft/vscode/releases/latest`
+  - latest regex: `\/tag\/(.*?)&quot`
 
 ---
 
