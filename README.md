@@ -164,7 +164,7 @@ Unit tests are for stateless logic tests on small parts of the code base, and ca
 npm run test:unit
 ```
 
-### Functional Tests
+#### Functional Tests
 
 Functional tests run against the final, distributable executable and are meant to test overarching scenarios of the tool to simulate as close as possible real interactions and use/edge cases. They required code to be [packaged](#package), and can be run with
 
