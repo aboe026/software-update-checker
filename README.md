@@ -158,10 +158,16 @@ This will [lint](#lint) the project, then run [unit](#unit-tests) and [functiona
 
 #### Unit Tests
 
-Unit tests are for stateless logic tests on small parts of the code base, and can be run with
+Unit tests are for stateless logic tests on small, contained parts of the code base, and can be run with
 
 ```sh
 npm run test:unit
+```
+
+_Note_: To run a specific test, execute
+
+```sh
+npm run test:unit -- -t 'test name'
 ```
 
 #### Functional Tests
@@ -170,4 +176,10 @@ Functional tests run against the final, distributable executable and are meant t
 
 ```sh
 npm run test:func
+```
+
+_Note_: To run a specific test, execute
+
+```sh
+npm run test:func -- -t 'test name'
 ```
