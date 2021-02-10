@@ -7,18 +7,23 @@ node {
     ansiColor('xterm') {
       dir(workDir) {
 
-        stage('Prep') {
-          checkout scm
-          packageJson = readJSON file: 'package.json'
-
-          def tag = "${packageJson.version}+${env.BUILD_ID}"
-          currentBuild.displayName = tag
+        stage('Pull Runtime Image') {
           sh "docker pull ${nodeImage}"
         }
 
         docker.image(nodeImage).inside() {
-          stage('Install') {
+
+          stage('Prep') {
+            checkout scm
+            packageJson = readJSON file: 'package.json'
+            def tag = "${packageJson.version}+${env.BUILD_ID}"
+            currentBuild.displayName = tag
+            sh 'apt-get update'
             sh 'apt-get install -y xmlstarlet'
+          }
+
+
+          stage('Install') {
             sh 'node --version'
             sh 'npm --version'
             sh 'npm ci'
