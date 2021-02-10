@@ -37,35 +37,34 @@ node {
               }
 
               try {
-                stage('Unit Tests') {
-                  try {
-                    sh 'npm run test:unit:xml'
-                  } catch (err) {
-                    exceptionThrown = true
-                    println 'Exception was caught in try block of unit tests stage.'
-                    println err
-                  } finally {
-                    if (fileExists('test-results/unit.xml')) {
-                      sh 'xmlstarlet edit --inplace --update "/testsuites/testsuite/testcase/@classname" --expr "concat(\'unit.\', .)" test-results/unit.xml' // update package name for easier distinction between unit & functional tests in Jenkins UI
+                parallel (
+                  'unit': {
+                    stage('Unit Tests') {
+                      try {
+                        sh 'npm run test:unit:xml'
+                      } catch (err) {
+                        exceptionThrown = true
+                        println 'Exception was caught in try block of unit tests stage.'
+                        println err
+                      } finally {
+                        junit testResults: 'test-results/unit.xml', allowEmptyResults: true
+                      }
                     }
-                    junit testResults: 'test-results/unit.xml', allowEmptyResults: true
-                  }
-                }
-
-                stage('Functional Tests') {
-                  try {
-                    sh 'npm run test:func:xml'
-                  } catch (err) {
-                    exceptionThrown = true
-                    println 'Exception was caught in try block of func tests stage.'
-                    println err
-                  } finally {
-                    if (fileExists('test-results/func.xml')) {
-                      sh 'xmlstarlet edit --inplace --update "/testsuites/testsuite/testcase/@classname" --expr "concat(\'func.\', .)" test-results/func.xml' // update package name for easier distinction between unit & functional tests in Jenkins UI
+                  },
+                  'func': {
+                    stage('Functional Tests') {
+                      try {
+                        sh 'npm run test:func:xml'
+                      } catch (err) {
+                        exceptionThrown = true
+                        println 'Exception was caught in try block of func tests stage.'
+                        println err
+                      } finally {
+                        junit testResults: 'test-results/func.xml', allowEmptyResults: true
+                      }
                     }
-                    junit testResults: 'test-results/func.xml', allowEmptyResults: true
                   }
-                }
+                )
               } catch (err) {
                 println 'Exception caught while running unit and func tests:'
                 println err
