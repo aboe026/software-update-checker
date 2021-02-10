@@ -13,12 +13,12 @@ node {
 
           def tag = "${packageJson.version}+${env.BUILD_ID}"
           currentBuild.displayName = tag
-          sh 'apt-get install -y xmlstarlet'
           sh "docker pull ${nodeImage}"
         }
 
         docker.image(nodeImage).inside() {
           stage('Install') {
+            sh 'apt-get install -y xmlstarlet'
             sh 'node --version'
             sh 'npm --version'
             sh 'npm ci'
@@ -41,7 +41,7 @@ node {
                     println err
                   } finally {
                     if (fileExists('test-results/unit.xml')) {
-                      // sh 'xmlstarlet edit --inplace --update "/testsuites/testsuite/testcase/@classname" --expr "concat(\'unit.\', .)" test-results/unit.xml' // update package name for easier distinction between tests
+                      sh 'xmlstarlet edit --inplace --update "/testsuites/testsuite/testcase/@classname" --expr "concat(\'unit.\', .)" test-results/unit.xml' // update package name for easier distinction between unit & functional tests in Jenkins UI
                     }
                     junit testResults: 'test-results/unit.xml', allowEmptyResults: true
                   }
@@ -56,7 +56,7 @@ node {
                     println err
                   } finally {
                     if (fileExists('test-results/func.xml')) {
-                      // sh 'xmlstarlet edit --inplace --update "/testsuites/testsuite/testcase/@classname" --expr "concat(\'func.\', .)" test-results/func.xml' // update package name for easier distinction between tests
+                      sh 'xmlstarlet edit --inplace --update "/testsuites/testsuite/testcase/@classname" --expr "concat(\'func.\', .)" test-results/func.xml' // update package name for easier distinction between unit & functional tests in Jenkins UI
                     }
                     junit testResults: 'test-results/func.xml', allowEmptyResults: true
                   }

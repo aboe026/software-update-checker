@@ -31,9 +31,9 @@
     "start": "ts-node src/index.ts",
     "test": "npm run lint && npm run test:unit && npm run test:func && npm run coverage:merge",
     "test:func": "jest test/func --coverageDirectory=coverage/func --runInBand",
-    "test:func:xml": "cross-env JEST_JUNIT_ANCESTOR_SEPARATOR='.' JEST_JUNIT_OUTPUT_DIR=test-results JEST_SUITE_NAME=func JEST_JUNIT_OUTPUT_NAME=func.xml npm run test:func -- --reporters=default --reporters=jest-junit",
+    "test:func:xml": "cross-env JEST_SUITE_NAME=func JEST_JUNIT_CLASSNAME='func.{classname}' JEST_JUNIT_OUTPUT_NAME=func.xml npm run test:func -- --reporters=default --reporters=jest-junit",
     "test:unit": "jest test/unit --coverageDirectory=coverage/unit",
-    "test:unit:xml": "cross-env JEST_JUNIT_ANCESTOR_SEPARATOR='.' JEST_JUNIT_OUTPUT_DIR=test-results JEST_SUITE_NAME=unit JEST_JUNIT_OUTPUT_NAME=unit.xml npm run test:unit -- --reporters=default --reporters=jest-junit"
+    "test:unit:xml": "cross-env JEST_SUITE_NAME=unit JEST_JUNIT_CLASSNAME='unit.{classname}' JEST_JUNIT_OUTPUT_NAME=unit.xml npm run test:unit -- --reporters=default --reporters=jest-junit"
   },
   "dependencies": {
     "cli-progress": "3.8.2",
@@ -69,5 +69,10 @@
     "ts-jest": "26.4.4",
     "ts-node": "9.1.1",
     "typescript": "4.1.3"
+  },
+  "jest-junit": {
+    "ancestorSeparator": ".",
+    "outputDirectory": "test-results",
+    "titleTemplate": "{title}"
   }
 }
