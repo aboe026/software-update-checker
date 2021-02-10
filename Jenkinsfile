@@ -4,7 +4,7 @@ node {
   def nodeImage = 'node:14'
   def exceptionThrown = false
   try {
-    docker.image(nodeImage).inside() {
+    ansiColor('xterm') {
       dir(workDir) {
 
         stage('Prep') {
@@ -12,69 +12,81 @@ node {
           packageJson = readJSON file: 'package.json'
 
           def tag = "${packageJson.version}+${env.BUILD_ID}"
-          dockerName = "${packageJson.name}--${env.BRANCH_NAME}--${tag}".toLowerCase().replace('.', '-')
           currentBuild.displayName = tag
-          sh 'node --version'
-          sh 'npm --version'
+          sh 'apt-get install -y xmlstarlet'
+          sh "docker pull ${nodeImage}"
         }
 
-        stage('Install') {
-          sh 'npm ci'
-        }
+        docker.image(nodeImage).inside() {
+          stage('Install') {
+            sh 'node --version'
+            sh 'npm --version'
+            sh 'npm ci'
+          }
 
-        stage('Lint') {
-          sh 'npm run lint'
-        }
+          parallel (
+            'test': {
 
-        stage('Build') {
-          sh 'npm run build'
-        }
-
-        stage('Package') {
-          sh 'npm run pack'
-          archiveArtifacts artifacts: 'dist/*', allowEmptyArchive: true
-        }
-
-        try {
-          stage('Unit Tests') {
-            try {
-              sh 'npm run test:unit:xml'
-            } catch (err) {
-              exceptionThrown = true
-              println 'Exception was caught in try block of unit tests stage.'
-              println err
-            } finally {
-              if (fileExists('test-results/unit.xml')) {
-                sh 'sed -i -e \'s/<testcase\\(.*\\)classname="\\(.*\\)"/<testcase\\1classname="unit"/g\' test-results/unit.xml'
+              stage('Lint') {
+                sh 'npm run lint'
               }
-              junit testResults: 'test-results/unit.xml', allowEmptyResults: true
-            }
-          }
 
-          stage('Functional Tests') {
-            try {
-              sh 'npm run test:func:xml'
-            } catch (err) {
-              exceptionThrown = true
-              println 'Exception was caught in try block of func tests stage.'
-              println err
-            } finally {
-              if (fileExists('test-results/func.xml')) {
-                sh 'sed -i -e \'s/<testcase\\(.*\\)classname="\\(.*\\)"/<testcase\\1classname="func"/g\' test-results/func.xml'
+              try {
+                stage('Unit Tests') {
+                  try {
+                    sh 'npm run test:unit:xml'
+                  } catch (err) {
+                    exceptionThrown = true
+                    println 'Exception was caught in try block of unit tests stage.'
+                    println err
+                  } finally {
+                    if (fileExists('test-results/unit.xml')) {
+                      // sh 'xmlstarlet edit --inplace --update "/testsuites/testsuite/testcase/@classname" --expr "concat(\'unit.\', .)" test-results/unit.xml' // update package name for easier distinction between tests
+                    }
+                    junit testResults: 'test-results/unit.xml', allowEmptyResults: true
+                  }
+                }
+
+                stage('Functional Tests') {
+                  try {
+                    sh 'npm run test:func:xml'
+                  } catch (err) {
+                    exceptionThrown = true
+                    println 'Exception was caught in try block of func tests stage.'
+                    println err
+                  } finally {
+                    if (fileExists('test-results/func.xml')) {
+                      // sh 'xmlstarlet edit --inplace --update "/testsuites/testsuite/testcase/@classname" --expr "concat(\'func.\', .)" test-results/func.xml' // update package name for easier distinction between tests
+                    }
+                    junit testResults: 'test-results/func.xml', allowEmptyResults: true
+                  }
+                }
+              } catch (err) {
+                println 'Exception caught while running unit and func tests:'
+                println err
+              } finally {
+                stage('Coverage') {
+                  sh 'npm run coverage:merge'
+                  cobertura coberturaReportFile: 'coverage/merged/cobertura-coverage.xml'
+                }
               }
-              junit testResults: 'test-results/func.xml', allowEmptyResults: true
-            }
-          }
-        } catch (err) {
-          println 'Exception caught while running unit and func tests:'
-          println err
-        } finally {
-          stage('Coverage') {
-            sh 'npm run coverage:merge'
-            cobertura coberturaReportFile: 'coverage/merged/cobertura-coverage.xml'
-          }
-        }
 
+            },
+            'dist': {
+
+              stage('Build') {
+                sh 'npm run build'
+              }
+
+              stage('Package') {
+                sh 'npm run pack'
+                archiveArtifacts artifacts: 'dist/*', allowEmptyArchive: true
+              }
+
+            }
+          )
+
+        }
       }
     }
   } catch (err) {
