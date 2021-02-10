@@ -18,10 +18,7 @@ node {
             packageJson = readJSON file: 'package.json'
             def tag = "${packageJson.version}+${env.BUILD_ID}"
             currentBuild.displayName = tag
-            sh 'apt-get update'
-            sh 'apt-get install -y xmlstarlet'
           }
-
 
           stage('Install') {
             sh 'node --version'
