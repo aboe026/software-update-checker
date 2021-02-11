@@ -28,7 +28,7 @@ describe('Software Func Tests', () => {
         execute({
           directory: path.join(__dirname, '../helpers/test-commands'),
           command: 'node',
-          args: 'good-command.js foo bar\\nhello world',
+          args: 'good-command.js foo bar\\\\nhello world',
         })
       ).resolves.toBe('foo bar\nhello world')
     })
