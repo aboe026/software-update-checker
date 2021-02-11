@@ -176,7 +176,7 @@ describe('Software Func Tests', () => {
           args: `${path.join(
             __dirname,
             '../helpers/test-commands/good-command.js'
-          )} server version v4.5.6\\nclient vesion v1.2.3`,
+          )} server version v4.5.6\\\\nclient vesion v1.2.3`,
           installedRegex: 'version v(.*)',
           url: '',
           latestRegex: '',
