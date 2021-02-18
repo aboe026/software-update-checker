@@ -2,6 +2,7 @@ import path from 'path'
 
 import Software, { execute, getFromUrl, getExecutable } from '../../src/software'
 import Website from '../helpers/website'
+import TestUtil from '../helpers/test-util'
 
 describe('Software Func Tests', () => {
   describe('execute', () => {
@@ -28,7 +29,7 @@ describe('Software Func Tests', () => {
         execute({
           directory: path.join(__dirname, '../helpers/test-commands'),
           command: 'node',
-          args: 'good-command.js foo bar\\\\nhello world',
+          args: `good-command.js foo bar${TestUtil.NEWLINE_CHARS}hello world`,
         })
       ).resolves.toBe('foo bar\nhello world')
     })
@@ -173,10 +174,9 @@ describe('Software Func Tests', () => {
           executable: {
             command: 'node',
           },
-          args: `${path.join(
-            __dirname,
-            '../helpers/test-commands/good-command.js'
-          )} server version v4.5.6\\\\nclient vesion v1.2.3`,
+          args: `${path.join(__dirname, '../helpers/test-commands/good-command.js')} server version v4.5.6${
+            TestUtil.NEWLINE_CHARS
+          }client vesion v1.2.3`,
           installedRegex: 'version v(.*)',
           url: '',
           latestRegex: '',

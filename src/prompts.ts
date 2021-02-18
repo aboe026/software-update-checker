@@ -10,7 +10,8 @@ import Validators from './validators'
 
 export default class Prompts {
   static async home(): Promise<void> {
-    while (true) {
+    let exit = false
+    while (!exit) {
       const { action } = await inquirer.prompt({
         name: 'action',
         message: 'Select action to perform:',
@@ -52,7 +53,7 @@ export default class Prompts {
           await Prompts.delete()
           break
         case 'exit':
-          process.exit(0)
+          exit = true
       }
     }
   }
@@ -71,9 +72,13 @@ export default class Prompts {
       }))
       validName = true
       for (const software of softwares) {
-        if (software.name === name && existingSoftware && existingSoftware.name !== name) {
+        let duplicateName = software.name === name
+        if (existingSoftware && existingSoftware.name === software.name && name === existingSoftware.name) {
+          duplicateName = false // editing software, but keeping original name
+        }
+        if (duplicateName) {
           validName = false
-          console.log(`Invalid name '${name}', already in use.`.red)
+          console.error(`Invalid name '${name}', already in use.`.red)
         }
       }
     }
@@ -83,7 +88,7 @@ export default class Prompts {
       existingInstalledRegex: existingSoftware?.installedRegex,
     })
     if (installedVersion) {
-      const latestVersion = await Prompts.configureLatestVersion({
+      const latestVersion: ConfigureLatestVersionResponse | undefined = await Prompts.configureLatestVersion({
         existingUrl: existingSoftware?.url,
         existingRegex: existingSoftware?.latestRegex,
       })
@@ -114,7 +119,71 @@ export default class Prompts {
     existingArgs?: string
     existingInstalledRegex?: string
   }): Promise<ConfigureInstalledVersionResponse | undefined> {
-    let executable: Static | Dynamic
+    const executable = await Prompts.configureExecutable(existingExecutable)
+    if (executable) {
+      const { args, installedRegex } = await inquirer.prompt([
+        {
+          name: 'args',
+          message: 'Arguments to apply to dynamic executable to produce version (eg --version):',
+          type: 'input',
+          default: existingArgs || undefined,
+        },
+        {
+          name: 'installedRegex',
+          message: 'Regex pattern applied to command output to single out installed version (eg version (.*)):',
+          type: 'input',
+          default: existingInstalledRegex || undefined,
+          validate: Validators.required,
+        },
+      ])
+      try {
+        const software = new Software({
+          name: 'Installed Test',
+          executable,
+          args,
+          installedRegex,
+          url: '',
+          latestRegex: '',
+        })
+        console.log(`Installed version: '${await software.getInstalledVersion()}'`)
+        const { versionCorrect }: { versionCorrect: boolean } = await inquirer.prompt({
+          name: 'versionCorrect',
+          message: 'Is the above version correct?',
+          type: 'confirm',
+          default: true,
+        })
+        if (versionCorrect) {
+          return {
+            executable,
+            args,
+            installedRegex,
+          }
+        }
+        return Prompts.configureInstalledVersion({
+          existingExecutable: executable,
+          existingArgs: args,
+          existingInstalledRegex: installedRegex,
+        })
+      } catch (err) {
+        console.error(colors['red'](err.message || err))
+        const { reattempt }: { reattempt: boolean } = await inquirer.prompt({
+          name: 'reattempt',
+          message: 'Could not determine version due to error above. Reconfigure?',
+          type: 'confirm',
+          default: true,
+        })
+        if (reattempt) {
+          return Prompts.configureInstalledVersion({
+            existingExecutable: executable,
+            existingArgs: args,
+            existingInstalledRegex: installedRegex,
+          })
+        }
+      }
+    }
+  }
+
+  static async configureExecutable(existingExecutable?: Static | Dynamic): Promise<Static | Dynamic | undefined> {
     const { type }: { type: CommandType } = await inquirer.prompt({
       name: 'type',
       message: 'Is the executable file a static name or dynamic (eg includes version in name):',
@@ -131,7 +200,19 @@ export default class Prompts {
         },
       ],
     })
-    if (type === CommandType.Dynamic) {
+    if (type === CommandType.Static) {
+      return {
+        command: (
+          await inquirer.prompt({
+            name: 'command',
+            message: 'Command or path to executable (eg git or C:\\Program Files\\Git\\bin\\git.exe):',
+            type: 'input',
+            default: existingExecutable && isStatic(existingExecutable) ? existingExecutable.command : undefined,
+            validate: Validators.required,
+          })
+        ).command,
+      }
+    } else {
       const { directory, regex } = await inquirer.prompt([
         {
           name: 'directory',
@@ -161,21 +242,18 @@ export default class Prompts {
           default: true,
         })
         if (executableCorrect) {
-          executable = {
+          return {
             directory,
             regex,
           }
         } else {
-          return Prompts.configureInstalledVersion({
-            existingExecutable: {
-              directory,
-              regex,
-            },
-            existingArgs,
+          return Prompts.configureExecutable({
+            directory,
+            regex,
           })
         }
       } catch (err) {
-        console.log(colors['red'](err.message || err))
+        console.error(colors['red'](err.message || err))
         const { reattempt }: { reattempt: boolean } = await inquirer.prompt({
           name: 'reattempt',
           message: 'Could not resolve dynamic executable due to error above. Reconfigure?',
@@ -183,86 +261,12 @@ export default class Prompts {
           default: true,
         })
         if (reattempt) {
-          return Prompts.configureInstalledVersion({
-            existingExecutable: {
-              directory,
-              regex,
-            },
-            existingArgs,
+          return Prompts.configureExecutable({
+            directory,
+            regex,
           })
         }
         return undefined
-      }
-    } else {
-      executable = {
-        command: (
-          await inquirer.prompt({
-            name: 'command',
-            message: 'Command or path to executable (eg git or C:\\Program Files\\Git\\bin\\git.exe):',
-            type: 'input',
-            default: existingExecutable && isStatic(existingExecutable) ? existingExecutable.command : undefined,
-            validate: Validators.required,
-          })
-        ).command,
-      }
-    }
-    const { args, installedRegex } = await inquirer.prompt([
-      {
-        name: 'args',
-        message: 'Arguments to apply to dynamic executable to produce version (eg --version):',
-        type: 'input',
-        default: existingArgs || undefined,
-      },
-      {
-        name: 'installedRegex',
-        message: 'Regex pattern applied to command output to single out installed version (eg version (.*)):',
-        type: 'input',
-        default: existingInstalledRegex || undefined,
-        validate: Validators.required,
-      },
-    ])
-    try {
-      const software = new Software({
-        name: 'Installed Test',
-        executable,
-        args,
-        installedRegex,
-        url: '',
-        latestRegex: '',
-      })
-      console.log(`Installed version: '${await software.getInstalledVersion()}'`)
-      const { versionCorrect }: { versionCorrect: boolean } = await inquirer.prompt({
-        name: 'versionCorrect',
-        message: 'Is the above version correct?',
-        type: 'confirm',
-        default: true,
-      })
-      if (versionCorrect) {
-        return {
-          executable,
-          args,
-          installedRegex,
-        }
-      }
-      return Prompts.configureInstalledVersion({
-        existingExecutable: executable,
-        existingArgs: args,
-        existingInstalledRegex: installedRegex,
-      })
-    } catch (err) {
-      console.log(colors['red'](err.message || err))
-      const { reattempt }: { reattempt: boolean } = await inquirer.prompt({
-        name: 'reattempt',
-        message: 'Could not determine version due to error above. Reconfigure?',
-        type: 'confirm',
-        default: true,
-      })
-      if (reattempt) {
-        return Prompts.configureInstalledVersion({
-          existingExecutable: executable,
-          existingArgs: args,
-          existingInstalledRegex: installedRegex,
-        })
       }
     }
   }
@@ -320,7 +324,7 @@ export default class Prompts {
         existingRegex: latestRegex,
       })
     } catch (err) {
-      console.log(colors['red'](err.message || err))
+      console.error(colors['red'](err.message || err))
       const { reattempt }: { reattempt: boolean } = await inquirer.prompt({
         name: 'reattempt',
         message: 'Could not determine version due to error above. Reconfigure?',
@@ -338,77 +342,97 @@ export default class Prompts {
 
   static async view(): Promise<void> {
     const softwares = await SoftwareList.load()
-    const progress = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic)
-    progress.start(softwares.length, 0)
-    const table = new Table({
-      head: ['Name'.white, 'Installed'.white, 'Latest'.white],
-    })
-    for (const software of softwares) {
-      let installed,
-        latest,
-        installedError,
-        latestError = ''
-      let color = colors.white
-      try {
-        installed = await software.getInstalledVersion()
-      } catch (err) {
-        installedError = err.message || err
+    if (softwares.length === 0) {
+      console.warn('No softwares to view. Please add a software to have something to view.'.yellow)
+    } else {
+      const progress = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic)
+      progress.start(softwares.length, 0)
+      const table = new Table({
+        head: ['Name'.white, 'Installed'.white, 'Latest'.white],
+      })
+      for (const software of softwares) {
+        let installed: string | null = null
+        let latest: string | null = null
+        let installedError = false
+        let latestError = false
+        let installedErrorMessage = ''
+        let latestErrorMessage = ''
+        let color: colors.Color = colors.white
+        try {
+          installed = await software.getInstalledVersion()
+        } catch (err) {
+          installedError = true
+          installedErrorMessage = err.message || err
+        }
+        try {
+          latest = await software.getLatestVersion()
+        } catch (err) {
+          latestError = true
+          latestErrorMessage = err.message || err
+        }
+        if (installedError || latestError || !installed || !latest) {
+          color = colors.red
+        } else if (installed !== latest) {
+          color = colors.green
+        }
+        table.push([
+          color(software.name),
+          color(installedError ? installedErrorMessage : installed || ''),
+          color(latestError ? latestErrorMessage : latest || ''),
+        ])
+        progress.increment()
       }
-      try {
-        latest = await software.getLatestVersion()
-      } catch (err) {
-        latestError = err.message || err
-      }
-      if (installedError || latestError || !installed || !latest) {
-        color = colors.red
-      } else if (installed !== latest) {
-        color = colors.green
-      }
-      table.push([color(software.name), color(installedError || installed || ''), color(latestError || latest || '')])
-      progress.increment()
-    }
 
-    progress.stop()
-    console.table(table.toString())
+      progress.stop()
+      console.table(table.toString())
+    }
   }
 
   static async edit(): Promise<void> {
     const softwares = await SoftwareList.load()
-    const { nameToEdit } = await inquirer.prompt({
-      name: 'nameToEdit',
-      message: 'Select configured software to edit:',
-      type: 'list',
-      choices: softwares.map((software) => {
-        return {
-          name: software.name,
-          value: software.name,
-        }
-      }),
-    })
-    await Prompts.configure(softwares.find((software) => software.name === nameToEdit))
+    if (softwares.length === 0) {
+      console.warn('No softwares to edit. Please add a software to have something to edit.'.yellow)
+    } else {
+      const { nameToEdit } = await inquirer.prompt({
+        name: 'nameToEdit',
+        message: 'Select configured software to edit:',
+        type: 'list',
+        choices: softwares.map((software) => {
+          return {
+            name: software.name,
+            value: software.name,
+          }
+        }),
+      })
+      await Prompts.configure(softwares.find((software) => software.name === nameToEdit))
+    }
   }
 
   static async delete(): Promise<void> {
     const softwares = await SoftwareList.load()
-    const { nameToDelete } = await inquirer.prompt({
-      name: 'nameToDelete',
-      message: 'Select configured software to delete:',
-      type: 'list',
-      choices: softwares.map((software) => {
-        return {
-          name: software.name,
-          value: software.name,
-        }
-      }),
-    })
-    const { deleteConfirmed } = await inquirer.prompt({
-      name: 'deleteConfirmed',
-      message: `Are you sure you want to delete '${nameToDelete}'?`,
-      type: 'confirm',
-      default: true,
-    })
-    if (deleteConfirmed) {
-      await SoftwareList.delete(nameToDelete)
+    if (softwares.length === 0) {
+      console.warn('No softwares to delete. Please add a software to have something to delete.'.yellow)
+    } else {
+      const { nameToDelete } = await inquirer.prompt({
+        name: 'nameToDelete',
+        message: 'Select configured software to delete:',
+        type: 'list',
+        choices: softwares.map((software) => {
+          return {
+            name: software.name,
+            value: software.name,
+          }
+        }),
+      })
+      const { deleteConfirmed } = await inquirer.prompt({
+        name: 'deleteConfirmed',
+        message: `Are you sure you want to delete '${nameToDelete}'?`,
+        type: 'confirm',
+        default: true,
+      })
+      if (deleteConfirmed) {
+        await SoftwareList.delete(nameToDelete)
+      }
     }
   }
 }

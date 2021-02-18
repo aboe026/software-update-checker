@@ -1,7 +1,7 @@
+import colors from 'colors'
 import Prompts from './prompts'
-;(async () => {
-  await Prompts.home()
-})().catch((err) => {
-  console.error(err)
+
+Prompts.home().catch((err) => {
+  console.error(colors.red(err))
   process.exit(1)
 })
