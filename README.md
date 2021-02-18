@@ -1,4 +1,4 @@
-# software-update-checker-cli [![Build Status](https://travis-ci.com/aboe026/software-update-checker-cli.svg?branch=master)](https://travis-ci.com/aboe026/software-update-checker-cli)
+# software-update-checker-cli
 
 A command line interface to check if local software installs have updates.
 

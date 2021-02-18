@@ -18,11 +18,11 @@ node {
             packageJson = readJSON file: 'package.json'
             def tag = "${packageJson.version}+${env.BUILD_ID}"
             currentBuild.displayName = tag
+            sh 'node --version'
+            sh 'npm --version'
           }
 
           stage('Install') {
-            sh 'node --version'
-            sh 'npm --version'
             sh 'npm ci'
           }
 
