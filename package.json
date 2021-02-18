@@ -1,6 +1,6 @@
 {
   "name": "software-update-checker-cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "Adam Boe",
   "description": "A command line interface to check if local software installs have updates",
   "private": false,
