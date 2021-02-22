@@ -477,25 +477,6 @@ describe('Software List Unit Tests', () => {
         `Saved file '${file}' contains an invalid software entry '${name}' that is dynamic but does not have an executable regex`
       )
     })
-    it('throws error if save file has software without an args', async () => {
-      const name = 'no args'
-      fs.readFile = jest.fn().mockResolvedValue(
-        JSON.stringify([
-          {
-            name,
-            executable: {
-              command: 'personalities',
-            },
-            installedRegex: 'compliant',
-            url: 'https://whoareyou.com',
-            latestRegex: 'non-argumentative',
-          },
-        ])
-      )
-      await expect(SoftwareList.load()).rejects.toThrow(
-        `Saved file '${file}' contains an invalid software entry '${name}' that does not have a args`
-      )
-    })
     it('throws error if save file has software without an installed regex', async () => {
       const name = 'no installed regex'
       fs.readFile = jest.fn().mockResolvedValue(
@@ -553,7 +534,7 @@ describe('Software List Unit Tests', () => {
         `Saved file '${file}' contains an invalid software entry '${name}' that does not have a latestRegex`
       )
     })
-    it('saves software if software list is single valid entry', async () => {
+    it('loads software if software list is single valid entry', async () => {
       const software = new Software({
         name: 'valid single',
         executable: {
@@ -567,7 +548,49 @@ describe('Software List Unit Tests', () => {
       fs.readFile = jest.fn().mockResolvedValue(JSON.stringify([software]))
       await expect(SoftwareList.load()).resolves.toStrictEqual([software])
     })
-    it('saves software if software list multiple valid entries', async () => {
+    it('loads software if software list is single valid entry without args', async () => {
+      const software = new Software({
+        name: 'valid single without args',
+        executable: {
+          command: 'handlebars',
+        },
+        installedRegex: 'no',
+        url: 'https://flobots.com',
+        latestRegex: 'fight with tools',
+      })
+      fs.readFile = jest.fn().mockResolvedValue(JSON.stringify([software]))
+      await expect(SoftwareList.load()).resolves.toStrictEqual([software])
+    })
+    it('loads software if software list is single valid entry with shell override', async () => {
+      const software = new Software({
+        name: 'valid single with shell override',
+        executable: {
+          command: 'shells',
+        },
+        args: 'koopa',
+        installedRegex: 'blue',
+        shellOverride: 'mariokart',
+        url: 'https://itsame.com',
+        latestRegex: 'spiny shell',
+      })
+      fs.readFile = jest.fn().mockResolvedValue(JSON.stringify([software]))
+      await expect(SoftwareList.load()).resolves.toStrictEqual([software])
+    })
+    it('loads software if software list is single valid entry without args and with shell override', async () => {
+      const software = new Software({
+        name: 'valid single without args and with shell override',
+        executable: {
+          command: 'attitudes',
+        },
+        installedRegex: 'unsparing',
+        shellOverride: 'force',
+        url: 'https:mywayorthehighway//.com',
+        latestRegex: 'obey',
+      })
+      fs.readFile = jest.fn().mockResolvedValue(JSON.stringify([software]))
+      await expect(SoftwareList.load()).resolves.toStrictEqual([software])
+    })
+    it('loads software if software list multiple valid entries', async () => {
       const firstSoftware = new Software({
         name: 'valid multiple first',
         executable: {
@@ -591,7 +614,7 @@ describe('Software List Unit Tests', () => {
       fs.readFile = jest.fn().mockResolvedValue(JSON.stringify([firstSoftware, lastSoftware]))
       await expect(SoftwareList.load()).resolves.toStrictEqual([firstSoftware, lastSoftware])
     })
-    it('saves and alphabetizes software if software list multiple valid entries not in order', async () => {
+    it('loads and alphabetizes software if software list multiple valid entries not in order', async () => {
       const firstSoftware = new Software({
         name: 'valid multiple out of order first',
         executable: {

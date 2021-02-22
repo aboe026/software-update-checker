@@ -88,9 +88,6 @@ export default class SoftwareList {
             `Saved file '${file}' contains an invalid software entry '${obj.name}' that is dynamic but does not have an executable regex`
           )
         }
-        if (!obj.args) {
-          throw Error(`Saved file '${file}' contains an invalid software entry '${obj.name}' that does not have a args`)
-        }
         if (!obj.installedRegex) {
           throw Error(
             `Saved file '${file}' contains an invalid software entry '${obj.name}' that does not have an installedRegex`
@@ -113,6 +110,7 @@ export default class SoftwareList {
             executable: obj.executable,
             args: obj.args,
             installedRegex: obj.installedRegex,
+            shellOverride: obj.shellOverride,
             url: obj.url,
             latestRegex: obj.latestRegex,
           })
