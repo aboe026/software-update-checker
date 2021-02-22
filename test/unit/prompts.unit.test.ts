@@ -13,141 +13,71 @@ const mockedInquirer = inquirer as jest.Mocked<typeof inquirer>
 describe('Prompts Unit Tests', () => {
   describe('home', () => {
     it('exit does not call any other prompt', async () => {
-      mockedInquirer.prompt.mockResolvedValueOnce({ action: 'exit' })
-      const configureSpy = jest.spyOn(Prompts, 'configure').mockResolvedValue()
-      const viewSpy = jest.spyOn(Prompts, 'view').mockResolvedValue()
-      const editSpy = jest.spyOn(Prompts, 'edit').mockResolvedValue()
-      const deleteSpy = jest.spyOn(Prompts, 'delete').mockResolvedValue()
-      await expect(Prompts.home()).resolves.toBe(undefined)
-      expect(configureSpy.mock.calls.length).toBe(0)
-      expect(viewSpy.mock.calls.length).toBe(0)
-      expect(editSpy.mock.calls.length).toBe(0)
-      expect(deleteSpy.mock.calls.length).toBe(0)
+      await testHomePromptSelection(['exit'])
     })
     it('add then exit calls the configure method once then exits', async () => {
-      mockedInquirer.prompt.mockResolvedValueOnce({ action: 'add' }).mockResolvedValueOnce({ action: 'exit' })
-      const configureSpy = jest.spyOn(Prompts, 'configure').mockResolvedValue()
-      const viewSpy = jest.spyOn(Prompts, 'view').mockResolvedValue()
-      const editSpy = jest.spyOn(Prompts, 'edit').mockResolvedValue()
-      const deleteSpy = jest.spyOn(Prompts, 'delete').mockResolvedValue()
-      await expect(Prompts.home()).resolves.toBe(undefined)
-      expect(configureSpy.mock.calls.length).toBe(1)
-      expect(viewSpy.mock.calls.length).toBe(0)
-      expect(editSpy.mock.calls.length).toBe(0)
-      expect(deleteSpy.mock.calls.length).toBe(0)
+      await testHomePromptSelection(['add', 'exit'], {
+        configureCalls: 1,
+      })
     })
     it('view then exit calls the view method once then exits', async () => {
-      mockedInquirer.prompt.mockResolvedValueOnce({ action: 'view' }).mockResolvedValueOnce({ action: 'exit' })
-      const configureSpy = jest.spyOn(Prompts, 'configure').mockResolvedValue()
-      const viewSpy = jest.spyOn(Prompts, 'view').mockResolvedValue()
-      const editSpy = jest.spyOn(Prompts, 'edit').mockResolvedValue()
-      const deleteSpy = jest.spyOn(Prompts, 'delete').mockResolvedValue()
-      await expect(Prompts.home()).resolves.toBe(undefined)
-      expect(configureSpy.mock.calls.length).toBe(0)
-      expect(viewSpy.mock.calls.length).toBe(1)
-      expect(editSpy.mock.calls.length).toBe(0)
-      expect(deleteSpy.mock.calls.length).toBe(0)
+      await testHomePromptSelection(['view', 'exit'], {
+        viewCalls: 1,
+      })
     })
-    it('edit then exit calls the view method once then exits', async () => {
-      mockedInquirer.prompt.mockResolvedValueOnce({ action: 'edit' }).mockResolvedValueOnce({ action: 'exit' })
-      const configureSpy = jest.spyOn(Prompts, 'configure').mockResolvedValue()
-      const viewSpy = jest.spyOn(Prompts, 'view').mockResolvedValue()
-      const editSpy = jest.spyOn(Prompts, 'edit').mockResolvedValue()
-      const deleteSpy = jest.spyOn(Prompts, 'delete').mockResolvedValue()
-      await expect(Prompts.home()).resolves.toBe(undefined)
-      expect(configureSpy.mock.calls.length).toBe(0)
-      expect(viewSpy.mock.calls.length).toBe(0)
-      expect(editSpy.mock.calls.length).toBe(1)
-      expect(deleteSpy.mock.calls.length).toBe(0)
+    it('edit then exit calls the edit method once then exits', async () => {
+      await testHomePromptSelection(['edit', 'exit'], {
+        editCalls: 1,
+      })
     })
     it('delete then exit calls the delete method once then exits', async () => {
-      mockedInquirer.prompt.mockResolvedValueOnce({ action: 'delete' }).mockResolvedValueOnce({ action: 'exit' })
-      const configureSpy = jest.spyOn(Prompts, 'configure').mockResolvedValue()
-      const viewSpy = jest.spyOn(Prompts, 'view').mockResolvedValue()
-      const editSpy = jest.spyOn(Prompts, 'edit').mockResolvedValue()
-      const deleteSpy = jest.spyOn(Prompts, 'delete').mockResolvedValue()
-      await expect(Prompts.home()).resolves.toBe(undefined)
-      expect(configureSpy.mock.calls.length).toBe(0)
-      expect(viewSpy.mock.calls.length).toBe(0)
-      expect(editSpy.mock.calls.length).toBe(0)
-      expect(deleteSpy.mock.calls.length).toBe(1)
+      await testHomePromptSelection(['delete', 'exit'], {
+        deleteCalls: 1,
+      })
     })
     it('add then add then exit calls the configure method twice then exits', async () => {
-      mockedInquirer.prompt
-        .mockResolvedValueOnce({ action: 'add' })
-        .mockResolvedValueOnce({ action: 'add' })
-        .mockResolvedValueOnce({ action: 'exit' })
-      const configureSpy = jest.spyOn(Prompts, 'configure').mockResolvedValue()
-      const viewSpy = jest.spyOn(Prompts, 'view').mockResolvedValue()
-      const editSpy = jest.spyOn(Prompts, 'edit').mockResolvedValue()
-      const deleteSpy = jest.spyOn(Prompts, 'delete').mockResolvedValue()
-      await expect(Prompts.home()).resolves.toBe(undefined)
-      expect(configureSpy.mock.calls.length).toBe(2)
-      expect(viewSpy.mock.calls.length).toBe(0)
-      expect(editSpy.mock.calls.length).toBe(0)
-      expect(deleteSpy.mock.calls.length).toBe(0)
+      await testHomePromptSelection(['add', 'add', 'exit'], {
+        configureCalls: 2,
+      })
     })
     it('view then view then exit calls the view method twice then exits', async () => {
-      mockedInquirer.prompt
-        .mockResolvedValueOnce({ action: 'view' })
-        .mockResolvedValueOnce({ action: 'view' })
-        .mockResolvedValueOnce({ action: 'exit' })
-      const configureSpy = jest.spyOn(Prompts, 'configure').mockResolvedValue()
-      const viewSpy = jest.spyOn(Prompts, 'view').mockResolvedValue()
-      const editSpy = jest.spyOn(Prompts, 'edit').mockResolvedValue()
-      const deleteSpy = jest.spyOn(Prompts, 'delete').mockResolvedValue()
-      await expect(Prompts.home()).resolves.toBe(undefined)
-      expect(configureSpy.mock.calls.length).toBe(0)
-      expect(viewSpy.mock.calls.length).toBe(2)
-      expect(editSpy.mock.calls.length).toBe(0)
-      expect(deleteSpy.mock.calls.length).toBe(0)
+      await testHomePromptSelection(['view', 'view', 'exit'], {
+        viewCalls: 2,
+      })
     })
     it('edit then edit then exit calls the edit method twice then exits', async () => {
-      mockedInquirer.prompt
-        .mockResolvedValueOnce({ action: 'edit' })
-        .mockResolvedValueOnce({ action: 'edit' })
-        .mockResolvedValueOnce({ action: 'exit' })
-      const configureSpy = jest.spyOn(Prompts, 'configure').mockResolvedValue()
-      const viewSpy = jest.spyOn(Prompts, 'view').mockResolvedValue()
-      const editSpy = jest.spyOn(Prompts, 'edit').mockResolvedValue()
-      const deleteSpy = jest.spyOn(Prompts, 'delete').mockResolvedValue()
-      await expect(Prompts.home()).resolves.toBe(undefined)
-      expect(configureSpy.mock.calls.length).toBe(0)
-      expect(viewSpy.mock.calls.length).toBe(0)
-      expect(editSpy.mock.calls.length).toBe(2)
-      expect(deleteSpy.mock.calls.length).toBe(0)
+      await testHomePromptSelection(['edit', 'edit', 'exit'], {
+        editCalls: 2,
+      })
     })
     it('delete then delete then exit calls the delete method twice then exits', async () => {
-      mockedInquirer.prompt
-        .mockResolvedValueOnce({ action: 'delete' })
-        .mockResolvedValueOnce({ action: 'delete' })
-        .mockResolvedValueOnce({ action: 'exit' })
-      const configureSpy = jest.spyOn(Prompts, 'configure').mockResolvedValue()
-      const viewSpy = jest.spyOn(Prompts, 'view').mockResolvedValue()
-      const editSpy = jest.spyOn(Prompts, 'edit').mockResolvedValue()
-      const deleteSpy = jest.spyOn(Prompts, 'delete').mockResolvedValue()
-      await expect(Prompts.home()).resolves.toBe(undefined)
-      expect(configureSpy.mock.calls.length).toBe(0)
-      expect(viewSpy.mock.calls.length).toBe(0)
-      expect(editSpy.mock.calls.length).toBe(0)
-      expect(deleteSpy.mock.calls.length).toBe(2)
+      await testHomePromptSelection(['delete', 'delete', 'exit'], {
+        deleteCalls: 2,
+      })
     })
     it('all options then exit calls the all methods once then exits', async () => {
-      mockedInquirer.prompt
-        .mockResolvedValueOnce({ action: 'add' })
-        .mockResolvedValueOnce({ action: 'view' })
-        .mockResolvedValueOnce({ action: 'edit' })
-        .mockResolvedValueOnce({ action: 'delete' })
-        .mockResolvedValueOnce({ action: 'exit' })
-      const configureSpy = jest.spyOn(Prompts, 'configure').mockResolvedValue()
-      const viewSpy = jest.spyOn(Prompts, 'view').mockResolvedValue()
-      const editSpy = jest.spyOn(Prompts, 'edit').mockResolvedValue()
-      const deleteSpy = jest.spyOn(Prompts, 'delete').mockResolvedValue()
-      await expect(Prompts.home()).resolves.toBe(undefined)
-      expect(configureSpy.mock.calls.length).toBe(1)
-      expect(viewSpy.mock.calls.length).toBe(1)
-      expect(editSpy.mock.calls.length).toBe(1)
-      expect(deleteSpy.mock.calls.length).toBe(1)
+      await testHomePromptSelection(['add', 'view', 'edit', 'delete', 'exit'], {
+        configureCalls: 1,
+        viewCalls: 1,
+        editCalls: 1,
+        deleteCalls: 1,
+      })
+    })
+    it('all options in scattered order then exit calls the all methods once then exits', async () => {
+      await testHomePromptSelection(['delete', 'edit', 'add', 'view', 'exit'], {
+        configureCalls: 1,
+        viewCalls: 1,
+        editCalls: 1,
+        deleteCalls: 1,
+      })
+    })
+    it('all options twice through then exit calls the all methods twice then exits', async () => {
+      await testHomePromptSelection(['add', 'view', 'edit', 'delete', 'add', 'view', 'edit', 'delete', 'exit'], {
+        configureCalls: 2,
+        viewCalls: 2,
+        editCalls: 2,
+        deleteCalls: 2,
+      })
     })
   })
   describe('configure', () => {
@@ -162,6 +92,7 @@ describe('Prompts Unit Tests', () => {
         },
         args: 'elvish',
         installedRegex: 'foe-hammer',
+        shellOverride: '',
         url: 'https://lotr-swords.com',
         latestRegex: 'beater',
       })
@@ -187,6 +118,7 @@ describe('Prompts Unit Tests', () => {
         },
         args: 'months',
         installedRegex: 'october',
+        shellOverride: '',
         url: 'https://months.com',
         latestRegex: 'halloween',
       })
@@ -200,6 +132,7 @@ describe('Prompts Unit Tests', () => {
         },
         args: 'dwarves',
         installedRegex: 'hay fever',
+        shellOverride: '',
         url: 'https://dwarfshortlist.com',
         latestRegex: 'sneezy',
       })
@@ -232,6 +165,7 @@ describe('Prompts Unit Tests', () => {
         },
         args: 'percentages',
         installedRegex: '1',
+        shellOverride: '',
         url: 'https://milkbythenumbers.com',
         latestRegex: '1%',
       })
@@ -245,6 +179,7 @@ describe('Prompts Unit Tests', () => {
         },
         args: 'african',
         installedRegex: 'the great one',
+        shellOverride: '',
         url: 'https://desertcourse.com',
         latestRegex: 'sahara',
       })
@@ -271,6 +206,7 @@ describe('Prompts Unit Tests', () => {
         },
         args: 'green',
         installedRegex: 'baja blast',
+        shellOverride: '',
         url: 'https://colorwheel.com',
         latestRegex: '#63FFE0',
       })
@@ -284,6 +220,7 @@ describe('Prompts Unit Tests', () => {
         },
         args: 'licorice',
         installedRegex: 'red',
+        shellOverride: '',
         url: 'https://candycolors.com',
         latestRegex: '#af3c4d',
       })
@@ -309,6 +246,7 @@ describe('Prompts Unit Tests', () => {
         },
         args: 'precipitation',
         installedRegex: 'snow',
+        shellOverride: '',
         url: 'https://atmosphericeffects.com',
         latestRegex: 'crystalline',
       })
@@ -319,6 +257,7 @@ describe('Prompts Unit Tests', () => {
         },
         args: 'optical',
         installedRegex: 'sun dog',
+        shellOverride: '',
         url: 'https://eyellusions.com',
         latestRegex: 'parhelion',
       })
@@ -329,6 +268,7 @@ describe('Prompts Unit Tests', () => {
         },
         args: 'optical-phenomenon',
         installedRegex: 'parhelion',
+        shellOverride: '',
         url: 'https://sunnydoglight.com',
         latestRegex: 'mock sun',
       })
@@ -634,8 +574,102 @@ describe('Prompts Unit Tests', () => {
         executable,
         args,
         installedRegex,
+        shellOverride: undefined,
       })
       expect(getPromptDefault(promptMock.mock.calls[0][0])).toBe(undefined)
+      expect(getPromptDefault(promptMock.mock.calls[1][0])).toBe(true)
+      expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(
+        JSON.stringify([[`Installed version: '${mockInstalledVersion}'`]], null, 2)
+      )
+      expect(JSON.stringify(consoleErrorMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
+    })
+    it('version correct without args returns configured installed version', async () => {
+      const executable = {
+        command: 'version correct without args',
+      }
+      jest.spyOn(Prompts, 'configureExecutable').mockResolvedValue(executable)
+      const installedRegex = 'be excellent to each other'
+      const mockInstalledVersion = 'party on dudes'
+      const promptMock = mockedInquirer.prompt
+        .mockResolvedValueOnce({ installedRegex })
+        .mockResolvedValueOnce({ versionCorrect: true })
+      jest.spyOn(Software.prototype, 'getInstalledVersion').mockResolvedValue(mockInstalledVersion)
+      const consoleLogMock = jest.spyOn(console, 'log').mockImplementation()
+      const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation()
+      await expect(Prompts.configureInstalledVersion({})).resolves.toStrictEqual({
+        executable,
+        args: undefined,
+        installedRegex,
+        shellOverride: undefined,
+      })
+      expect(getPromptDefault(promptMock.mock.calls[0][0])).toBe(undefined)
+      expect(getPromptDefault(promptMock.mock.calls[1][0])).toBe(true)
+      expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(
+        JSON.stringify([[`Installed version: '${mockInstalledVersion}'`]], null, 2)
+      )
+      expect(JSON.stringify(consoleErrorMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
+    })
+    it('version correct with shell override returns configured installed version', async () => {
+      const executable = {
+        command: 'version correct with shell override',
+      }
+      jest.spyOn(Prompts, 'configureExecutable').mockResolvedValue(executable)
+      const args = 'pets'
+      const installedRegex = 'snail'
+      const shellOverride = 'spongebob'
+      const mockInstalledVersion = 'Garold "Gary" Wilson, Jr.'
+      const promptMock = mockedInquirer.prompt
+        .mockResolvedValueOnce({ args, installedRegex, shellOverride })
+        .mockResolvedValueOnce({ versionCorrect: true })
+      jest.spyOn(Software.prototype, 'getInstalledVersion').mockResolvedValue(mockInstalledVersion)
+      const consoleLogMock = jest.spyOn(console, 'log').mockImplementation()
+      const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation()
+      await expect(Prompts.configureInstalledVersion({})).resolves.toStrictEqual({
+        executable,
+        args,
+        installedRegex,
+        shellOverride,
+      })
+      expect(getPromptDefault(promptMock.mock.calls[0][0])).toBe(undefined)
+      expect(getPromptDefault(promptMock.mock.calls[1][0])).toBe(true)
+      expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(
+        JSON.stringify([[`Installed version: '${mockInstalledVersion}'`]], null, 2)
+      )
+      expect(JSON.stringify(consoleErrorMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
+    })
+    it('version correct with existing values uses them as defaults then returns configured installed version', async () => {
+      const executable = {
+        command: 'version correct with existing values',
+      }
+      jest.spyOn(Prompts, 'configureExecutable').mockResolvedValue(executable)
+      const existingArgs = 'dogma'
+      const existingInstalledRegex = 'transmigration'
+      const existingShellOverride = 'philosophy'
+      const args = 'belief'
+      const installedRegex = 'rebirth'
+      const shellOverride = 'religion'
+      const mockInstalledVersion = 'reincarnation'
+      const promptMock = mockedInquirer.prompt
+        .mockResolvedValueOnce({ args, installedRegex, shellOverride })
+        .mockResolvedValueOnce({ versionCorrect: true })
+      jest.spyOn(Software.prototype, 'getInstalledVersion').mockResolvedValue(mockInstalledVersion)
+      const consoleLogMock = jest.spyOn(console, 'log').mockImplementation()
+      const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation()
+      await expect(
+        Prompts.configureInstalledVersion({
+          existingArgs,
+          existingInstalledRegex,
+          existingShellOverride,
+        })
+      ).resolves.toStrictEqual({
+        executable,
+        args,
+        installedRegex,
+        shellOverride,
+      })
+      expect(getPromptDefault(promptMock.mock.calls[0][0], 0)).toBe(existingArgs)
+      expect(getPromptDefault(promptMock.mock.calls[0][0], 1)).toBe(existingInstalledRegex)
+      expect(getPromptDefault(promptMock.mock.calls[0][0], 2)).toBe(existingShellOverride)
       expect(getPromptDefault(promptMock.mock.calls[1][0])).toBe(true)
       expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(
         JSON.stringify([[`Installed version: '${mockInstalledVersion}'`]], null, 2)
@@ -688,6 +722,7 @@ describe('Prompts Unit Tests', () => {
         executable,
         args: reconfiguredArgs,
         installedRegex: reconfiguredInstalledRegex,
+        shellOverride: undefined,
       })
       expect(getPromptDefault(promptMock.mock.calls[0][0])).toBe(undefined)
       expect(getPromptDefault(promptMock.mock.calls[1][0])).toBe(true)
@@ -725,6 +760,7 @@ describe('Prompts Unit Tests', () => {
         executable,
         args: reconfiguredArgs,
         installedRegex: reconfiguredInstalledRegex,
+        shellOverride: undefined,
       })
       expect(getPromptDefault(promptMock.mock.calls[0][0])).toBe(undefined)
       expect(getPromptDefault(promptMock.mock.calls[1][0])).toBe(true)
@@ -868,555 +904,466 @@ describe('Prompts Unit Tests', () => {
     })
     it('single valid software without update prints out table', async () => {
       const name = 'single valid view without update'
-      jest.spyOn(SoftwareList, 'load').mockResolvedValue([
-        new Software({
-          name,
-          executable: {
-            command: 'art',
+      const version = '1490'
+      await testViewTable({
+        softwares: [
+          new Software({
+            name,
+            executable: {
+              command: 'art',
+            },
+            args: 'drawings',
+            installedRegex: 'vitruvian man',
+            url: 'https://leonardonottheninjaturtle.com',
+            latestRegex: 'Le proporzioni del corpo umano secondo Vitruvio',
+          }),
+        ],
+        installedVersions: [{ value: version }],
+        latestVersions: [{ value: version }],
+        expectedRows: [
+          {
+            name,
+            installedVersion: version,
+            latestVersion: version,
+            color: colors.white,
           },
-          args: 'drawings',
-          installedRegex: 'vitruvian man',
-          url: 'https://leonardonottheninjaturtle.com',
-          latestRegex: 'Le proporzioni del corpo umano secondo Vitruvio',
-        }),
-      ])
-      const installedVersion = '1490'
-      const latestVersion = '1490'
-      jest.spyOn(Software.prototype, 'getInstalledVersion').mockResolvedValue(installedVersion)
-      jest.spyOn(Software.prototype, 'getLatestVersion').mockResolvedValue(latestVersion)
-      const consoleLogMock = jest.spyOn(console, 'log').mockImplementation()
-      const consoleTableMock = jest.spyOn(console, 'table').mockImplementation()
-      const consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation()
-      const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation()
-      await expect(Prompts.view()).resolves.toBe(undefined)
-      expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
-      TestUtil.validateTablePrintout(JSON.stringify(consoleTableMock.mock.calls[0][0], null, 2), [
-        {
-          name,
-          installedVersion,
-          latestVersion,
-          color: colors.white,
-        },
-      ])
-      expect(JSON.stringify(consoleWarnMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
-      expect(JSON.stringify(consoleErrorMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
+        ],
+      })
     })
     it('single valid software with update prints out table', async () => {
       const name = 'single valid view with update'
-      jest.spyOn(SoftwareList, 'load').mockResolvedValue([
-        new Software({
-          name,
-          executable: {
-            command: 'unis',
-          },
-          args: 'eyepiece',
-          installedRegex: 'monocle',
-          url: 'https://universe.com',
-          latestRegex: 'rich uncle pennybags',
-        }),
-      ])
       const installedVersion = 'bifocal'
       const latestVersion = 'progressive'
-      jest.spyOn(Software.prototype, 'getInstalledVersion').mockResolvedValue(installedVersion)
-      jest.spyOn(Software.prototype, 'getLatestVersion').mockResolvedValue(latestVersion)
-      const consoleLogMock = jest.spyOn(console, 'log').mockImplementation()
-      const consoleTableMock = jest.spyOn(console, 'table').mockImplementation()
-      const consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation()
-      const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation()
-      await expect(Prompts.view()).resolves.toBe(undefined)
-      expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
-      TestUtil.validateTablePrintout(JSON.stringify(consoleTableMock.mock.calls[0][0], null, 2), [
-        {
-          name,
-          installedVersion,
-          latestVersion,
-          color: colors.green,
-        },
-      ])
-      expect(JSON.stringify(consoleWarnMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
-      expect(JSON.stringify(consoleErrorMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
+      await testViewTable({
+        softwares: [
+          new Software({
+            name,
+            executable: {
+              command: 'unis',
+            },
+            args: 'eyepiece',
+            installedRegex: 'monocle',
+            url: 'https://universe.com',
+            latestRegex: 'rich uncle pennybags',
+          }),
+        ],
+        installedVersions: [{ value: installedVersion }],
+        latestVersions: [{ value: latestVersion }],
+        expectedRows: [
+          {
+            name,
+            installedVersion,
+            latestVersion,
+            color: colors.green,
+          },
+        ],
+      })
     })
     it('multiple valid softwares without updates prints out table', async () => {
       const nameOne = 'multiple valid view without update first'
       const nameTwo = 'multiple valid view without update last'
-      jest.spyOn(SoftwareList, 'load').mockResolvedValue([
-        new Software({
-          name: nameOne,
-          executable: {
-            command: 'jedi',
-          },
-          args: 'master',
-          installedRegex: 'windu',
-          url: 'https://theycalledmemrjedi.com',
-          latestRegex: 'General Mace Windu of the Jedi Order',
-        }),
-        new Software({
-          name: nameTwo,
-          executable: {
-            command: 'sith',
-          },
-          args: 'apprentice',
-          installedRegex: 'dooku',
-          url: 'https://anewdarksideisrising.com',
-          latestRegex: 'Darth Tyranus',
-        }),
-      ])
       const installedVersionOne = '1'
       const latestVersionOne = '1'
       const installedVersionTwo = '2'
       const latestVersionTwo = '2'
-      jest
-        .spyOn(Software.prototype, 'getInstalledVersion')
-        .mockResolvedValueOnce(installedVersionOne)
-        .mockResolvedValueOnce(installedVersionTwo)
-      jest
-        .spyOn(Software.prototype, 'getLatestVersion')
-        .mockResolvedValueOnce(latestVersionOne)
-        .mockResolvedValueOnce(latestVersionTwo)
-      const consoleLogMock = jest.spyOn(console, 'log').mockImplementation()
-      const consoleTableMock = jest.spyOn(console, 'table').mockImplementation()
-      const consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation()
-      const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation()
-      await expect(Prompts.view()).resolves.toBe(undefined)
-      expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
-      TestUtil.validateTablePrintout(JSON.stringify(consoleTableMock.mock.calls[0][0], null, 2), [
-        {
-          name: nameOne,
-          installedVersion: installedVersionOne,
-          latestVersion: latestVersionOne,
-          color: colors.white,
-        },
-        {
-          name: nameTwo,
-          installedVersion: installedVersionTwo,
-          latestVersion: latestVersionTwo,
-          color: colors.white,
-        },
-      ])
-      expect(JSON.stringify(consoleWarnMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
-      expect(JSON.stringify(consoleErrorMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
+      await testViewTable({
+        softwares: [
+          new Software({
+            name: nameOne,
+            executable: {
+              command: 'jedi',
+            },
+            args: 'master',
+            installedRegex: 'windu',
+            url: 'https://theycalledmemrjedi.com',
+            latestRegex: 'General Mace Windu of the Jedi Order',
+          }),
+          new Software({
+            name: nameTwo,
+            executable: {
+              command: 'sith',
+            },
+            args: 'apprentice',
+            installedRegex: 'dooku',
+            url: 'https://anewdarksideisrising.com',
+            latestRegex: 'Darth Tyranus',
+          }),
+        ],
+        installedVersions: [{ value: installedVersionOne }, { value: installedVersionTwo }],
+        latestVersions: [{ value: latestVersionOne }, { value: latestVersionTwo }],
+        expectedRows: [
+          {
+            name: nameOne,
+            installedVersion: installedVersionOne,
+            latestVersion: latestVersionOne,
+            color: colors.white,
+          },
+          {
+            name: nameTwo,
+            installedVersion: installedVersionTwo,
+            latestVersion: latestVersionTwo,
+            color: colors.white,
+          },
+        ],
+      })
     })
     it('multiple valid softwares with updates prints out table', async () => {
       const nameOne = 'multiple valid view with update first'
       const nameTwo = 'multiple valid view with update last'
-      jest.spyOn(SoftwareList, 'load').mockResolvedValue([
-        new Software({
-          name: nameOne,
-          executable: {
-            command: 'os',
-          },
-          args: 'windows',
-          installedRegex: 'os name',
-          url: 'https://microsoftware.com',
-          latestRegex: 'osaas',
-        }),
-        new Software({
-          name: nameTwo,
-          executable: {
-            command: 'os',
-          },
-          args: 'mac',
-          installedRegex: 'amd64',
-          url: 'https://appleaday.com',
-          latestRegex: 'arm64',
-        }),
-      ])
       const installedVersionOne = '7'
       const latestVersionOne = '10'
       const installedVersionTwo = '10.10'
       const latestVersionTwo = '11'
-      jest
-        .spyOn(Software.prototype, 'getInstalledVersion')
-        .mockResolvedValueOnce(installedVersionOne)
-        .mockResolvedValueOnce(installedVersionTwo)
-      jest
-        .spyOn(Software.prototype, 'getLatestVersion')
-        .mockResolvedValueOnce(latestVersionOne)
-        .mockResolvedValueOnce(latestVersionTwo)
-      const consoleLogMock = jest.spyOn(console, 'log').mockImplementation()
-      const consoleTableMock = jest.spyOn(console, 'table').mockImplementation()
-      const consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation()
-      const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation()
-      await expect(Prompts.view()).resolves.toBe(undefined)
-      expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
-      TestUtil.validateTablePrintout(JSON.stringify(consoleTableMock.mock.calls[0][0], null, 2), [
-        {
-          name: nameOne,
-          installedVersion: installedVersionOne,
-          latestVersion: latestVersionOne,
-          color: colors.green,
-        },
-        {
-          name: nameTwo,
-          installedVersion: installedVersionTwo,
-          latestVersion: latestVersionTwo,
-          color: colors.green,
-        },
-      ])
-      expect(JSON.stringify(consoleWarnMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
-      expect(JSON.stringify(consoleErrorMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
+      await testViewTable({
+        softwares: [
+          new Software({
+            name: nameOne,
+            executable: {
+              command: 'os',
+            },
+            args: 'windows',
+            installedRegex: 'os name',
+            url: 'https://microsoftware.com',
+            latestRegex: 'osaas',
+          }),
+          new Software({
+            name: nameTwo,
+            executable: {
+              command: 'os',
+            },
+            args: 'mac',
+            installedRegex: 'amd64',
+            url: 'https://appleaday.com',
+            latestRegex: 'arm64',
+          }),
+        ],
+        installedVersions: [{ value: installedVersionOne }, { value: installedVersionTwo }],
+        latestVersions: [{ value: latestVersionOne }, { value: latestVersionTwo }],
+        expectedRows: [
+          {
+            name: nameOne,
+            installedVersion: installedVersionOne,
+            latestVersion: latestVersionOne,
+            color: colors.green,
+          },
+          {
+            name: nameTwo,
+            installedVersion: installedVersionTwo,
+            latestVersion: latestVersionTwo,
+            color: colors.green,
+          },
+        ],
+      })
     })
     it('multiple valid softwares with and without updates prints out table', async () => {
       const nameOne = 'multiple valid with and without update first'
       const nameTwo = 'multiple valid with and without update middle'
       const nameThree = 'multiple valid with and without update last'
-      jest.spyOn(SoftwareList, 'load').mockResolvedValue([
-        new Software({
-          name: nameOne,
-          executable: {
-            command: 'alcohol',
-          },
-          args: 'beer',
-          installedRegex: 'irish red',
-          url: 'https://whokilledkenny.com',
-          latestRegex: 'kilkenny',
-        }),
-        new Software({
-          name: nameTwo,
-          executable: {
-            command: 'alcohol',
-          },
-          args: 'port',
-          installedRegex: 'coffee',
-          url: 'https://portly.com',
-          latestRegex: 'homemade',
-        }),
-        new Software({
-          name: nameThree,
-          executable: {
-            command: 'alcohol',
-          },
-          args: 'whiskey',
-          installedRegex: 'bearproof',
-          url: 'https://hucklemyberry.com',
-          latestRegex: 'glacier',
-        }),
-      ])
       const installedVersionOne = 'schooner'
       const latestVersionOne = 'pint'
       const installedVersionTwo = 'dessert glass'
       const latestVersionTwo = 'dessert glass'
       const installedVersionThree = 'one finger'
       const latestVersionThree = 'two fingers'
-      jest
-        .spyOn(Software.prototype, 'getInstalledVersion')
-        .mockResolvedValueOnce(installedVersionOne)
-        .mockResolvedValueOnce(installedVersionTwo)
-        .mockResolvedValueOnce(installedVersionThree)
-      jest
-        .spyOn(Software.prototype, 'getLatestVersion')
-        .mockResolvedValueOnce(latestVersionOne)
-        .mockResolvedValueOnce(latestVersionTwo)
-        .mockResolvedValueOnce(latestVersionThree)
-      const consoleLogMock = jest.spyOn(console, 'log').mockImplementation()
-      const consoleTableMock = jest.spyOn(console, 'table').mockImplementation()
-      const consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation()
-      const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation()
-      await expect(Prompts.view()).resolves.toBe(undefined)
-      expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
-      TestUtil.validateTablePrintout(JSON.stringify(consoleTableMock.mock.calls[0][0], null, 2), [
-        {
-          name: nameOne,
-          installedVersion: installedVersionOne,
-          latestVersion: latestVersionOne,
-          color: colors.green,
-        },
-        {
-          name: nameTwo,
-          installedVersion: installedVersionTwo,
-          latestVersion: latestVersionTwo,
-          color: colors.white,
-        },
-        {
-          name: nameThree,
-          installedVersion: installedVersionThree,
-          latestVersion: latestVersionThree,
-          color: colors.green,
-        },
-      ])
-      expect(JSON.stringify(consoleWarnMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
-      expect(JSON.stringify(consoleErrorMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
+      await testViewTable({
+        softwares: [
+          new Software({
+            name: nameOne,
+            executable: {
+              command: 'alcohol',
+            },
+            args: 'beer',
+            installedRegex: 'irish red',
+            url: 'https://whokilledkenny.com',
+            latestRegex: 'kilkenny',
+          }),
+          new Software({
+            name: nameTwo,
+            executable: {
+              command: 'alcohol',
+            },
+            args: 'port',
+            installedRegex: 'coffee',
+            url: 'https://portly.com',
+            latestRegex: 'homemade',
+          }),
+          new Software({
+            name: nameThree,
+            executable: {
+              command: 'alcohol',
+            },
+            args: 'whiskey',
+            installedRegex: 'bearproof',
+            url: 'https://hucklemyberry.com',
+            latestRegex: 'glacier',
+          }),
+        ],
+        installedVersions: [
+          { value: installedVersionOne },
+          { value: installedVersionTwo },
+          { value: installedVersionThree },
+        ],
+        latestVersions: [{ value: latestVersionOne }, { value: latestVersionTwo }, { value: latestVersionThree }],
+        expectedRows: [
+          {
+            name: nameOne,
+            installedVersion: installedVersionOne,
+            latestVersion: latestVersionOne,
+            color: colors.green,
+          },
+          {
+            name: nameTwo,
+            installedVersion: installedVersionTwo,
+            latestVersion: latestVersionTwo,
+            color: colors.white,
+          },
+          {
+            name: nameThree,
+            installedVersion: installedVersionThree,
+            latestVersion: latestVersionThree,
+            color: colors.green,
+          },
+        ],
+      })
     })
     it('single with no installed or latest version prints out table with red row', async () => {
       const name = 'single with no installed or latest'
-      jest.spyOn(SoftwareList, 'load').mockResolvedValue([
-        new Software({
-          name,
-          executable: {
-            command: 'practice',
-          },
-          args: 'spiritual',
-          installedRegex: 'silence',
-          url: 'https://shh.com',
-          latestRegex: 'monastic silence',
-        }),
-      ])
       const installedVersion = ''
       const latestVersion = ''
-      jest.spyOn(Software.prototype, 'getInstalledVersion').mockResolvedValue(installedVersion)
-      jest.spyOn(Software.prototype, 'getLatestVersion').mockResolvedValue(latestVersion)
-      const consoleLogMock = jest.spyOn(console, 'log').mockImplementation()
-      const consoleTableMock = jest.spyOn(console, 'table').mockImplementation()
-      const consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation()
-      const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation()
-      await expect(Prompts.view()).resolves.toBe(undefined)
-      expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
-      TestUtil.validateTablePrintout(JSON.stringify(consoleTableMock.mock.calls[0][0], null, 2), [
-        {
-          name,
-          installedVersion: installedVersion,
-          latestVersion: latestVersion,
-          color: colors.red,
-        },
-      ])
-      expect(JSON.stringify(consoleWarnMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
-      expect(JSON.stringify(consoleErrorMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
+      await testViewTable({
+        softwares: [
+          new Software({
+            name,
+            executable: {
+              command: 'practice',
+            },
+            args: 'spiritual',
+            installedRegex: 'silence',
+            url: 'https://shh.com',
+            latestRegex: 'monastic silence',
+          }),
+        ],
+        installedVersions: [{ value: installedVersion }],
+        latestVersions: [{ value: latestVersion }],
+        expectedRows: [
+          {
+            name,
+            installedVersion: installedVersion,
+            latestVersion: latestVersion,
+            color: colors.red,
+          },
+        ],
+      })
     })
     it('single with installed error prints out table with red row', async () => {
       const name = 'single with installed error'
-      jest.spyOn(SoftwareList, 'load').mockResolvedValue([
-        new Software({
-          name,
-          executable: {
-            command: 'vision',
-          },
-          args: 'hindsight',
-          installedRegex: '42',
-          url: 'https://predictthefuture.com',
-          latestRegex: 'visual acuity',
-        }),
-      ])
       const installedError = 'Cannot predict the future as easily as the past'
       const latestVersion = '2020'
-      jest.spyOn(Software.prototype, 'getInstalledVersion').mockRejectedValue(installedError)
-      jest.spyOn(Software.prototype, 'getLatestVersion').mockResolvedValue(latestVersion)
-      const consoleLogMock = jest.spyOn(console, 'log').mockImplementation()
-      const consoleTableMock = jest.spyOn(console, 'table').mockImplementation()
-      const consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation()
-      const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation()
-      await expect(Prompts.view()).resolves.toBe(undefined)
-      expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
-      TestUtil.validateTablePrintout(JSON.stringify(consoleTableMock.mock.calls[0][0], null, 2), [
-        {
-          name,
-          installedVersion: installedError,
-          latestVersion: latestVersion,
-          color: colors.red,
-        },
-      ])
-      expect(JSON.stringify(consoleWarnMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
-      expect(JSON.stringify(consoleErrorMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
+      await testViewTable({
+        softwares: [
+          new Software({
+            name,
+            executable: {
+              command: 'practice',
+            },
+            args: 'spiritual',
+            installedRegex: 'silence',
+            url: 'https://shh.com',
+            latestRegex: 'monastic silence',
+          }),
+        ],
+        installedVersions: [{ value: installedError, rejected: true }],
+        latestVersions: [{ value: latestVersion }],
+        expectedRows: [
+          {
+            name,
+            installedVersion: installedError,
+            latestVersion: latestVersion,
+            color: colors.red,
+          },
+        ],
+      })
     })
     it('single with latest error prints out table with red row', async () => {
       const name = 'single with latest error'
-      jest.spyOn(SoftwareList, 'load').mockResolvedValue([
-        new Software({
-          name,
-          executable: {
-            command: 'lotr',
-          },
-          args: 'towers',
-          installedRegex: 'minas anor',
-          url: 'https://whereinmiddleearthami.com',
-          latestRegex: 'capital of gondor',
-        }),
-      ])
       const installedVersion = 'minas tirith'
       const latestError = 'could not find city. did you mean minas tirith?'
-      jest.spyOn(Software.prototype, 'getInstalledVersion').mockResolvedValue(installedVersion)
-      jest.spyOn(Software.prototype, 'getLatestVersion').mockRejectedValue(latestError)
-      const consoleLogMock = jest.spyOn(console, 'log').mockImplementation()
-      const consoleTableMock = jest.spyOn(console, 'table').mockImplementation()
-      const consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation()
-      const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation()
-      await expect(Prompts.view()).resolves.toBe(undefined)
-      expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
-      TestUtil.validateTablePrintout(JSON.stringify(consoleTableMock.mock.calls[0][0], null, 2), [
-        {
-          name,
-          installedVersion: installedVersion,
-          latestVersion: latestError,
-          color: colors.red,
-        },
-      ])
-      expect(JSON.stringify(consoleWarnMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
-      expect(JSON.stringify(consoleErrorMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
+      await testViewTable({
+        softwares: [
+          new Software({
+            name,
+            executable: {
+              command: 'lotr',
+            },
+            args: 'towers',
+            installedRegex: 'minas anor',
+            url: 'https://whereinmiddleearthami.com',
+            latestRegex: 'capital of gondor',
+          }),
+        ],
+        installedVersions: [{ value: installedVersion }],
+        latestVersions: [{ value: latestError, rejected: true }],
+        expectedRows: [
+          {
+            name,
+            installedVersion: installedVersion,
+            latestVersion: latestError,
+            color: colors.red,
+          },
+        ],
+      })
     })
     it('single with installed and latest error prints out table with red row', async () => {
       const name = 'single with installed and latest error'
-      jest.spyOn(SoftwareList, 'load').mockResolvedValue([
-        new Software({
-          name,
-          executable: {
-            command: 'audio',
-          },
-          args: 'vinyl',
-          installedRegex: 'album',
-          url: 'https://soundofabrokenrecord.com',
-          latestRegex: 'record',
-        }),
-      ])
       const installedError = 'Your record is broken'
       const latestError = 'Your record is brokener'
-      jest.spyOn(Software.prototype, 'getInstalledVersion').mockRejectedValue(installedError)
-      jest.spyOn(Software.prototype, 'getLatestVersion').mockRejectedValue(latestError)
-      const consoleLogMock = jest.spyOn(console, 'log').mockImplementation()
-      const consoleTableMock = jest.spyOn(console, 'table').mockImplementation()
-      const consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation()
-      const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation()
-      await expect(Prompts.view()).resolves.toBe(undefined)
-      expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
-      TestUtil.validateTablePrintout(JSON.stringify(consoleTableMock.mock.calls[0][0], null, 2), [
-        {
-          name,
-          installedVersion: installedError,
-          latestVersion: latestError,
-          color: colors.red,
-        },
-      ])
-      expect(JSON.stringify(consoleWarnMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
-      expect(JSON.stringify(consoleErrorMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
+      await testViewTable({
+        softwares: [
+          new Software({
+            name,
+            executable: {
+              command: 'audio',
+            },
+            args: 'vinyl',
+            installedRegex: 'album',
+            url: 'https://soundofabrokenrecord.com',
+            latestRegex: 'record',
+          }),
+        ],
+        installedVersions: [{ value: installedError, rejected: true }],
+        latestVersions: [{ value: latestError, rejected: true }],
+        expectedRows: [
+          {
+            name,
+            installedVersion: installedError,
+            latestVersion: latestError,
+            color: colors.red,
+          },
+        ],
+      })
     })
     it('multiple errors with one installed and one latest prints out table with red rows', async () => {
       const nameFirst = 'multiple errors with one installed and one latest first'
       const nameLast = 'multiple errors with one installed and one latest last'
-      jest.spyOn(SoftwareList, 'load').mockResolvedValue([
-        new Software({
-          name: nameFirst,
-          executable: {
-            command: 'artifacts',
-          },
-          args: 'daedric',
-          installedRegex: 'mind of madness',
-          url: 'https://sheogorathschicanery.com',
-          latestRegex: 'wabbajack',
-        }),
-        new Software({
-          name: nameLast,
-          executable: {
-            command: 'armor',
-          },
-          args: 'light',
-          installedRegex: 'nocturnal',
-          url: 'https://trinityrestored.com',
-          latestRegex: 'Nightingale Armor',
-        }),
-      ])
       const installedError = 'mudcrab'
       const latestVersion = '0009B2B2'
       const installedVersion = '69'
       const latestError = 'white hood'
-      jest
-        .spyOn(Software.prototype, 'getInstalledVersion')
-        .mockRejectedValueOnce(installedError)
-        .mockResolvedValueOnce(installedVersion)
-      jest
-        .spyOn(Software.prototype, 'getLatestVersion')
-        .mockResolvedValueOnce(latestVersion)
-        .mockRejectedValueOnce(latestError)
-      const consoleLogMock = jest.spyOn(console, 'log').mockImplementation()
-      const consoleTableMock = jest.spyOn(console, 'table').mockImplementation()
-      const consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation()
-      const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation()
-      await expect(Prompts.view()).resolves.toBe(undefined)
-      expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
-      TestUtil.validateTablePrintout(JSON.stringify(consoleTableMock.mock.calls[0][0], null, 2), [
-        {
-          name: nameFirst,
-          installedVersion: installedError,
-          latestVersion: latestVersion,
-          color: colors.red,
-        },
-        {
-          name: nameLast,
-          installedVersion: installedVersion,
-          latestVersion: latestError,
-          color: colors.red,
-        },
-      ])
-      expect(JSON.stringify(consoleWarnMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
-      expect(JSON.stringify(consoleErrorMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
+      await testViewTable({
+        softwares: [
+          new Software({
+            name: nameFirst,
+            executable: {
+              command: 'artifacts',
+            },
+            args: 'daedric',
+            installedRegex: 'mind of madness',
+            url: 'https://sheogorathschicanery.com',
+            latestRegex: 'wabbajack',
+          }),
+          new Software({
+            name: nameLast,
+            executable: {
+              command: 'armor',
+            },
+            args: 'light',
+            installedRegex: 'nocturnal',
+            url: 'https://trinityrestored.com',
+            latestRegex: 'Nightingale Armor',
+          }),
+        ],
+        installedVersions: [{ value: installedError, rejected: true }, { value: installedVersion }],
+        latestVersions: [{ value: latestVersion }, { value: latestError, rejected: true }],
+        expectedRows: [
+          {
+            name: nameFirst,
+            installedVersion: installedError,
+            latestVersion: latestVersion,
+            color: colors.red,
+          },
+          {
+            name: nameLast,
+            installedVersion: installedVersion,
+            latestVersion: latestError,
+            color: colors.red,
+          },
+        ],
+      })
     })
     it('multiple softwares with and without updates and error prints out table', async () => {
       const nameOne = 'multiple valid without update first'
       const nameTwo = 'multiple error middle'
       const nameThree = 'multiple valid with update last'
-      jest.spyOn(SoftwareList, 'load').mockResolvedValue([
-        new Software({
-          name: nameOne,
-          executable: {
-            command: 'balls',
-          },
-          args: 'billiards',
-          installedRegex: 'stripe',
-          url: 'https://behindtheeightball.com',
-          latestRegex: 'nine',
-        }),
-        new Software({
-          name: nameTwo,
-          executable: {
-            command: 'mistake',
-          },
-          args: 'mixup',
-          installedRegex: 'miscue',
-          url: 'https://failure.com',
-          latestRegex: 'glitch',
-        }),
-        new Software({
-          name: nameThree,
-          executable: {
-            command: 'grammer',
-          },
-          args: 'tense',
-          installedRegex: '^((?!past|future).)*$',
-          url: 'https://notimelikethegift.com',
-          latestRegex: 'indicative|subjunctive',
-        }),
-      ])
       const installedVersionOne = '1889'
       const latestVersionOne = '1889'
       const installedErrorTwo = 'obi-wan error'
       const latestErrorTwo = 'azimuthal error'
       const installedVersionThree = 'indicative'
       const latestVersionThree = 'subjunctive'
-      jest
-        .spyOn(Software.prototype, 'getInstalledVersion')
-        .mockResolvedValueOnce(installedVersionOne)
-        .mockRejectedValueOnce(installedErrorTwo)
-        .mockResolvedValueOnce(installedVersionThree)
-      jest
-        .spyOn(Software.prototype, 'getLatestVersion')
-        .mockResolvedValueOnce(latestVersionOne)
-        .mockRejectedValueOnce(latestErrorTwo)
-        .mockResolvedValueOnce(latestVersionThree)
-      const consoleLogMock = jest.spyOn(console, 'log').mockImplementation()
-      const consoleTableMock = jest.spyOn(console, 'table').mockImplementation()
-      const consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation()
-      const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation()
-      await expect(Prompts.view()).resolves.toBe(undefined)
-      expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
-      TestUtil.validateTablePrintout(JSON.stringify(consoleTableMock.mock.calls[0][0], null, 2), [
-        {
-          name: nameOne,
-          installedVersion: installedVersionOne,
-          latestVersion: latestVersionOne,
-          color: colors.white,
-        },
-        {
-          name: nameTwo,
-          installedVersion: installedErrorTwo,
-          latestVersion: latestErrorTwo,
-          color: colors.red,
-        },
-        {
-          name: nameThree,
-          installedVersion: installedVersionThree,
-          latestVersion: latestVersionThree,
-          color: colors.green,
-        },
-      ])
-      expect(JSON.stringify(consoleWarnMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
-      expect(JSON.stringify(consoleErrorMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
+      await testViewTable({
+        softwares: [
+          new Software({
+            name: nameOne,
+            executable: {
+              command: 'balls',
+            },
+            args: 'billiards',
+            installedRegex: 'stripe',
+            url: 'https://behindtheeightball.com',
+            latestRegex: 'nine',
+          }),
+          new Software({
+            name: nameTwo,
+            executable: {
+              command: 'mistake',
+            },
+            args: 'mixup',
+            installedRegex: 'miscue',
+            url: 'https://failure.com',
+            latestRegex: 'glitch',
+          }),
+          new Software({
+            name: nameThree,
+            executable: {
+              command: 'grammer',
+            },
+            args: 'tense',
+            installedRegex: '^((?!past|future).)*$',
+            url: 'https://notimelikethegift.com',
+            latestRegex: 'indicative|subjunctive',
+          }),
+        ],
+        installedVersions: [
+          { value: installedVersionOne },
+          { value: installedErrorTwo, rejected: true },
+          { value: installedVersionThree },
+        ],
+        latestVersions: [
+          { value: latestVersionOne },
+          { value: latestErrorTwo, rejected: true },
+          { value: latestVersionThree },
+        ],
+        expectedRows: [
+          {
+            name: nameOne,
+            installedVersion: installedVersionOne,
+            latestVersion: latestVersionOne,
+            color: colors.white,
+          },
+          {
+            name: nameTwo,
+            installedVersion: installedErrorTwo,
+            latestVersion: latestErrorTwo,
+            color: colors.red,
+          },
+          {
+            name: nameThree,
+            installedVersion: installedVersionThree,
+            latestVersion: latestVersionThree,
+            color: colors.green,
+          },
+        ],
+      })
     })
   })
   describe('edit', () => {
@@ -1560,104 +1507,216 @@ describe('Prompts Unit Tests', () => {
     })
     it('single software to choose with confirmation gets passed to delete method', async () => {
       const name = 'single delete with confirmation'
-      jest.spyOn(SoftwareList, 'load').mockResolvedValue([
-        new Software({
-          name,
-          executable: {
-            command: 'cyborg',
+      await testDeletePromptSelection({
+        softwares: [
+          new Software({
+            name,
+            executable: {
+              command: 'cyborg',
+            },
+            args: 'assassin',
+            installedRegex: 'terminator',
+            url: 'https://skynet.com',
+            latestRegex: 'Cyberdyne Systems Model 101 Series 800',
+          }),
+        ],
+        promptMocks: [
+          {
+            nameToDelete: name,
           },
-          args: 'assassin',
-          installedRegex: 'terminator',
-          url: 'https://skynet.com',
-          latestRegex: 'Cyberdyne Systems Model 101 Series 800',
-        }),
-      ])
-      const promptMock = mockedInquirer.prompt
-        .mockResolvedValueOnce({ nameToDelete: name })
-        .mockResolvedValueOnce({ deleteConfirmed: true })
-      const deleteMock = jest.spyOn(SoftwareList, 'delete').mockResolvedValue([])
-      const consoleLogMock = jest.spyOn(console, 'log').mockImplementation()
-      const consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation()
-      await expect(Prompts.delete()).resolves.toBe(undefined)
-      expect(promptMock.mock.calls.length).toBe(2)
-      expect(JSON.stringify(deleteMock.mock.calls, null, 2)).toBe(JSON.stringify([[name]], null, 2))
-      expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
-      expect(JSON.stringify(consoleWarnMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
+          {
+            deleteConfirmed: true,
+          },
+        ],
+        expectedDeleteName: name,
+      })
     })
     it('first of multiple with confirmation gets passed to delete method', async () => {
       const name = 'first of multiple with confirmation first'
-      jest.spyOn(SoftwareList, 'load').mockResolvedValue([
-        new Software({
-          name,
-          executable: {
-            command: 'matrix',
+      await testDeletePromptSelection({
+        softwares: [
+          new Software({
+            name,
+            executable: {
+              command: 'matrix',
+            },
+            args: 'redpill',
+            installedRegex: 'neo',
+            url: 'https://theone.com',
+            latestRegex: 'Thomas A. Anderson',
+          }),
+          new Software({
+            name: 'first of multiple with confirmation last',
+            executable: {
+              command: 'arrakis',
+            },
+            args: 'rulers',
+            installedRegex: "Muad'Dib",
+            url: 'https://fearisthemindkiller.com',
+            latestRegex: 'Paul Atreides',
+          }),
+        ],
+        promptMocks: [
+          {
+            nameToDelete: name,
           },
-          args: 'redpill',
-          installedRegex: 'neo',
-          url: 'https://theone.com',
-          latestRegex: 'Thomas A. Anderson',
-        }),
-        new Software({
-          name: 'first of multiple with confirmation last',
-          executable: {
-            command: 'arrakis',
+          {
+            deleteConfirmed: true,
           },
-          args: 'rulers',
-          installedRegex: "Muad'Dib",
-          url: 'https://fearisthemindkiller.com',
-          latestRegex: 'Paul Atreides',
-        }),
-      ])
-      const promptMock = mockedInquirer.prompt
-        .mockResolvedValueOnce({ nameToDelete: name })
-        .mockResolvedValueOnce({ deleteConfirmed: true })
-      const deleteMock = jest.spyOn(SoftwareList, 'delete').mockResolvedValue([])
-      const consoleLogMock = jest.spyOn(console, 'log').mockImplementation()
-      const consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation()
-      await expect(Prompts.delete()).resolves.toBe(undefined)
-      expect(promptMock.mock.calls.length).toBe(2)
-      expect(JSON.stringify(deleteMock.mock.calls, null, 2)).toBe(JSON.stringify([[name]], null, 2))
-      expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
-      expect(JSON.stringify(consoleWarnMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
+        ],
+        expectedDeleteName: name,
+      })
     })
     it('last of multiple with confirmation gets passed to delete method', async () => {
       const name = 'last of multiple with confirmation last'
-      jest.spyOn(SoftwareList, 'load').mockResolvedValue([
-        new Software({
-          name: 'last of multiple with confirmation first',
-          executable: {
-            command: 'rings',
+      await testDeletePromptSelection({
+        softwares: [
+          new Software({
+            name: 'last of multiple with confirmation first',
+            executable: {
+              command: 'rings',
+            },
+            args: 'magic',
+            installedRegex: 'ring of fire',
+            url: 'https://elvenkingsunderthesky.com',
+            latestRegex: 'narya',
+          }),
+          new Software({
+            name,
+            executable: {
+              command: 'wand',
+            },
+            args: 'thestral',
+            installedRegex: 'destiny',
+            url: 'https://deathsfirsthallow.com',
+            latestRegex: 'elder wand',
+          }),
+        ],
+        promptMocks: [
+          {
+            nameToDelete: name,
           },
-          args: 'magic',
-          installedRegex: 'ring of fire',
-          url: 'https://elvenkingsunderthesky.com',
-          latestRegex: 'narya',
-        }),
-        new Software({
-          name,
-          executable: {
-            command: 'wand',
+          {
+            deleteConfirmed: true,
           },
-          args: 'thestral',
-          installedRegex: 'destiny',
-          url: 'https://deathsfirsthallow.com',
-          latestRegex: 'elder wand',
-        }),
-      ])
-      const promptMock = mockedInquirer.prompt
-        .mockResolvedValueOnce({ nameToDelete: name })
-        .mockResolvedValueOnce({ deleteConfirmed: true })
-      const deleteMock = jest.spyOn(SoftwareList, 'delete').mockResolvedValue([])
-      const consoleLogMock = jest.spyOn(console, 'log').mockImplementation()
-      const consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation()
-      await expect(Prompts.delete()).resolves.toBe(undefined)
-      expect(promptMock.mock.calls.length).toBe(2)
-      expect(JSON.stringify(deleteMock.mock.calls, null, 2)).toBe(JSON.stringify([[name]], null, 2))
-      expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
-      expect(JSON.stringify(consoleWarnMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
+        ],
+        expectedDeleteName: name,
+      })
     })
   })
 })
+
+async function testHomePromptSelection(
+  actions: string[],
+  {
+    configureCalls = 0,
+    viewCalls = 0,
+    editCalls = 0,
+    deleteCalls = 0,
+  }: {
+    configureCalls?: number
+    viewCalls?: number
+    editCalls?: number
+    deleteCalls?: number
+  } = {
+    configureCalls: 0,
+    viewCalls: 0,
+    editCalls: 0,
+    deleteCalls: 0,
+  }
+) {
+  for (const action of actions) {
+    mockedInquirer.prompt.mockResolvedValueOnce({ action })
+  }
+  const configureSpy = jest.spyOn(Prompts, 'configure').mockResolvedValue()
+  const viewSpy = jest.spyOn(Prompts, 'view').mockResolvedValue()
+  const editSpy = jest.spyOn(Prompts, 'edit').mockResolvedValue()
+  const deleteSpy = jest.spyOn(Prompts, 'delete').mockResolvedValue()
+  await expect(Prompts.home()).resolves.toBe(undefined)
+  expect(configureSpy.mock.calls.length).toBe(configureCalls)
+  expect(viewSpy.mock.calls.length).toBe(viewCalls)
+  expect(editSpy.mock.calls.length).toBe(editCalls)
+  expect(deleteSpy.mock.calls.length).toBe(deleteCalls)
+}
+
+async function testViewTable({
+  softwares,
+  installedVersions,
+  latestVersions,
+  expectedRows,
+}: {
+  softwares: Software[]
+  installedVersions: MockResponse[]
+  latestVersions: MockResponse[]
+  expectedRows: ExpectedTableRow[]
+}) {
+  jest.spyOn(SoftwareList, 'load').mockResolvedValue(softwares)
+  const installedSpy = jest.spyOn(Software.prototype, 'getInstalledVersion')
+  for (const installedVersion of installedVersions) {
+    if (installedVersion.rejected) {
+      installedSpy.mockRejectedValueOnce(installedVersion.value)
+    } else {
+      installedSpy.mockResolvedValueOnce(installedVersion.value)
+    }
+  }
+  const latestSpy = jest.spyOn(Software.prototype, 'getLatestVersion')
+  for (const latestVersion of latestVersions) {
+    if (latestVersion.rejected) {
+      latestSpy.mockRejectedValueOnce(latestVersion.value)
+    } else {
+      latestSpy.mockResolvedValueOnce(latestVersion.value)
+    }
+  }
+  const consoleLogMock = jest.spyOn(console, 'log').mockImplementation()
+  const consoleTableMock = jest.spyOn(console, 'table').mockImplementation()
+  const consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation()
+  const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation()
+  await expect(Prompts.view()).resolves.toBe(undefined)
+  expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
+  TestUtil.validateTablePrintout(JSON.stringify(consoleTableMock.mock.calls[0][0], null, 2), expectedRows)
+  expect(JSON.stringify(consoleWarnMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
+  expect(JSON.stringify(consoleErrorMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
+}
+
+interface MockResponse {
+  value: string
+  rejected?: boolean
+}
+
+interface ExpectedTableRow {
+  name: string
+  installedVersion: string
+  latestVersion: string
+  color: colors.Color
+}
+
+async function testDeletePromptSelection({
+  softwares,
+  promptMocks,
+  expectedDeleteName,
+}: {
+  softwares: Software[]
+  promptMocks: PromptInput[]
+  expectedDeleteName: string
+}) {
+  jest.spyOn(SoftwareList, 'load').mockResolvedValue(softwares)
+  const promptMock = mockedInquirer.prompt
+  for (const mock of promptMocks) {
+    promptMock.mockResolvedValueOnce(mock)
+  }
+  const deleteMock = jest.spyOn(SoftwareList, 'delete').mockResolvedValue([])
+  const consoleLogMock = jest.spyOn(console, 'log').mockImplementation()
+  const consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation()
+  await expect(Prompts.delete()).resolves.toBe(undefined)
+  expect(promptMock.mock.calls.length).toBe(2)
+  expect(JSON.stringify(deleteMock.mock.calls, null, 2)).toBe(JSON.stringify([[expectedDeleteName]], null, 2))
+  expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
+  expect(JSON.stringify(consoleWarnMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
+}
+
+interface PromptInput {
+  [key: string]: string | boolean
+}
 
 function getPromptDefault(input: Question | QuestionCollection, index = -1): string {
   if (index >= 0) {

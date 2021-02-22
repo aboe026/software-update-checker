@@ -1,14 +1,14 @@
 import path from 'path'
 
-import Software, { execute, getFromUrl, getExecutable } from '../../src/software'
+import Software, { getFromExecutable, getFromUrl, getExecutable } from '../../src/software'
 import Website from '../helpers/website'
 import TestUtil from '../helpers/test-util'
 
 describe('Software Func Tests', () => {
-  describe('execute', () => {
+  describe('getFromExecutable', () => {
     it('captures single word output of command that exits cleanly', async () => {
       await expect(
-        execute({
+        getFromExecutable({
           directory: path.join(__dirname, '../helpers/test-commands'),
           command: 'node',
           args: 'good-command.js foo',
@@ -17,7 +17,7 @@ describe('Software Func Tests', () => {
     })
     it('captures multi-word output of command that exits cleanly', async () => {
       await expect(
-        execute({
+        getFromExecutable({
           directory: path.join(__dirname, '../helpers/test-commands'),
           command: 'node',
           args: 'good-command.js foo bar hello world',
@@ -26,7 +26,7 @@ describe('Software Func Tests', () => {
     })
     it('captures multi-line output of command that exits cleanly', async () => {
       await expect(
-        execute({
+        getFromExecutable({
           directory: path.join(__dirname, '../helpers/test-commands'),
           command: 'node',
           args: `good-command.js foo bar${TestUtil.NEWLINE_CHARS}hello world`,
