@@ -17,6 +17,10 @@ export default class E2eBaseUtil {
     Bad: path.join(__dirname, '../../helpers/test-commands/bad-command.js'),
   }
 
+  static getNameInUseMessage(name: string): string {
+    return `Invalid name '${name}', already in use.`
+  }
+
   static getNavigateToPositionInputs(position: number): string[] {
     const inputs: string[] = []
     for (let i = 0; i < position; i++) {
@@ -126,10 +130,6 @@ export default class E2eBaseUtil {
       counter++
     }
     return chunk
-  }
-
-  static getNameInUseMessage(name: string): string {
-    return `Invalid name '${name}', already in use.`
   }
 
   static validateTableChunk(expected: TableOutput, actual: string): void {
