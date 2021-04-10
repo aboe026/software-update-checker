@@ -93,18 +93,19 @@ describe('Software Func Tests', () => {
   })
   describe('getInstalledVersion', () => {
     it('throws error if error from static executable', async () => {
+      const error = 'bad static executable'
       await expect(
         new Software({
           name: 'runtime environments',
           executable: {
             command: 'node',
           },
-          args: path.join(__dirname, '../helpers/test-commands/bad-command.js'),
+          args: path.join(__dirname, `../helpers/test-commands/bad-command.js ${error}`),
           installedRegex: '(.*)',
           url: '',
           latestRegex: '',
         }).getInstalledVersion()
-      ).rejects.toThrow('Oh no!')
+      ).rejects.toEqual(error)
     })
     it('throws error if dynamic directory does not exist', async () => {
       const directory = path.join(__dirname, '../helpers/test-commands-fake')
@@ -212,7 +213,7 @@ describe('Software Func Tests', () => {
           },
           args: '',
           installedRegex: '',
-          url: Website.getErrorUrl(),
+          url: Website.getErrorUrl(''),
           latestRegex: 'The current stable release of GIMP is <b>(.*)</b>',
         }).getLatestVersion()
       ).rejects.toThrow(

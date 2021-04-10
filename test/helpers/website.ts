@@ -6,7 +6,7 @@ app.get('/', function (req, res) {
   res.send(req.query.text)
 })
 app.get('/error', function (req, res) {
-  res.status(500).send()
+  res.status(500).send(req.query.message)
 })
 
 export default class Website {
@@ -44,6 +44,19 @@ export default class Website {
     })
   }
 
+  static getPort(): number {
+    if (Website.server && Website.server.address()) {
+      const addressInfo = Website.server.address()
+      if (typeof addressInfo === 'string' || addressInfo?.port === undefined) {
+        throw Error('Could not get port from address info')
+      } else {
+        return addressInfo?.port
+      }
+    } else {
+      throw Error('Could not get port from unstarted server')
+    }
+  }
+
   static getBaseUrl(): string {
     if (Website.server && Website.server.address()) {
       const addressInfo = Website.server.address()
@@ -61,7 +74,7 @@ export default class Website {
     return `${Website.getBaseUrl()}?text=${encodeURIComponent(response)}`
   }
 
-  static getErrorUrl(): string {
-    return `${Website.getBaseUrl()}/error`
+  static getErrorUrl(message: string): string {
+    return `${Website.getBaseUrl()}/error?message=${encodeURIComponent(message)}`
   }
 }

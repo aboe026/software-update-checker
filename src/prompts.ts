@@ -128,7 +128,7 @@ export default class Prompts {
       const { args, installedRegex, shellOverride } = await inquirer.prompt([
         {
           name: 'args',
-          message: 'Arguments to apply to dynamic executable to produce version (eg --version):',
+          message: 'Arguments to apply to executable to produce version (eg --version):',
           type: 'input',
           default: existingArgs || undefined,
         },
@@ -141,7 +141,7 @@ export default class Prompts {
         },
         {
           name: 'shellOverride',
-          message: 'Shell override to use instead of system default shell (eg powershell)',
+          message: 'Shell override to use instead of system default shell (eg powershell):',
           type: 'input',
           default: existingShellOverride || undefined,
         },
@@ -392,8 +392,8 @@ export default class Prompts {
         }
         table.push([
           color(software.name),
-          color(installedError ? installedErrorMessage : installed || ''),
-          color(latestError ? latestErrorMessage : latest || ''),
+          color((installedError ? installedErrorMessage : installed || '').trim()),
+          color((latestError ? latestErrorMessage : latest || '').trim()),
         ])
         progress.increment()
       }

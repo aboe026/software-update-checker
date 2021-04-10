@@ -54,7 +54,7 @@ describe('Software List Unit Tests', () => {
       })
       await expect(SoftwareList.add(software)).resolves.toStrictEqual([software])
     })
-    it('returns list with software added at end on list with single software already', async () => {
+    it('returns list with software added alphabetically at beginning on list with single software already', async () => {
       const existingSoftware = new Software({
         name: 'existing single',
         executable: {
@@ -67,7 +67,7 @@ describe('Software List Unit Tests', () => {
       })
       jest.spyOn(SoftwareList, 'get').mockImplementation(() => [existingSoftware])
       const software: Software = new Software({
-        name: 'add after single existing',
+        name: 'add after single existing to beginning',
         executable: {
           command: 'aloha',
         },
@@ -76,11 +76,35 @@ describe('Software List Unit Tests', () => {
         url: 'https://hawaiia.com',
         latestRegex: 'mahalo',
       })
+      await expect(SoftwareList.add(software)).resolves.toStrictEqual([software, existingSoftware])
+    })
+    it('returns list with software added alphabetically to end on list with single software already', async () => {
+      const existingSoftware = new Software({
+        name: 'an existing single',
+        executable: {
+          command: 'manufacturer',
+        },
+        args: 'cpu',
+        installedRegex: 'amd',
+        url: 'https://threadripper.com',
+        latestRegex: 'advanced micro devices',
+      })
+      jest.spyOn(SoftwareList, 'get').mockImplementation(() => [existingSoftware])
+      const software: Software = new Software({
+        name: 'the added after single existing to end',
+        executable: {
+          command: 'designer',
+        },
+        args: 'gpu',
+        installedRegex: 'GeForce',
+        url: 'https://turing.com',
+        latestRegex: 'nvidia',
+      })
       await expect(SoftwareList.add(software)).resolves.toStrictEqual([existingSoftware, software])
     })
-    it('returns list with software added at end on list with two softwares already', async () => {
+    it('returns list with software added alphabetically to middle on list with two softwares already', async () => {
       const existingSoftwareOne = new Software({
-        name: 'existing double',
+        name: 'an existing double',
         executable: {
           command: 'planets',
         },
@@ -90,7 +114,7 @@ describe('Software List Unit Tests', () => {
         latestRegex: 'gas planets',
       })
       const existingSoftwareTwo = new Software({
-        name: 'existing double trouble',
+        name: 'the existing double trouble',
         executable: {
           command: 'planest',
         },
@@ -101,7 +125,7 @@ describe('Software List Unit Tests', () => {
       })
       jest.spyOn(SoftwareList, 'get').mockImplementation(() => [existingSoftwareOne, existingSoftwareTwo])
       const software: Software = new Software({
-        name: 'add after double existing',
+        name: 'middling double existing',
         executable: {
           command: 'planets',
         },
@@ -112,8 +136,8 @@ describe('Software List Unit Tests', () => {
       })
       await expect(SoftwareList.add(software)).resolves.toStrictEqual([
         existingSoftwareOne,
-        existingSoftwareTwo,
         software,
+        existingSoftwareTwo,
       ])
     })
   })
@@ -207,7 +231,7 @@ describe('Software List Unit Tests', () => {
     })
     it('edit first software in list', async () => {
       const oldSoftware = new Software({
-        name: 'first edit old',
+        name: 'an old software first edit',
         executable: {
           command: 'cars',
         },
@@ -237,7 +261,7 @@ describe('Software List Unit Tests', () => {
         url: 'https://planes.com',
         latestRegex: 'boeing 747',
       })
-      await expect(SoftwareList.edit(oldSoftware, newSoftware)).resolves.toStrictEqual([newSoftware, existingSoftware])
+      await expect(SoftwareList.edit(oldSoftware, newSoftware)).resolves.toStrictEqual([existingSoftware, newSoftware])
     })
     it('edit last software in list', async () => {
       const oldSoftware = new Software({
@@ -374,12 +398,6 @@ describe('Software List Unit Tests', () => {
     beforeEach(() => {
       fs.pathExists = jest.fn().mockResolvedValue(true)
       jest.spyOn(SoftwareList, 'getSavedFilePath').mockImplementation(() => file)
-    })
-    it('throws error if save file does not exist', async () => {
-      fs.pathExists = jest.fn().mockResolvedValue(false)
-      await expect(SoftwareList.load()).rejects.toThrow(
-        `File '${file}' does not exist. Please specify software list file that exists.`
-      )
     })
     it('throws error if save file does not contain valid json', async () => {
       fs.readFile = jest.fn().mockResolvedValue('i am not valid JSON')
@@ -534,6 +552,14 @@ describe('Software List Unit Tests', () => {
         `Saved file '${file}' contains an invalid software entry '${name}' that does not have a latestRegex`
       )
     })
+    it('loads empty list if save file does not exist', async () => {
+      fs.pathExists = jest.fn().mockResolvedValue(false)
+      await expect(SoftwareList.load()).resolves.toStrictEqual([])
+    })
+    it('loads empty list if save file is empty', async () => {
+      fs.readFile = jest.fn().mockResolvedValue('')
+      await expect(SoftwareList.load()).resolves.toStrictEqual([])
+    })
     it('loads software if software list is single valid entry', async () => {
       const software = new Software({
         name: 'valid single',
@@ -634,6 +660,30 @@ describe('Software List Unit Tests', () => {
         installedRegex: 'diabetes',
         url: 'https://automimmunes.com',
         latestRegex: 'diabetes mellitus',
+      })
+      fs.readFile = jest.fn().mockResolvedValue(JSON.stringify([lastSoftware, firstSoftware]))
+      await expect(SoftwareList.load()).resolves.toStrictEqual([firstSoftware, lastSoftware])
+    })
+    it('loads and alphabetizes software ignoring capitalization if software list multiple valid entries of different capitalization', async () => {
+      const firstSoftware = new Software({
+        name: 'a valid multiple capitalization first',
+        executable: {
+          command: 'capitals',
+        },
+        args: 'smallest',
+        installedRegex: 'South Georgia and the South Sandwich Islands (UK)',
+        url: 'https://capitalizationmatters.com',
+        latestRegex: 'King Edward Point',
+      })
+      const lastSoftware = new Software({
+        name: 'B valid multiple capitalization last',
+        executable: {
+          command: 'location',
+        },
+        args: 'caput mundi',
+        installedRegex: 'rome',
+        url: 'https://capitaloftheworld.com',
+        latestRegex: 'new york city',
       })
       fs.readFile = jest.fn().mockResolvedValue(JSON.stringify([lastSoftware, firstSoftware]))
       await expect(SoftwareList.load()).resolves.toStrictEqual([firstSoftware, lastSoftware])

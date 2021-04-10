@@ -164,7 +164,7 @@ To test the project for regressions, run
 npm test
 ```
 
-This will [lint](#lint) the project, then run [unit](#unit-tests) and [functional](#functional-tests) tests
+This will [lint](#lint) the project, then run [unit](#unit-tests), [functional](#functional-tests), and [e2e](#end-to-end-tests) tests
 
 #### Unit Tests
 
@@ -182,7 +182,7 @@ npm run test:unit -- -t 'test name'
 
 #### Functional Tests
 
-Functional tests run against the final, distributable executable and are meant to test overarching scenarios of the tool to simulate as close as possible real interactions and use/edge cases. They required code to be [packaged](#package), and can be run with
+Functional tests are for portions of the code that cannot easily be mocked (or do not make sense to mock), such as executables and interacting with a live website. They can be run with
 
 ```sh
 npm run test:func
@@ -192,4 +192,20 @@ _Note_: To run a specific test, execute
 
 ```sh
 npm run test:func -- -t 'test name'
+```
+
+#### End to End Tests
+
+End to End (E2E) Tests run against the final, distributable executable and are meant to test overarching scenarios of the tool to simulate as close as possible the real interactions and use/edge cases.
+
+They required code to be [packaged](#package), and can be run with
+
+```sh
+npm run test:e2e
+```
+
+_Note_: To run a specific test, execute
+
+```sh
+npm run test:e2e -- -t 'test name'
 ```

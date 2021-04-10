@@ -4,6 +4,11 @@ export default async function (command: string, options?: ExecOptions): Promise<
   return new Promise((resolve, reject) => {
     exec(command, options || {}, (error, stdout, stderr) => {
       if (error) {
+        if (stderr) {
+          reject(stderr.trim())
+        } else {
+          reject(error)
+        }
         reject(error)
       } else {
         resolve({ stdout, stderr })
