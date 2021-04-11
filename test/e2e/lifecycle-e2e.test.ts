@@ -42,7 +42,7 @@ describe('Lifecycle', () => {
       latestRegex: software.latestRegex,
     })
     const response = await interactiveExecute({
-      timeoutMs: 20000,
+      timeoutMs: 17000,
       inputs: [
         ...E2eHomeUtil.getDefaultOptionInputs(HomeChoiceOption.View),
         ...E2eHomeUtil.getDefaultOptionInputs(HomeChoiceOption.Add),

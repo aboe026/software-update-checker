@@ -87,6 +87,7 @@ export default function ({
   return new Promise(function (resolve) {
     proc.stdout.pipe(
       concat((result: Buffer) => {
+        console.log('TEST chunks: ' + JSON.stringify(chunks, null, 2))
         resolve({
           stdout: result.toString(),
           chunks,
