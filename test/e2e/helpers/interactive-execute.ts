@@ -102,9 +102,9 @@ function getExecutableName() {
   if (os.platform() === 'win32') {
     name += 'win.exe'
   } else if (os.platform() === 'darwin') {
-    name += 'macos'
+    name += `./${name}macos`
   } else {
-    name += './linux'
+    name = `./${name}linux`
   }
   return name
 }
