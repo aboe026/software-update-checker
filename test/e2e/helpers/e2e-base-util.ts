@@ -34,6 +34,8 @@ export default class E2eBaseUtil {
     const softwaresFile = path.join(this.DIRECTORY.UserConfig, this.SOFTWARES_FILE_NAME)
     if (softwares !== undefined) {
       console.log('TEST a0')
+      await fs.ensureDir(this.DIRECTORY.UserConfig)
+      console.log('TEST a0.5')
       await fs.writeFile(softwaresFile, JSON.stringify(softwares, null, 2))
       console.log('TEST a1')
     } else {
