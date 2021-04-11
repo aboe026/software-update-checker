@@ -33,28 +33,44 @@ export default class E2eBaseUtil {
   static async setSoftwares(softwares: Software[] | undefined): Promise<void> {
     const softwaresFile = path.join(this.DIRECTORY.UserConfig, this.SOFTWARES_FILE_NAME)
     if (softwares !== undefined) {
+      console.log('TEST a0')
       await fs.writeFile(softwaresFile, JSON.stringify(softwares, null, 2))
+      console.log('TEST a1')
     } else {
+      console.log('TEST a2')
       await fs.createFile(softwaresFile)
+      console.log('TEST a3')
     }
   }
 
   static async verifySoftwares(softwares: Software[] | undefined, fileExists = true): Promise<void> {
     const softwaresFile = path.join(this.DIRECTORY.UserConfig, this.SOFTWARES_FILE_NAME)
     if (!fileExists) {
+      console.log('TEST b0')
       await expect(fs.access(softwaresFile)).rejects.toThrow('no such file or directory')
+      console.log('TEST b1')
     } else {
+      console.log('TEST b2')
       await expect(fs.access(softwaresFile)).resolves.toBe(undefined)
+      console.log('TEST b3')
       const contents = (await fs.readFile(softwaresFile)).toString()
+      console.log('TEST b4')
       if (softwares === undefined) {
+        console.log('TEST b5')
         expect(contents).toBe('')
+        console.log('TEST b6')
       } else {
+        console.log('TEST b7')
         let json
         try {
+          console.log('TEST b8')
           json = JSON.parse(contents)
+          console.log('TEST b9')
         } catch (err) {
+          console.log('TEST b10')
           expect(err).toBe(undefined)
         }
+        console.log('TEST b11')
         expect(json).toStrictEqual(JSON.parse(JSON.stringify(softwares)))
       }
     }

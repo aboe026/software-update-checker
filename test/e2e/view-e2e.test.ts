@@ -74,6 +74,7 @@ describe('View', () => {
       latestRegex: 'latest: v(.*)',
     })
     await E2eViewUtil.setSoftwares([software])
+    console.log('TEST 0.5')
     await E2eViewUtil.verifySoftwares([software])
     console.log('TEST 1')
     await testDefaultView({
