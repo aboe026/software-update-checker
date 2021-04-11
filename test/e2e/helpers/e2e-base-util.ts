@@ -314,7 +314,7 @@ function stripNewlines(words: string): string {
 }
 
 function condenseBackslashes(words: string): string {
-  return words.replace(/\\+/g, '\\')
+  return words && words.replace(/\\+/g, '\\')
 }
 
 function applyDecoration(words: string, decoration?: RowDecoration) {
