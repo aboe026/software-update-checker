@@ -399,6 +399,7 @@ export default class Prompts {
       }
 
       progress.stop()
+      console.log('TEST table.toString(): ' + table.toString())
       console.table(table.toString())
     }
   }

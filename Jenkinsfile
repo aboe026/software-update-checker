@@ -75,26 +75,26 @@ node {
             },
             'dist': {
 
-              stage('Build') {
-                sh 'npm run build'
-              }
+              // stage('Build') {
+              //   sh 'npm run build'
+              // }
 
-              stage('Package') {
-                sh 'npm run pack'
-                archiveArtifacts artifacts: 'dist/*', allowEmptyArchive: true
-              }
+              // stage('Package') {
+              //   sh 'npm run pack'
+              //   archiveArtifacts artifacts: 'dist/*', allowEmptyArchive: true
+              // }
 
-              stage('E2E Tests') {
-                try {
-                  sh 'npm run test:e2e:xml -- -t "view single software with installed error"'
-                } catch (err) {
-                  exceptionThrown = true
-                  println 'Exception was caught in try block of e2e tests stage.'
-                  println err
-                } finally {
-                  junit testResults: 'test-results/e2e.xml', allowEmptyResults: true
-                }
-              }
+              // stage('E2E Tests') {
+              //   try {
+              //     sh 'npm run test:e2e:xml -- -t "view single software with installed error"'
+              //   } catch (err) {
+              //     exceptionThrown = true
+              //     println 'Exception was caught in try block of e2e tests stage.'
+              //     println err
+              //   } finally {
+              //     junit testResults: 'test-results/e2e.xml', allowEmptyResults: true
+              //   }
+              // }
 
             }
           )
