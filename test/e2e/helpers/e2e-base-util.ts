@@ -68,6 +68,8 @@ export default class E2eBaseUtil {
     for (let i = 0; i < expectedChunks.length; i++) {
       const expected = expectedChunks[i]
       let actual = actualChunks[actualIndex]
+      console.log('TEST expected: ' + JSON.stringify(expected, null, 2))
+      console.log('TEST actual: ' + actual)
       if (typeof expected === 'string') {
         expect(actual).toBe(expected)
         actualIndex++
