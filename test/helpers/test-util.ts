@@ -19,6 +19,7 @@ export default class TestUtil {
   }
 
   static validateTablePrintout(output: string, printouts: SoftwarePrintout[]): void {
+    console.log('TEST output: ' + JSON.stringify(output))
     const lines = output.split(/\\\\r\\\\n?|\\\\n|\\r\\n?|\\n|\r\n?|\n/)
     const header = lines[1]
     const headerCols = header.split(TestUtil.TABLE_CHAR.MiddleSeparator)
