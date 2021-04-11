@@ -59,6 +59,7 @@ describe('View', () => {
     await E2eViewUtil.verifySoftwares([software])
   })
   it('view single software with installed error', async () => {
+    console.log('TEST 0')
     const installedError = 'null pointer'
     const latestVersion = '1.0.0'
     const software = new Software({
@@ -74,6 +75,7 @@ describe('View', () => {
     })
     await E2eViewUtil.setSoftwares([software])
     await E2eViewUtil.verifySoftwares([software])
+    console.log('TEST 1')
     await testDefaultView({
       rows: [
         {
@@ -84,6 +86,7 @@ describe('View', () => {
         },
       ],
     })
+    console.log('TEST 2')
     await E2eViewUtil.verifySoftwares([software])
   })
   it('view single software with latest error', async () => {
