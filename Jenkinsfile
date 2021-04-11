@@ -29,48 +29,48 @@ node {
           parallel (
             'test': {
 
-              stage('Lint') {
-                sh 'npm run lint'
-              }
+              // stage('Lint') {
+              //   sh 'npm run lint'
+              // }
 
-              try {
-                parallel (
-                  'unit': {
-                    stage('Unit Tests') {
-                      try {
-                        sh 'npm run test:unit:xml'
-                      } catch (err) {
-                        exceptionThrown = true
-                        println 'Exception was caught in try block of unit tests stage.'
-                        println err
-                      } finally {
-                        junit testResults: 'test-results/unit.xml', allowEmptyResults: true
-                      }
-                    }
-                  },
-                  'func': {
-                    stage('Functional Tests') {
-                      try {
-                        sh 'npm run test:func:xml'
-                      } catch (err) {
-                        exceptionThrown = true
-                        println 'Exception was caught in try block of func tests stage.'
-                        println err
-                      } finally {
-                        junit testResults: 'test-results/func.xml', allowEmptyResults: true
-                      }
-                    }
-                  }
-                )
-              } catch (err) {
-                println 'Exception caught while running unit and func tests:'
-                println err
-              } finally {
-                stage('Coverage') {
-                  sh 'npm run coverage:merge'
-                  cobertura coberturaReportFile: 'coverage/merged/cobertura-coverage.xml'
-                }
-              }
+              // try {
+              //   parallel (
+              //     'unit': {
+              //       stage('Unit Tests') {
+              //         try {
+              //           sh 'npm run test:unit:xml'
+              //         } catch (err) {
+              //           exceptionThrown = true
+              //           println 'Exception was caught in try block of unit tests stage.'
+              //           println err
+              //         } finally {
+              //           junit testResults: 'test-results/unit.xml', allowEmptyResults: true
+              //         }
+              //       }
+              //     },
+              //     'func': {
+              //       stage('Functional Tests') {
+              //         try {
+              //           sh 'npm run test:func:xml'
+              //         } catch (err) {
+              //           exceptionThrown = true
+              //           println 'Exception was caught in try block of func tests stage.'
+              //           println err
+              //         } finally {
+              //           junit testResults: 'test-results/func.xml', allowEmptyResults: true
+              //         }
+              //       }
+              //     }
+              //   )
+              // } catch (err) {
+              //   println 'Exception caught while running unit and func tests:'
+              //   println err
+              // } finally {
+              //   stage('Coverage') {
+              //     sh 'npm run coverage:merge'
+              //     cobertura coberturaReportFile: 'coverage/merged/cobertura-coverage.xml'
+              //   }
+              // }
 
             },
             'dist': {
@@ -86,7 +86,7 @@ node {
 
               stage('E2E Tests') {
                 try {
-                  sh 'npm run test:e2e:xml'
+                  sh 'npm run test:e2e:xml -- -t "view single software with installed error"'
                 } catch (err) {
                   exceptionThrown = true
                   println 'Exception was caught in try block of e2e tests stage.'
