@@ -112,6 +112,7 @@ function escapeChunk(chunk: string): string {
   let escapedChunk = `${stripAnsiChars(JSON.stringify(chunk))}`
   escapedChunk = escapedChunk.substring(1, escapedChunk.length - 1) // remove enclosing double quotes from stringify
   escapedChunk = escapedChunk.replace(/\\+n$/, '') // if ends in newline, remove newline
+  escapedChunk = escapedChunk.replace(/❯/g, '>') // some shells print out strange symbol, convert it to standard
   return escapedChunk
 }
 
