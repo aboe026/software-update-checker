@@ -42,6 +42,7 @@ describe('Lifecycle', () => {
       latestRegex: software.latestRegex,
     })
     const response = await interactiveExecute({
+      timeoutMs: 20000,
       inputs: [
         ...E2eHomeUtil.getDefaultOptionInputs(HomeChoiceOption.View),
         ...E2eHomeUtil.getDefaultOptionInputs(HomeChoiceOption.Add),
@@ -64,7 +65,6 @@ describe('Lifecycle', () => {
         ...E2eHomeUtil.getDefaultOptionInputs(HomeChoiceOption.Exit),
       ],
     })
-    console.log('TEST chunks: ' + JSON.stringify(response.chunks, null, 2))
     E2eBaseUtil.validatePromptChunks(response.chunks, [
       ...E2eHomeUtil.getDefaultOptionChunks(HomeChoiceOption.View),
       E2eViewUtil.MESSAGES.NoSoftwares,
