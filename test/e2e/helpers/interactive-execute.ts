@@ -104,7 +104,7 @@ function getExecutableName() {
   } else if (os.platform() === 'darwin') {
     name += 'macos'
   } else {
-    name += 'linux'
+    name += './linux'
   }
   return name
 }

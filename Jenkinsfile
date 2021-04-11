@@ -85,6 +85,7 @@ node {
               }
 
               stage('E2E Tests') {
+                sh 'ls -la dist'
                 try {
                   // sh 'npm run test:e2e:xml'
                   sh 'npm run test:e2e:xml -- -t "selecting exit properly exits"'
