@@ -64,6 +64,7 @@ describe('Lifecycle', () => {
         ...E2eHomeUtil.getDefaultOptionInputs(HomeChoiceOption.Exit),
       ],
     })
+    console.log('TEST chunks: ' + JSON.stringify(response.chunks, null, 2))
     E2eBaseUtil.validatePromptChunks(response.chunks, [
       ...E2eHomeUtil.getDefaultOptionChunks(HomeChoiceOption.View),
       E2eViewUtil.MESSAGES.NoSoftwares,
