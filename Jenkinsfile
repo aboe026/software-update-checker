@@ -4,7 +4,7 @@ node {
   def nodeImage = 'node:14'
   def exceptionThrown = false
   try {
-    // ansiColor('xterm') {
+    ansiColor('xterm') {
       dir(workDir) {
 
         stage('Pull Runtime Image') {
@@ -38,7 +38,7 @@ node {
                   'unit': {
                     stage('Unit Tests') {
                       try {
-                        sh 'npm run test:unit:xml -- -t "single with installed error prints out table with red row"'
+                        sh 'npm run test:unit:xml'
                       } catch (err) {
                         exceptionThrown = true
                         println 'Exception was caught in try block of unit tests stage.'
@@ -49,17 +49,17 @@ node {
                     }
                   },
                   'func': {
-                    // stage('Functional Tests') {
-                    //   try {
-                    //     sh 'npm run test:func:xml'
-                    //   } catch (err) {
-                    //     exceptionThrown = true
-                    //     println 'Exception was caught in try block of func tests stage.'
-                    //     println err
-                    //   } finally {
-                    //     junit testResults: 'test-results/func.xml', allowEmptyResults: true
-                    //   }
-                    // }
+                    stage('Functional Tests') {
+                      try {
+                        sh 'npm run test:func:xml'
+                      } catch (err) {
+                        exceptionThrown = true
+                        println 'Exception was caught in try block of func tests stage.'
+                        println err
+                      } finally {
+                        junit testResults: 'test-results/func.xml', allowEmptyResults: true
+                      }
+                    }
                   }
                 )
               } catch (err) {
@@ -75,33 +75,33 @@ node {
             },
             'dist': {
 
-              // stage('Build') {
-              //   sh 'npm run build'
-              // }
+              stage('Build') {
+                sh 'npm run build'
+              }
 
-              // stage('Package') {
-              //   sh 'npm run pack'
-              //   archiveArtifacts artifacts: 'dist/*', allowEmptyArchive: true
-              // }
+              stage('Package') {
+                sh 'npm run pack'
+                archiveArtifacts artifacts: 'dist/*', allowEmptyArchive: true
+              }
 
-              // stage('E2E Tests') {
-              //   try {
-              //     sh 'npm run test:e2e:xml -- -t "view single software with installed error"'
-              //   } catch (err) {
-              //     exceptionThrown = true
-              //     println 'Exception was caught in try block of e2e tests stage.'
-              //     println err
-              //   } finally {
-              //     junit testResults: 'test-results/e2e.xml', allowEmptyResults: true
-              //   }
-              // }
+              stage('E2E Tests') {
+                try {
+                  sh 'npm run test:e2e:xml'
+                } catch (err) {
+                  exceptionThrown = true
+                  println 'Exception was caught in try block of e2e tests stage.'
+                  println err
+                } finally {
+                  junit testResults: 'test-results/e2e.xml', allowEmptyResults: true
+                }
+              }
 
             }
           )
 
         }
       }
-    // }
+    }
   } catch (err) {
     exceptionThrown = true
     println 'Exception was caught in try block of jenkins job.'

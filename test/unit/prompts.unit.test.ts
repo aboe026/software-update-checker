@@ -1667,13 +1667,12 @@ async function testViewTable({
       latestSpy.mockResolvedValueOnce(latestVersion.value)
     }
   }
-  // const consoleLogMock = jest.spyOn(console, 'log').mockImplementation()
+  const consoleLogMock = jest.spyOn(console, 'log').mockImplementation()
   const consoleTableMock = jest.spyOn(console, 'table').mockImplementation()
   const consoleWarnMock = jest.spyOn(console, 'warn').mockImplementation()
   const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation()
   await expect(Prompts.view()).resolves.toBe(undefined)
-  // expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
-  // consoleLogMock.mockRestore()
+  expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
   TestUtil.validateTablePrintout(JSON.stringify(consoleTableMock.mock.calls[0][0], null, 2), expectedRows)
   expect(JSON.stringify(consoleWarnMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
   expect(JSON.stringify(consoleErrorMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))

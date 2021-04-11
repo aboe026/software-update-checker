@@ -43,7 +43,6 @@ export default function ({
   })
 
   function recordAndReply(chunk: string): void {
-    console.log('TEST chunk.toString(): ' + JSON.stringify(chunk.toString()))
     const line = escapeChunk(chunk.toString())
     if (line !== '' && line !== '\n') {
       const lineChunks = line.split(/(?<!^)(\? [^\(YN])/) // sometimes multiple lines come in a single chunk. Split on those (but not boolean questions or choices)
