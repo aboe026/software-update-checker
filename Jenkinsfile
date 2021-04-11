@@ -4,7 +4,7 @@ node {
   def nodeImage = 'node:14'
   def exceptionThrown = false
   try {
-    ansiColor('xterm') {
+    // ansiColor('xterm') {
       dir(workDir) {
 
         stage('Pull Runtime Image') {
@@ -101,7 +101,7 @@ node {
 
         }
       }
-    }
+    // }
   } catch (err) {
     exceptionThrown = true
     println 'Exception was caught in try block of jenkins job.'
