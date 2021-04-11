@@ -19,6 +19,7 @@ describe('Home', () => {
     const response = await interactiveExecute({
       inputs: E2eHomeUtil.getDefaultOptionInputs(E2eHomeUtil.CHOICES.Home.options.Exit),
     })
+    console.log('TEST response: ' + JSON.stringify(response, null, 2))
     E2eHomeUtil.validatePromptChunks(
       response.chunks,
       E2eHomeUtil.getDefaultOptionChunks(E2eHomeUtil.CHOICES.Home.options.Exit)

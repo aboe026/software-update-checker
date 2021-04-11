@@ -86,7 +86,8 @@ node {
 
               stage('E2E Tests') {
                 try {
-                  sh 'npm run test:e2e:xml'
+                  // sh 'npm run test:e2e:xml'
+                  sh 'npm run test:e2e:xml -- -t "selecting exit properly exits"'
                 } catch (err) {
                   exceptionThrown = true
                   println 'Exception was caught in try block of e2e tests stage.'
