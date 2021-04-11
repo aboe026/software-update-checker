@@ -311,7 +311,7 @@ function isTable(output: string | StringPrompt | BooleanPrompt | ChoicePrompt | 
 }
 
 function stripNewlines(words: string): string {
-  return words.replace(/\\?\\n/g, '')
+  return words && words.replace(/\\?\\n/g, '')
 }
 
 function condenseBackslashes(words: string): string {
