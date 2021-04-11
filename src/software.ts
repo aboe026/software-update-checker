@@ -44,16 +44,13 @@ export default class Software {
   }
 
   async getInstalledVersion(): Promise<string | null> {
-    console.log('TEST 00')
     const executable = await getExecutable(this.executable)
-    console.log('TEST 01')
     const output = await getFromExecutable({
       directory: path.dirname(executable),
       command: path.basename(executable),
       args: this.args,
       shellOverride: this.shellOverride,
     })
-    console.log('TEST 02')
     return getFromRegex(output, new RegExp(this.installedRegex))
   }
 

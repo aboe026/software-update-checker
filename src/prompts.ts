@@ -386,6 +386,7 @@ export default class Prompts {
           latestErrorMessage = err.message || err
         }
         if (installedError || latestError || !installed || !latest) {
+          console.log('TEST red')
           color = colors.red
         } else if (installed !== latest) {
           color = colors.green
