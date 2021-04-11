@@ -313,6 +313,7 @@ async function testDefaultView({ rows }: { rows: TableRow[] }) {
       ...E2eHomeUtil.getDefaultOptionInputs(HomeChoiceOption.Exit),
     ],
   })
+  console.log('TEST resposne: ' + JSON.stringify(response, null, 2))
   E2eViewUtil.validatePromptChunks(response.chunks, [
     ...E2eHomeUtil.getDefaultOptionChunks(HomeChoiceOption.View),
     ...E2eViewUtil.getDefaultViewChunks({
