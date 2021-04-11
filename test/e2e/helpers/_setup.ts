@@ -29,12 +29,14 @@ beforeEach(async () => {
 afterAll(async () => {
   await fs.remove(E2eBaseUtil.DIRECTORY.UserConfig)
   await fs.ensureDir(E2eBaseUtil.DIRECTORY.UserConfig)
-  const files = await fs.readdir(E2eBaseUtil.DIRECTORY.TempBackupConfig)
-  for (const file of files) {
-    await fs.move(
-      path.join(E2eBaseUtil.DIRECTORY.TempBackupConfig, file),
-      path.join(E2eBaseUtil.DIRECTORY.UserConfig, file)
-    )
+  if (await fs.pathExists(E2eBaseUtil.DIRECTORY.TempBackupConfig)) {
+    const files = await fs.readdir(E2eBaseUtil.DIRECTORY.TempBackupConfig)
+    for (const file of files) {
+      await fs.move(
+        path.join(E2eBaseUtil.DIRECTORY.TempBackupConfig, file),
+        path.join(E2eBaseUtil.DIRECTORY.UserConfig, file)
+      )
+    }
+    await fs.remove(E2eBaseUtil.DIRECTORY.TempBackupConfig)
   }
-  await fs.remove(E2eBaseUtil.DIRECTORY.TempBackupConfig)
 })
