@@ -1,4 +1,4 @@
-import colors from 'colors'
+import colors from '../../src/colors'
 
 export default class TestUtil {
   static readonly NEWLINE_CHARS: string = '\\\\n'

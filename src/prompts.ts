@@ -1,8 +1,8 @@
 import cliProgress from 'cli-progress'
-import colors from 'colors'
 import inquirer from 'inquirer'
 import Table from 'cli-table3'
 
+import colors from './colors'
 import { Dynamic, Static, isStatic, getDynamicExecutable } from './executable'
 import Software from './software'
 import SoftwareList from './software-list'

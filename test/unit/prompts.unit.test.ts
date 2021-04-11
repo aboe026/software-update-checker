@@ -1,7 +1,7 @@
-import colors from 'colors'
 import inquirer, { Answers, DistinctQuestion, Question, QuestionCollection } from 'inquirer'
 
 import * as executable from '../../src/executable'
+import colors from '../../src/colors'
 import Prompts from '../../src/prompts'
 import Software from '../../src/software'
 import SoftwareList from '../../src/software-list'

@@ -1,5 +1,5 @@
+import colors from '../../src/colors'
 import Prompts from '../../src/prompts'
-import colors from 'colors'
 
 describe('Index Unit Tests', () => {
   it('calls home prompt', async () => {
