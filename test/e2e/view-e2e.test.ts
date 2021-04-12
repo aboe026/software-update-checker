@@ -12,24 +12,22 @@ describe('View', () => {
   afterAll(async () => {
     await Website.stop()
   })
-  describe('No Softwares', () => {
-    it('viewing with non-existent softwares file says nothing to view', async () => {
-      await E2eViewUtil.verifySoftwares(undefined, false)
-      await testNoSoftwaresView()
-      await E2eViewUtil.verifySoftwares([])
-    })
-    it('viewing with no content softwares file says nothing to view', async () => {
-      await E2eViewUtil.setSoftwares(undefined)
-      await E2eViewUtil.verifySoftwares(undefined)
-      await testNoSoftwaresView()
-      await E2eViewUtil.verifySoftwares([])
-    })
-    it('viewing with empty array softwares file says nothing to view', async () => {
-      await E2eViewUtil.setSoftwares([])
-      await E2eViewUtil.verifySoftwares([])
-      await testNoSoftwaresView()
-      await E2eViewUtil.verifySoftwares([])
-    })
+  it('viewing with non-existent softwares file says nothing to view', async () => {
+    await E2eViewUtil.verifySoftwares(undefined, false)
+    await testNoSoftwaresView()
+    await E2eViewUtil.verifySoftwares([])
+  })
+  it('viewing with no content softwares file says nothing to view', async () => {
+    await E2eViewUtil.setSoftwares(undefined)
+    await E2eViewUtil.verifySoftwares(undefined)
+    await testNoSoftwaresView()
+    await E2eViewUtil.verifySoftwares([])
+  })
+  it('viewing with empty array softwares file says nothing to view', async () => {
+    await E2eViewUtil.setSoftwares([])
+    await E2eViewUtil.verifySoftwares([])
+    await testNoSoftwaresView()
+    await E2eViewUtil.verifySoftwares([])
   })
   it('view single software without error or update', async () => {
     const installedVersion = '1.0.0'

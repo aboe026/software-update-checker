@@ -11,24 +11,22 @@ describe('Edit', () => {
   afterAll(async () => {
     await Website.stop()
   })
-  describe('No Softwares', () => {
-    it('editing with non-existent softwares file says nothing to edit', async () => {
-      await E2eEditUtil.verifySoftwares(undefined, false)
-      await testNoSoftwaresEdit()
-      await E2eEditUtil.verifySoftwares([])
-    })
-    it('editing with no content softwares file says nothing to edit', async () => {
-      await E2eEditUtil.setSoftwares(undefined)
-      await E2eEditUtil.verifySoftwares(undefined)
-      await testNoSoftwaresEdit()
-      await E2eEditUtil.verifySoftwares([])
-    })
-    it('editing with empty array softwares file says nothing to edit', async () => {
-      await E2eEditUtil.setSoftwares([])
-      await E2eEditUtil.verifySoftwares([])
-      await testNoSoftwaresEdit()
-      await E2eEditUtil.verifySoftwares([])
-    })
+  it('editing with non-existent softwares file says nothing to edit', async () => {
+    await E2eEditUtil.verifySoftwares(undefined, false)
+    await testNoSoftwaresEdit()
+    await E2eEditUtil.verifySoftwares([])
+  })
+  it('editing with no content softwares file says nothing to edit', async () => {
+    await E2eEditUtil.setSoftwares(undefined)
+    await E2eEditUtil.verifySoftwares(undefined)
+    await testNoSoftwaresEdit()
+    await E2eEditUtil.verifySoftwares([])
+  })
+  it('editing with empty array softwares file says nothing to edit', async () => {
+    await E2eEditUtil.setSoftwares([])
+    await E2eEditUtil.verifySoftwares([])
+    await testNoSoftwaresEdit()
+    await E2eEditUtil.verifySoftwares([])
   })
   it('cannot edit software to existing name', async () => {
     const firstSoftware = new Software({

@@ -22,7 +22,7 @@ To see a list of available targets and flags, run the executable with the `--hel
 
 ### Example Configurations
 
-See the [example configurations file](example-configurations.md) for reference on how software configurations should look like.
+See the [example configurations file](example-configurations.md) for reference on what software configurations should look like.
 
 ---
 

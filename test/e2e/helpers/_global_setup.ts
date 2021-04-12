@@ -26,7 +26,7 @@ export default async () => {
     await fs.access(E2eConfig.FILE.Debug)
     await fs.remove(E2eConfig.FILE.Debug)
   } catch (err) {
-    // swallow
+    // debug file does not exist, no need to delete
   }
   await fs.createFile(E2eConfig.FILE.Debug)
 }

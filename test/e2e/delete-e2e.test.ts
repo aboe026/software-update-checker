@@ -11,24 +11,22 @@ describe('Delete', () => {
   afterAll(async () => {
     await Website.stop()
   })
-  describe('No Softwares', () => {
-    it('deleting with non-existent softwares file says nothing to delete', async () => {
-      await E2eDeleteUtil.verifySoftwares(undefined, false)
-      await testNoSoftwaresDelete()
-      await E2eDeleteUtil.verifySoftwares([])
-    })
-    it('deleting with no content softwares file says nothing to delete', async () => {
-      await E2eDeleteUtil.setSoftwares(undefined)
-      await E2eDeleteUtil.verifySoftwares(undefined)
-      await testNoSoftwaresDelete()
-      await E2eDeleteUtil.verifySoftwares([])
-    })
-    it('deleting with empty array softwares file says nothing to delete', async () => {
-      await E2eDeleteUtil.setSoftwares([])
-      await E2eDeleteUtil.verifySoftwares([])
-      await testNoSoftwaresDelete()
-      await E2eDeleteUtil.verifySoftwares([])
-    })
+  it('deleting with non-existent softwares file says nothing to delete', async () => {
+    await E2eDeleteUtil.verifySoftwares(undefined, false)
+    await testNoSoftwaresDelete()
+    await E2eDeleteUtil.verifySoftwares([])
+  })
+  it('deleting with no content softwares file says nothing to delete', async () => {
+    await E2eDeleteUtil.setSoftwares(undefined)
+    await E2eDeleteUtil.verifySoftwares(undefined)
+    await testNoSoftwaresDelete()
+    await E2eDeleteUtil.verifySoftwares([])
+  })
+  it('deleting with empty array softwares file says nothing to delete', async () => {
+    await E2eDeleteUtil.setSoftwares([])
+    await E2eDeleteUtil.verifySoftwares([])
+    await testNoSoftwaresDelete()
+    await E2eDeleteUtil.verifySoftwares([])
   })
   it('delete but do not confirm does not remove', async () => {
     const name = 'e2e delete without confirm'
