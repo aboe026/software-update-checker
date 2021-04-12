@@ -3,6 +3,8 @@ import os from 'os'
 import path from 'path'
 import { spawn } from 'child_process'
 
+import E2eConfig from './e2e-config'
+
 export default function ({
   inputs,
   timeoutMs = 12000,
@@ -43,6 +45,7 @@ export default function ({
   })
 
   function recordAndReply(chunk: string): void {
+    E2eConfig.appendToDebugLog(JSON.stringify(chunk.toString()))
     const line = escapeChunk(chunk.toString())
     if (line !== '' && line !== '\n') {
       const lineChunks = line.split(/(?<!^)(\? [^\(YN])/) // sometimes multiple lines come in a single chunk. Split on those (but not boolean questions or choices)
@@ -86,8 +89,8 @@ export default function ({
 
   return new Promise(function (resolve) {
     proc.stdout.pipe(
-      concat((result: Buffer) => {
-        console.log('TEST chunks: ' + JSON.stringify(chunks, null, 2))
+      concat(async (result: Buffer) => {
+        await E2eConfig.appendToDebugLog(JSON.stringify(chunks, null, 2))
         resolve({
           stdout: result.toString(),
           chunks,

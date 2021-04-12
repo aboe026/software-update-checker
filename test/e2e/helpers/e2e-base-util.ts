@@ -1,17 +1,12 @@
 import fs from 'fs-extra'
-import os from 'os'
 import path from 'path'
 
 import { ANSI_CHAR_REPLACEMENT, KEYS } from './interactive-execute'
+import E2eConfig from './e2e-config'
 import Software from '../../../src/software'
 import testUtil from '../../helpers/test-util'
 
 export default class E2eBaseUtil {
-  static readonly SOFTWARES_FILE_NAME = 'softwares.json'
-  static readonly DIRECTORY = {
-    UserConfig: path.join(os.homedir(), '.suc'),
-    TempBackupConfig: path.join(__dirname, '../.temp-work-dir', '.suc-temp'),
-  }
   static readonly COMMAND = {
     Good: path.join(__dirname, '../../helpers/test-commands/good-command.js'),
     Bad: path.join(__dirname, '../../helpers/test-commands/bad-command.js'),
@@ -31,22 +26,20 @@ export default class E2eBaseUtil {
   }
 
   static async setSoftwares(softwares: Software[] | undefined): Promise<void> {
-    const softwaresFile = path.join(this.DIRECTORY.UserConfig, this.SOFTWARES_FILE_NAME)
     if (softwares !== undefined) {
-      await fs.ensureDir(this.DIRECTORY.UserConfig)
-      await fs.writeFile(softwaresFile, JSON.stringify(softwares, null, 2))
+      await fs.ensureDir(E2eConfig.DIRECTORY.UserConfig)
+      await fs.writeFile(E2eConfig.FILE.Softwares, JSON.stringify(softwares, null, 2))
     } else {
-      await fs.createFile(softwaresFile)
+      await fs.createFile(E2eConfig.FILE.Softwares)
     }
   }
 
   static async verifySoftwares(softwares: Software[] | undefined, fileExists = true): Promise<void> {
-    const softwaresFile = path.join(this.DIRECTORY.UserConfig, this.SOFTWARES_FILE_NAME)
     if (!fileExists) {
-      await expect(fs.access(softwaresFile)).rejects.toThrow('no such file or directory')
+      await expect(fs.access(E2eConfig.FILE.Softwares)).rejects.toThrow('no such file or directory')
     } else {
-      await expect(fs.access(softwaresFile)).resolves.toBe(undefined)
-      const contents = (await fs.readFile(softwaresFile)).toString()
+      await expect(fs.access(E2eConfig.FILE.Softwares)).resolves.toBe(undefined)
+      const contents = (await fs.readFile(E2eConfig.FILE.Softwares)).toString()
       if (softwares === undefined) {
         expect(contents).toBe('')
       } else {

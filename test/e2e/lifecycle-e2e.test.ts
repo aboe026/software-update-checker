@@ -1,4 +1,5 @@
 import E2eAddUtil from './helpers/e2e-add-util'
+import E2eBaseUtil, { RowDecoration } from './helpers/e2e-base-util'
 import E2eDeleteUtil from './helpers/e2e-delete-util'
 import E2eEditUtil from './helpers/e2e-edit-util'
 import E2eHomeUtil, { HomeChoiceOption } from './helpers/e2e-home-util'
@@ -6,7 +7,6 @@ import E2eViewUtil from './helpers/e2e-view-util'
 import interactiveExecute from './helpers/interactive-execute'
 import Software from '../../src/software'
 import Website from '../helpers/website'
-import E2eBaseUtil, { RowDecoration } from './helpers/e2e-base-util'
 
 describe('Lifecycle', () => {
   beforeAll(async () => {
@@ -24,7 +24,7 @@ describe('Lifecycle', () => {
       executable: {
         command: 'node',
       },
-      args: `${E2eAddUtil.COMMAND.Good} v${installedVersion}`,
+      args: `${E2eBaseUtil.COMMAND.Good} v${installedVersion}`,
       shellOverride: '',
       installedRegex: 'v(.*)',
       url: Website.getResponseUrl(`latest: v${latestVersion}`),
