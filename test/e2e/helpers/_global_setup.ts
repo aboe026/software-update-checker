@@ -28,4 +28,5 @@ export default async () => {
   } catch (err) {
     // swallow
   }
+  await fs.createFile(E2eConfig.FILE.Debug)
 }
