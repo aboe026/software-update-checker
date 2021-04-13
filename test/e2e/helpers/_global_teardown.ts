@@ -7,7 +7,7 @@ import E2eConfig from './e2e-config'
  * Run once after all tests execute
  */
 
-export default async () => {
+export default async (): Promise<void> => {
   await fs.remove(E2eConfig.DIRECTORY.UserConfig)
   await fs.ensureDir(E2eConfig.DIRECTORY.UserConfig)
   if (await fs.pathExists(E2eConfig.DIRECTORY.BackupConfig)) {
