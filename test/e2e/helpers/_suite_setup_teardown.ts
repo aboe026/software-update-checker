@@ -1,5 +1,4 @@
 import fs from 'fs-extra'
-import path from 'path'
 
 import E2eConfig from './e2e-config'
 
