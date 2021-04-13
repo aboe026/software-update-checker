@@ -84,6 +84,22 @@ node {
                 archiveArtifacts artifacts: 'dist/*', allowEmptyArchive: true
               }
 
+              stage('E2E Tests') {
+                try {
+                  sh 'npm run test:e2e:xml'
+                } catch (err) {
+                  exceptionThrown = true
+                  println 'Exception was caught in try block of e2e tests stage.'
+                  println err
+                } finally {
+                  junit testResults: 'test-results/e2e.xml', allowEmptyResults: true
+                  def e2eDebugLogs = 'test/e2e/.temp-work-dir/debug.txt'
+                  if (fileExists(e2eDebugLogs)) {
+                    archiveArtifacts artifacts: e2eDebugLogs
+                  }
+                }
+              }
+
             }
           )
 

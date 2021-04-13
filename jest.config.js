@@ -1,8 +1,8 @@
 module.exports = {
   clearMocks: true,
-  collectCoverage: true,
   collectCoverageFrom: ['src/**/*'],
   coverageReporters: ['json', 'lcov'],
+  moduleFileExtensions: ['ts', 'js', 'json', 'node'],
   preset: 'ts-jest',
   resetMocks: true,
   restoreMocks: true,

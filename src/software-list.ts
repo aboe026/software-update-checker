@@ -49,6 +49,7 @@ export default class SoftwareList {
   }
 
   static async save(softwares: Software[]): Promise<Software[]> {
+    softwares = softwares.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1))
     const file = SoftwareList.getSavedFilePath()
     await fs.ensureDir(path.dirname(file))
     await fs.writeFile(file, JSON.stringify(softwares, null, 2))
@@ -60,64 +61,68 @@ export default class SoftwareList {
     const file = SoftwareList.getSavedFilePath()
     SoftwareList.softwares = []
     const softwares: Software[] = []
-    if (!(await fs.pathExists(file))) {
-      throw Error(`File '${file}' does not exist. Please specify software list file that exists.`)
-    }
-    try {
-      const contents = await fs.readFile(file)
-      let json = JSON.parse(contents.toString())
-      if (!json || !Array.isArray(json)) {
-        throw Error(`Saved file '${file}' does not contain a valid JSON array`)
+    if (await fs.pathExists(file)) {
+      try {
+        const contents = await fs.readFile(file)
+        if (contents.toString() === '') {
+          return SoftwareList.save(softwares)
+        }
+        let json = JSON.parse(contents.toString())
+        if (!json || !Array.isArray(json)) {
+          throw Error(`Saved file '${file}' does not contain a valid JSON array`)
+        }
+        for (const obj of json) {
+          if (!obj.name) {
+            throw Error(`Saved file '${file}' contains an invalid software entry that does not have a name`)
+          }
+          if (!obj.executable) {
+            throw Error(
+              `Saved file '${file}' contains an invalid software entry '${obj.name}' that does not have an executable`
+            )
+          }
+          if (!obj.executable.command && !obj.executable.directory) {
+            throw Error(
+              `Saved file '${file}' contains an invalid software entry '${obj.name}' that is dynamic but does not have an executable directory`
+            )
+          }
+          if (!obj.executable.command && !obj.executable.regex) {
+            throw Error(
+              `Saved file '${file}' contains an invalid software entry '${obj.name}' that is dynamic but does not have an executable regex`
+            )
+          }
+          if (!obj.installedRegex) {
+            throw Error(
+              `Saved file '${file}' contains an invalid software entry '${obj.name}' that does not have an installedRegex`
+            )
+          }
+          if (!obj.url) {
+            throw Error(
+              `Saved file '${file}' contains an invalid software entry '${obj.name}' that does not have a url`
+            )
+          }
+          if (!obj.latestRegex) {
+            throw Error(
+              `Saved file '${file}' contains an invalid software entry '${obj.name}' that does not have a latestRegex`
+            )
+          }
+        }
+        json = json.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1)) // sort alphabetically
+        for (const obj of json) {
+          softwares.push(
+            new Software({
+              name: obj.name,
+              executable: obj.executable,
+              args: obj.args,
+              installedRegex: obj.installedRegex,
+              shellOverride: obj.shellOverride,
+              url: obj.url,
+              latestRegex: obj.latestRegex,
+            })
+          )
+        }
+      } catch (err) {
+        throw Error(`Cannot parse saved file '${file}' as JSON: ${err.message}`)
       }
-      for (const obj of json) {
-        if (!obj.name) {
-          throw Error(`Saved file '${file}' contains an invalid software entry that does not have a name`)
-        }
-        if (!obj.executable) {
-          throw Error(
-            `Saved file '${file}' contains an invalid software entry '${obj.name}' that does not have an executable`
-          )
-        }
-        if (!obj.executable.command && !obj.executable.directory) {
-          throw Error(
-            `Saved file '${file}' contains an invalid software entry '${obj.name}' that is dynamic but does not have an executable directory`
-          )
-        }
-        if (!obj.executable.command && !obj.executable.regex) {
-          throw Error(
-            `Saved file '${file}' contains an invalid software entry '${obj.name}' that is dynamic but does not have an executable regex`
-          )
-        }
-        if (!obj.installedRegex) {
-          throw Error(
-            `Saved file '${file}' contains an invalid software entry '${obj.name}' that does not have an installedRegex`
-          )
-        }
-        if (!obj.url) {
-          throw Error(`Saved file '${file}' contains an invalid software entry '${obj.name}' that does not have a url`)
-        }
-        if (!obj.latestRegex) {
-          throw Error(
-            `Saved file '${file}' contains an invalid software entry '${obj.name}' that does not have a latestRegex`
-          )
-        }
-      }
-      json = json.sort((a, b) => (a.name > b.name ? 1 : -1)) // sort alphabetically
-      for (const obj of json) {
-        softwares.push(
-          new Software({
-            name: obj.name,
-            executable: obj.executable,
-            args: obj.args,
-            installedRegex: obj.installedRegex,
-            shellOverride: obj.shellOverride,
-            url: obj.url,
-            latestRegex: obj.latestRegex,
-          })
-        )
-      }
-    } catch (err) {
-      throw Error(`Cannot parse saved file '${file}' as JSON: ${err.message}`)
     }
     return SoftwareList.save(softwares)
   }

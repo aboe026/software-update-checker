@@ -22,87 +22,7 @@ To see a list of available targets and flags, run the executable with the `--hel
 
 ### Example Configurations
 
-- [Docker](https://www.docker.com/)
-
-  - type: `Static`
-  - command: `docker`
-  - arguments: `--version`
-  - installed regex: `version (.*),`
-  - latest URL: `https://docs.docker.com/engine/release-notes/`,
-  - latest regex: `\>(.*)\<\/h2\>`
-
-- [Docker Desktop for Windows](https://hub.docker.com/editions/community/docker-ce-desktop-windows)
-
-  - type: `Static`
-  - command: `Get-ItemProperty`
-  - arguments: `HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | select DisplayName,DisplayVersion | where {$_.DisplayName -like "Docker*"}`
-  - installed regex: `Docker Desktop (.*)`
-  - shell override: `powershell`
-  - latest URL: `https://docs.docker.com/docker-for-windows/release-notes/`,
-  - latest regex: `Docker Desktop Community (.*)\<\/h2\>`
-
-- [Firefox](https://www.mozilla.org/)
-
-  - type: `Static`
-  - command: `C:\Program Files\Mozilla Firefox\firefox.exe`
-  - arguments: `--version`
-  - installed regex: `Firefox (.*)`
-  - latest URL: `https://www.mozilla.org/en-US/firefox/releasenotes/`
-  - latest regex: `Version (\d+\.\d+(\.\d+)?)`
-
-- [GIMP](https://www.gimp.org/)
-
-  - type: `Dynamic`
-  - command directory: `C:\Program Files\GIMP 2\bin`
-  - directory regex: `gimp-\d+\.\d+\.exe`
-  - arguments: `--version`
-  - installed regex: `version (.*)`
-  - latest URL: `https://www.gimp.org/downloads/`
-  - latest regex: `The current stable release of GIMP is <b>(.*)<\/b>`
-
-- [Git](https://git-scm.com/)
-
-  - type: `Static`
-  - command: `git`
-  - arguments: `--version`
-  - installed regex: `version (.*)`
-  - latest URL: `https://github.com/git-for-windows/git/releases/latest`
-  - latest regex: `\/tag\/v(.*?)&quot`
-
-- [Inkscape](https://inkscape.org/)
-
-  - type: `Static`
-  - command: `C:\Program Files\Inkscape\bin\inkscape.com`
-  - arguments: `--version`
-  - installed regex: `Inkscape (.*) \(`,
-  - latest URL: `https://inkscape.org/release/`
-  - latest regex: `Download Inkscape (.*) \|`
-
-- [MongoDB](https://www.mongodb.com/)
-
-  - type: `Static`
-  - command: `mongod`
-  - arguments: `--version`
-  - installed regex: `version v(.*)`
-  - latest URL: `https://www.mongodb.com/try/download/community`
-  - latest regex: `(\d+.\d+.\d+) \(current\)`
-
-- [NVM](https://github.com/coreybutler/nvm-windows)
-
-  - type: `Static`
-  - command: `nvm`
-  - arguments: `version`
-  - installed regex: `(.*)`
-  - latest URL: `https://github.com/coreybutler/nvm-windows/releases/latest`
-  - latest regex: `\/tag\/(.*?)&quot`
-
-- [VS Code](https://code.visualstudio.com/)
-  - type: `Static`
-  - command: `code`
-  - arguments: `--version`
-  - installed regex: `(.*)`
-  - latest URL: `https://github.com/microsoft/vscode/releases/latest`
-  - latest regex: `\/tag\/(.*?)&quot`
+See the [example configurations file](example-configurations.md) for reference on what software configurations should look like.
 
 ---
 
@@ -164,7 +84,7 @@ To test the project for regressions, run
 npm test
 ```
 
-This will [lint](#lint) the project, then run [unit](#unit-tests) and [functional](#functional-tests) tests
+This will [lint](#lint) the project, then run [unit](#unit-tests), [functional](#functional-tests), and [e2e](#end-to-end-tests) tests
 
 #### Unit Tests
 
@@ -182,7 +102,7 @@ npm run test:unit -- -t 'test name'
 
 #### Functional Tests
 
-Functional tests run against the final, distributable executable and are meant to test overarching scenarios of the tool to simulate as close as possible real interactions and use/edge cases. They required code to be [packaged](#package), and can be run with
+Functional tests are for portions of the code that cannot easily be mocked (or do not make sense to mock), such as executables and interacting with a live website. They can be run with
 
 ```sh
 npm run test:func
@@ -193,3 +113,29 @@ _Note_: To run a specific test, execute
 ```sh
 npm run test:func -- -t 'test name'
 ```
+
+#### End to End Tests
+
+End to End (E2E) Tests run against the final, distributable executable and are meant to test overarching scenarios of the tool to simulate as close as possible the real interactions and use/edge cases.
+
+They required code to be [packaged](#package), and can be run with
+
+```sh
+npm run test:e2e
+```
+
+_Note_: To run a specific test, execute
+
+```sh
+npm run test:e2e -- -t 'test name'
+```
+
+### Code Coverage
+
+By default, code coverage will be generated for unit and functional tests in the `coverage` directory in `unit` and `func` sub-directories respectively. Their individual coverages can be merged into an overall coverage report with
+
+```sh
+npm run coverage:merge
+```
+
+There is no code coverage for [e2e](#end-to-end-tests) tests as those do not run against source code, but binaries.
