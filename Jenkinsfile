@@ -93,7 +93,7 @@ node {
                   println err
                 } finally {
                   junit testResults: 'test-results/e2e.xml', allowEmptyResults: true
-                  def e2eDebugLogs = 'test/e2e/.temp-work-dir/debug.txt'
+                  def e2eDebugLogs = 'test/e2e/.temp-work-dir/e2e-debug.txt'
                   if (fileExists(e2eDebugLogs)) {
                     archiveArtifacts artifacts: e2eDebugLogs
                   }

@@ -1,4 +1,4 @@
-import E2eAddUtil from './helpers/e2e-add-util'
+import E2eAddUtil, { InstalledReconfiguration, LatestReconfiguration } from './helpers/e2e-add-util'
 import E2eHomeUtil, { HomeChoiceOption } from './helpers/e2e-home-util'
 import interactiveExecute, { KEYS } from './helpers/interactive-execute'
 import Software from '../../src/software'
@@ -30,6 +30,59 @@ describe('Add', () => {
     })
     await E2eAddUtil.setSoftwares([existing])
     await E2eAddUtil.verifySoftwares([existing])
+  })
+  it('does not add if installed error and choose not to reconfigure', async () => {
+    await E2eAddUtil.setSoftwares([])
+    await E2eAddUtil.verifySoftwares([])
+    const installedError = 'does not compute'
+    await testReconfigureAdd({
+      name: 'e2e add installed error no reconfigure',
+      installed: [
+        {
+          command: 'node',
+          args: `${E2eAddUtil.COMMAND.Bad} ${installedError}`,
+          shellOverride: '',
+          regex: 'v(.*)',
+          error: installedError,
+          confirmOrReconfigure: false,
+        },
+      ],
+    })
+    await E2eAddUtil.verifySoftwares([])
+  })
+  it('does not add if latest error and choose not to reconfigure', async () => {
+    try {
+      await E2eAddUtil.setSoftwares([])
+      await E2eAddUtil.verifySoftwares([])
+      const installedVersion = '1.0.1'
+      const url = Website.getErrorUrl('could not connect')
+      const port = Website.getPort()
+      await Website.stop()
+      await testReconfigureAdd({
+        name: 'e2e add latest error no reconfigure',
+        installed: [
+          {
+            command: 'node',
+            args: `${E2eAddUtil.COMMAND.Good} v${installedVersion}`,
+            shellOverride: '',
+            regex: 'v(.*)',
+            version: installedVersion,
+            confirmOrReconfigure: true,
+          },
+        ],
+        latest: [
+          {
+            url,
+            regex: 'latest: v(.*)',
+            error: `request to ${url} failed, reason: connect ECONNREFUSED 127.0.0.1:${port}`,
+            confirmOrReconfigure: false,
+          },
+        ],
+      })
+      await E2eAddUtil.verifySoftwares([])
+    } finally {
+      await Website.start()
+    }
   })
   it('adds valid software with non-existent softwares file', async () => {
     await E2eAddUtil.verifySoftwares(undefined, false)
@@ -212,20 +265,146 @@ describe('Add', () => {
     })
     await E2eAddUtil.verifySoftwares([existingFirst, software, existingSecond])
   })
+  it('adds valid software if installed error is reconfigured', async () => {
+    await E2eAddUtil.setSoftwares([])
+    await E2eAddUtil.verifySoftwares([])
+    const command = 'node'
+    const installedError = 'does not compute'
+    const installedVersion = '1.2.3'
+    const latestVersion = '2.3.4'
+    const software = new Software({
+      name: 'e2e add installed error reconfigured',
+      executable: {
+        command,
+      },
+      args: `${E2eAddUtil.COMMAND.Good} v${installedVersion}`,
+      shellOverride: '',
+      installedRegex: 'v(.*)',
+      url: Website.getResponseUrl(`latest: v${latestVersion}`),
+      latestRegex: 'latest: v(.*)',
+    })
+    await testReconfigureAdd({
+      name: software.name,
+      installed: [
+        {
+          command,
+          args: `${E2eAddUtil.COMMAND.Bad} ${installedError}`,
+          shellOverride: software.shellOverride,
+          regex: software.installedRegex,
+          error: installedError,
+          confirmOrReconfigure: true,
+        },
+        {
+          command,
+          args: software.args,
+          regex: software.installedRegex,
+          version: installedVersion,
+          confirmOrReconfigure: true,
+        },
+      ],
+      latest: [
+        {
+          url: software.url,
+          regex: software.latestRegex,
+          version: latestVersion,
+          confirmOrReconfigure: true,
+        },
+      ],
+    })
+    await E2eAddUtil.verifySoftwares([software])
+  })
+  it('adds valid software if latest error is reconfigured', async () => {
+    await E2eAddUtil.setSoftwares([])
+    await E2eAddUtil.verifySoftwares([])
+    const command = 'node'
+    const installedVersion = '2.0.0'
+    const latestError = 'webserver not available'
+    const latestVersion = '4.0.0'
+    const software = new Software({
+      name: 'e2e add latest error reconfigured',
+      executable: {
+        command,
+      },
+      args: `${E2eAddUtil.COMMAND.Good} v${installedVersion}`,
+      shellOverride: '',
+      installedRegex: 'v(.*)',
+      url: Website.getResponseUrl(`latest: v${latestVersion}`),
+      latestRegex: 'latest: v(.*)',
+    })
+    await testReconfigureAdd({
+      name: software.name,
+      installed: [
+        {
+          command,
+          args: software.args,
+          shellOverride: software.shellOverride,
+          regex: software.installedRegex,
+          version: installedVersion,
+          confirmOrReconfigure: true,
+        },
+      ],
+      latest: [
+        {
+          url: Website.getErrorUrl(latestError),
+          regex: software.latestRegex,
+          error: `Could not find match for regex '/${software.latestRegex}/' in text '${latestError}'`,
+          confirmOrReconfigure: true,
+        },
+        {
+          url: software.url,
+          regex: software.latestRegex,
+          version: latestVersion,
+          confirmOrReconfigure: true,
+        },
+      ],
+    })
+    await E2eAddUtil.verifySoftwares([software])
+  })
 })
 
 async function testAddNameAlreadyExists({ name }: { name: string }) {
   const response = await interactiveExecute({
-    inputs: [...E2eHomeUtil.getDefaultOptionInputs(HomeChoiceOption.Add), name, KEYS.Enter],
+    inputs: [...E2eHomeUtil.getInputs(HomeChoiceOption.Add), name, KEYS.Enter],
   })
-  E2eAddUtil.validatePromptChunks(response.chunks, [
-    ...E2eHomeUtil.getDefaultOptionChunks(HomeChoiceOption.Add),
+  await E2eAddUtil.validateChunks(response.chunks, [
+    ...E2eHomeUtil.getChunks(HomeChoiceOption.Add),
     {
       question: 'Name to identify new software',
       answer: name,
     },
     E2eAddUtil.getNameInUseMessage(name),
     '? Name to identify new software: ',
+  ])
+}
+
+async function testReconfigureAdd({
+  name,
+  installed,
+  latest = [],
+}: {
+  name: string
+  installed: InstalledReconfiguration[]
+  latest?: LatestReconfiguration[]
+}) {
+  const response = await interactiveExecute({
+    inputs: [
+      ...E2eHomeUtil.getInputs(HomeChoiceOption.Add),
+      ...E2eAddUtil.getInputsReconfigure({
+        name,
+        installed,
+        latest,
+      }),
+      ...E2eHomeUtil.getInputs(HomeChoiceOption.Exit),
+    ],
+  })
+  await E2eAddUtil.validateChunks(response.chunks, [
+    ...E2eHomeUtil.getChunks(HomeChoiceOption.Add),
+    ...E2eAddUtil.getChunksReconfigure({
+      name,
+      installed,
+      latest,
+    }),
+    ...E2eHomeUtil.getChunks(HomeChoiceOption.Exit),
   ])
 }
 
@@ -240,20 +419,20 @@ async function testDefaultAdd({
 }) {
   const response = await interactiveExecute({
     inputs: [
-      ...E2eHomeUtil.getDefaultOptionInputs(HomeChoiceOption.Add),
-      ...E2eAddUtil.getDefaultAddInputs({
+      ...E2eHomeUtil.getInputs(HomeChoiceOption.Add),
+      ...E2eAddUtil.getInputs({
         software,
       }),
-      ...E2eHomeUtil.getDefaultOptionInputs(HomeChoiceOption.Exit),
+      ...E2eHomeUtil.getInputs(HomeChoiceOption.Exit),
     ],
   })
-  E2eAddUtil.validatePromptChunks(response.chunks, [
-    ...E2eHomeUtil.getDefaultOptionChunks(HomeChoiceOption.Add),
-    ...E2eAddUtil.getDefaultAddChunks({
+  await E2eAddUtil.validateChunks(response.chunks, [
+    ...E2eHomeUtil.getChunks(HomeChoiceOption.Add),
+    ...E2eAddUtil.getChunks({
       software,
       installedVersion,
       latestVersion,
     }),
-    ...E2eHomeUtil.getDefaultOptionChunks(HomeChoiceOption.Exit),
+    ...E2eHomeUtil.getChunks(HomeChoiceOption.Exit),
   ])
 }

@@ -136,15 +136,12 @@ describe('Delete', () => {
 
 async function testNoSoftwaresDelete() {
   const response = await interactiveExecute({
-    inputs: [
-      ...E2eHomeUtil.getDefaultOptionInputs(HomeChoiceOption.Delete),
-      ...E2eHomeUtil.getDefaultOptionInputs(HomeChoiceOption.Exit),
-    ],
+    inputs: [...E2eHomeUtil.getInputs(HomeChoiceOption.Delete), ...E2eHomeUtil.getInputs(HomeChoiceOption.Exit)],
   })
-  E2eDeleteUtil.validatePromptChunks(response.chunks, [
-    ...E2eHomeUtil.getDefaultOptionChunks(HomeChoiceOption.Delete),
+  await E2eDeleteUtil.validateChunks(response.chunks, [
+    ...E2eHomeUtil.getChunks(HomeChoiceOption.Delete),
     E2eDeleteUtil.MESSAGES.NoSoftwares,
-    ...E2eHomeUtil.getDefaultOptionChunks(HomeChoiceOption.Exit),
+    ...E2eHomeUtil.getChunks(HomeChoiceOption.Exit),
   ])
 }
 
@@ -159,21 +156,21 @@ async function testDefaultDelete({
 }) {
   const response = await interactiveExecute({
     inputs: [
-      ...E2eHomeUtil.getDefaultOptionInputs(HomeChoiceOption.Delete),
-      ...E2eDeleteUtil.getDefaultDeleteInputs({
+      ...E2eHomeUtil.getInputs(HomeChoiceOption.Delete),
+      ...E2eDeleteUtil.getInputs({
         position: positionToDelete,
         confirm,
       }),
-      ...E2eHomeUtil.getDefaultOptionInputs(HomeChoiceOption.Exit),
+      ...E2eHomeUtil.getInputs(HomeChoiceOption.Exit),
     ],
   })
-  E2eDeleteUtil.validatePromptChunks(response.chunks, [
-    ...E2eHomeUtil.getDefaultOptionChunks(HomeChoiceOption.Delete),
-    ...E2eDeleteUtil.getDefaultDeleteChunks({
+  await E2eDeleteUtil.validateChunks(response.chunks, [
+    ...E2eHomeUtil.getChunks(HomeChoiceOption.Delete),
+    ...E2eDeleteUtil.getChunks({
       existingSoftwares,
       softwareToDelete: existingSoftwares[positionToDelete],
       confirm,
     }),
-    ...E2eHomeUtil.getDefaultOptionChunks(HomeChoiceOption.Exit),
+    ...E2eHomeUtil.getChunks(HomeChoiceOption.Exit),
   ])
 }

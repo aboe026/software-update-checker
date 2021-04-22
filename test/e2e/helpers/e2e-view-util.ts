@@ -5,7 +5,7 @@ export default class E2eViewUtil extends E2eBaseUtil {
     NoSoftwares: 'No softwares to view. Please add a software to have something to view.',
   }
 
-  static getDefaultViewChunks({ rows }: { rows: TableRow[] }): TableOutput[] {
+  static getChunks({ rows }: { rows: TableRow[] }): TableOutput[] {
     return [
       {
         rows,

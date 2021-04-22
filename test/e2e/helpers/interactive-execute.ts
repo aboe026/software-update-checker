@@ -5,7 +5,7 @@ import { spawn } from 'child_process'
 
 import E2eConfig from './e2e-config'
 
-export default function ({
+export default async function ({
   inputs,
   timeoutMs = 12000,
   minQuietPeriodMs = 200,
@@ -16,6 +16,7 @@ export default function ({
   minQuietPeriodMs?: number
   maxQuietPeriodMs?: number
 }): Promise<ExecutableResponse> {
+  await E2eConfig.appendToDebugLog(`Inputs: ${JSON.stringify(inputs, null, 2)}`)
   const chunks: string[] = []
   let inputIndex = 0
 
@@ -32,10 +33,10 @@ export default function ({
   }, timeoutMs)
 
   proc.stdout.on('data', (chunk: Buffer) => {
-    recordAndReply(chunk.toString())
+    recordAndReply(chunk.toString(), 'stdout')
   })
   proc.stderr.on('data', (chunk: Buffer) => {
-    recordAndReply(chunk.toString())
+    recordAndReply(chunk.toString(), 'stderr')
   })
   proc.stdout.on('close', () => {
     cleanUp()
@@ -44,14 +45,13 @@ export default function ({
     cleanUp()
   })
 
-  function recordAndReply(chunk: string): void {
-    E2eConfig.appendToDebugLog(JSON.stringify(chunk.toString()))
+  function recordAndReply(chunk: string, prefix: string) {
+    E2eConfig.appendToDebugLog(`${prefix}: ${JSON.stringify(chunk.toString())}`) // for some reason if this is awaited, chunks get read in incorrect order (stdout vs stderr)
     const line = escapeChunk(chunk.toString())
     if (line !== '' && line !== '\n') {
-      const lineChunks = line.split(/(?<!^)(\? [^\(YN])/) // sometimes multiple lines come in a single chunk. Split on those (but not boolean questions or choices)
-      if (lineChunks.length === 1) {
-        chunks.push(escapeChunk(lineChunks[0]))
-      } else {
+      const lineChunks = line.split(/(?<!^)(\? (?!\(|Yes|No))/) // sometimes multiple lines come in a single chunk. Split on those (but not boolean questions or choices)
+      chunks.push(escapeChunk(lineChunks[0]))
+      if (lineChunks.length > 1) {
         for (let i = 2; i < lineChunks.length; i = i + 2) {
           chunks.push(escapeChunk(`${lineChunks[i - 1]}${lineChunks[i]}`))
         }
@@ -90,10 +90,10 @@ export default function ({
   return new Promise(function (resolve) {
     proc.stdout.pipe(
       concat(async (result: Buffer) => {
-        await E2eConfig.appendToDebugLog(JSON.stringify(chunks, null, 2))
+        await E2eConfig.appendToDebugLog(`Chunks: ${JSON.stringify(chunks, null, 2)}`)
         resolve({
           stdout: result.toString(),
-          chunks,
+          chunks: chunks.filter((chunk) => chunk !== ''),
         })
       })
     )

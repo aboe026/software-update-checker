@@ -10,7 +10,7 @@ export default class E2eConfig {
   }
   static readonly FILE = {
     Softwares: path.join(E2eConfig.DIRECTORY.UserConfig, 'softwares.json'),
-    Debug: path.join(E2eConfig.DIRECTORY.Temp, 'debug.txt'),
+    Debug: path.join(E2eConfig.DIRECTORY.Temp, 'e2e-debug.txt'),
   }
 
   static async appendToDebugLog(words: string): Promise<void> {

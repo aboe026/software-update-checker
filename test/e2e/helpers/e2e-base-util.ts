@@ -16,7 +16,24 @@ export default class E2eBaseUtil {
     return `Invalid name '${name}', already in use.`
   }
 
-  static getNavigateToPositionInputs(position: number): string[] {
+  static getInputsPrompt({
+    currentValue,
+    defaultValue,
+    fallbackValue = '',
+  }: {
+    currentValue: string | undefined
+    defaultValue?: string
+    fallbackValue?: string
+  }): string[] {
+    const inputs = []
+    if (!defaultValue || currentValue !== defaultValue) {
+      inputs.push(currentValue || fallbackValue)
+    }
+    inputs.push(KEYS.Enter)
+    return inputs
+  }
+
+  static getInputsNavigate(position: number): string[] {
     const inputs: string[] = []
     for (let i = 0; i < position; i++) {
       inputs.push(KEYS.Down)
@@ -54,10 +71,11 @@ export default class E2eBaseUtil {
     }
   }
 
-  static validatePromptChunks(
+  static async validateChunks(
     actualChunks: string[],
     expectedChunks: (string | StringPrompt | BooleanPrompt | ChoicePrompt | TableOutput)[]
-  ): void {
+  ): Promise<void> {
+    await E2eConfig.appendToDebugLog(`Expected: ${JSON.stringify(expectedChunks, null, 2)}`)
     let actualIndex = 0
     for (let i = 0; i < expectedChunks.length; i++) {
       const expected = expectedChunks[i]
@@ -105,7 +123,7 @@ export default class E2eBaseUtil {
             actualIndex++
           }
           actual = condenseBackslashes(stripNewlines(actualChunks[actualIndex - 1]))
-          expect(actual).toBe(`${question}${expected.answer}`)
+          expect(actual).toBe(`${question}${expected.answer || ''}`)
         }
       }
     }
@@ -257,7 +275,7 @@ interface InputChoice {
 
 export interface StringPrompt {
   question: string
-  answer: string
+  answer?: string
   default?: string
   validated?: boolean
 }
