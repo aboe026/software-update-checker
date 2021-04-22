@@ -75,7 +75,7 @@ export default class E2eBaseUtil {
     actualChunks: string[],
     expectedChunks: (string | StringPrompt | BooleanPrompt | ChoicePrompt | TableOutput)[]
   ): void {
-    E2eConfig.appendToDebugLog(JSON.stringify(expectedChunks, null, 2))
+    E2eConfig.appendToDebugLog(`Expected: ${JSON.stringify(expectedChunks, null, 2)}`)
     let actualIndex = 0
     for (let i = 0; i < expectedChunks.length; i++) {
       const expected = expectedChunks[i]
