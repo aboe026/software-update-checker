@@ -65,7 +65,7 @@ describe('Lifecycle', () => {
         ...E2eHomeUtil.getInputs(HomeChoiceOption.Exit),
       ],
     })
-    E2eBaseUtil.validateChunks(response.chunks, [
+    await E2eBaseUtil.validateChunks(response.chunks, [
       ...E2eHomeUtil.getChunks(HomeChoiceOption.View),
       E2eViewUtil.MESSAGES.NoSoftwares,
       ...E2eHomeUtil.getChunks(HomeChoiceOption.Add),

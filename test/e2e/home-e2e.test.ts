@@ -7,7 +7,7 @@ describe('Home', () => {
     const response = await interactiveExecute({
       inputs: [],
     })
-    E2eHomeUtil.validateChunks(response.chunks, [
+    await E2eHomeUtil.validateChunks(response.chunks, [
       {
         choice: E2eHomeUtil.CHOICES.Home,
       },
@@ -19,7 +19,7 @@ describe('Home', () => {
     const response = await interactiveExecute({
       inputs: E2eHomeUtil.getInputs(E2eHomeUtil.CHOICES.Home.options.Exit),
     })
-    E2eHomeUtil.validateChunks(response.chunks, E2eHomeUtil.getChunks(E2eHomeUtil.CHOICES.Home.options.Exit))
+    await E2eHomeUtil.validateChunks(response.chunks, E2eHomeUtil.getChunks(E2eHomeUtil.CHOICES.Home.options.Exit))
     await E2eHomeUtil.verifySoftwares(undefined, false)
   })
 })

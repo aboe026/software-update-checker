@@ -138,7 +138,7 @@ async function testNoSoftwaresDelete() {
   const response = await interactiveExecute({
     inputs: [...E2eHomeUtil.getInputs(HomeChoiceOption.Delete), ...E2eHomeUtil.getInputs(HomeChoiceOption.Exit)],
   })
-  E2eDeleteUtil.validateChunks(response.chunks, [
+  await E2eDeleteUtil.validateChunks(response.chunks, [
     ...E2eHomeUtil.getChunks(HomeChoiceOption.Delete),
     E2eDeleteUtil.MESSAGES.NoSoftwares,
     ...E2eHomeUtil.getChunks(HomeChoiceOption.Exit),
@@ -164,7 +164,7 @@ async function testDefaultDelete({
       ...E2eHomeUtil.getInputs(HomeChoiceOption.Exit),
     ],
   })
-  E2eDeleteUtil.validateChunks(response.chunks, [
+  await E2eDeleteUtil.validateChunks(response.chunks, [
     ...E2eHomeUtil.getChunks(HomeChoiceOption.Delete),
     ...E2eDeleteUtil.getChunks({
       existingSoftwares,

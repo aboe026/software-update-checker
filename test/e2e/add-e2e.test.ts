@@ -366,7 +366,7 @@ async function testAddNameAlreadyExists({ name }: { name: string }) {
   const response = await interactiveExecute({
     inputs: [...E2eHomeUtil.getInputs(HomeChoiceOption.Add), name, KEYS.Enter],
   })
-  E2eAddUtil.validateChunks(response.chunks, [
+  await E2eAddUtil.validateChunks(response.chunks, [
     ...E2eHomeUtil.getChunks(HomeChoiceOption.Add),
     {
       question: 'Name to identify new software',
@@ -397,7 +397,7 @@ async function testReconfigureAdd({
       ...E2eHomeUtil.getInputs(HomeChoiceOption.Exit),
     ],
   })
-  E2eAddUtil.validateChunks(response.chunks, [
+  await E2eAddUtil.validateChunks(response.chunks, [
     ...E2eHomeUtil.getChunks(HomeChoiceOption.Add),
     ...E2eAddUtil.getChunksReconfigure({
       name,
@@ -426,7 +426,7 @@ async function testDefaultAdd({
       ...E2eHomeUtil.getInputs(HomeChoiceOption.Exit),
     ],
   })
-  E2eAddUtil.validateChunks(response.chunks, [
+  await E2eAddUtil.validateChunks(response.chunks, [
     ...E2eHomeUtil.getChunks(HomeChoiceOption.Add),
     ...E2eAddUtil.getChunks({
       software,

@@ -13,7 +13,7 @@ export default class E2eConfig {
     Debug: path.join(E2eConfig.DIRECTORY.Temp, 'e2e-debug.txt'),
   }
 
-  static appendToDebugLog(words: string): void {
-    fs.appendFileSync(E2eConfig.FILE.Debug, `${words}\n`)
+  static async appendToDebugLog(words: string): Promise<void> {
+    await fs.appendFile(E2eConfig.FILE.Debug, `${words}\n`)
   }
 }

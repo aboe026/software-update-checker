@@ -12,9 +12,9 @@ import E2eConfig from './e2e-config'
 
 beforeEach(async () => {
   await fs.remove(E2eConfig.FILE.Softwares)
-  E2eConfig.appendToDebugLog(`${expect.getState().currentTestName}...`)
+  await E2eConfig.appendToDebugLog(`${expect.getState().currentTestName}...`)
 })
 
-afterEach(() => {
-  E2eConfig.appendToDebugLog(`...${expect.getState().currentTestName}\n`)
+afterEach(async () => {
+  await E2eConfig.appendToDebugLog(`...${expect.getState().currentTestName}\n`)
 })
