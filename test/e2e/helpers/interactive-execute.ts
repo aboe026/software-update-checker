@@ -16,7 +16,7 @@ export default async function ({
   minQuietPeriodMs?: number
   maxQuietPeriodMs?: number
 }): Promise<ExecutableResponse> {
-  // E2eConfig.appendToDebugLog(`Inputs: ${JSON.stringify(inputs, null, 2)}`)
+  E2eConfig.appendToDebugLog(`Inputs: ${JSON.stringify(inputs, null, 2)}`)
   const chunks: string[] = []
   let inputIndex = 0
 
@@ -90,8 +90,7 @@ export default async function ({
   return new Promise(function (resolve) {
     proc.stdout.pipe(
       concat((result: Buffer) => {
-        // E2eConfig.appendToDebugLog(`Result: ${result.toString()}`)
-        // E2eConfig.appendToDebugLog(`Chunks: ${JSON.stringify(chunks, null, 2)}`)
+        E2eConfig.appendToDebugLog(`Chunks: ${JSON.stringify(chunks, null, 2)}`)
         resolve({
           stdout: result.toString(),
           chunks: chunks.filter((chunk) => chunk !== ''),
