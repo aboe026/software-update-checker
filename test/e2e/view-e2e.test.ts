@@ -289,7 +289,7 @@ async function testNoSoftwaresView() {
   const response = await interactiveExecute({
     inputs: [...E2eHomeUtil.getInputs(HomeChoiceOption.View), ...E2eHomeUtil.getInputs(HomeChoiceOption.Exit)],
   })
-  await E2eViewUtil.validateChunks(response.chunks, [
+  E2eViewUtil.validateChunks(response.chunks, [
     ...E2eHomeUtil.getChunks(HomeChoiceOption.View),
     E2eViewUtil.MESSAGES.NoSoftwares,
     ...E2eHomeUtil.getChunks(HomeChoiceOption.Exit),
@@ -300,7 +300,7 @@ async function testDefaultView({ rows }: { rows: TableRow[] }) {
   const response = await interactiveExecute({
     inputs: [...E2eHomeUtil.getInputs(HomeChoiceOption.View), ...E2eHomeUtil.getInputs(HomeChoiceOption.Exit)],
   })
-  await E2eViewUtil.validateChunks(response.chunks, [
+  E2eViewUtil.validateChunks(response.chunks, [
     ...E2eHomeUtil.getChunks(HomeChoiceOption.View),
     ...E2eViewUtil.getChunks({
       rows,

@@ -16,7 +16,7 @@ export default async function ({
   minQuietPeriodMs?: number
   maxQuietPeriodMs?: number
 }): Promise<ExecutableResponse> {
-  await E2eConfig.appendToDebugLog(JSON.stringify(inputs, null, 2))
+  E2eConfig.appendToDebugLog(JSON.stringify(inputs, null, 2))
   const chunks: string[] = []
   let inputIndex = 0
 
@@ -32,11 +32,11 @@ export default async function ({
     proc.stdin.end()
   }, timeoutMs)
 
-  proc.stdout.on('data', async (chunk: Buffer) => {
-    await recordAndReply(chunk.toString())
+  proc.stdout.on('data', (chunk: Buffer) => {
+    recordAndReply(chunk.toString())
   })
-  proc.stderr.on('data', async (chunk: Buffer) => {
-    await recordAndReply(chunk.toString())
+  proc.stderr.on('data', (chunk: Buffer) => {
+    recordAndReply(chunk.toString())
   })
   proc.stdout.on('close', () => {
     cleanUp()
@@ -45,11 +45,11 @@ export default async function ({
     cleanUp()
   })
 
-  async function recordAndReply(chunk: string): Promise<void> {
-    await E2eConfig.appendToDebugLog(JSON.stringify(chunk.toString()))
+  function recordAndReply(chunk: string) {
+    E2eConfig.appendToDebugLog(JSON.stringify(chunk.toString()))
     const line = escapeChunk(chunk.toString())
     if (line !== '' && line !== '\n') {
-      const lineChunks = line.split(/(?<!^)(\? [^\(YN])/) // sometimes multiple lines come in a single chunk. Split on those (but not boolean questions or choices)
+      const lineChunks = line.split(/(?<!^)(\? (?!\(|Yes|No))/) // sometimes multiple lines come in a single chunk. Split on those (but not boolean questions or choices)
       chunks.push(escapeChunk(lineChunks[0]))
       if (lineChunks.length > 1) {
         for (let i = 2; i < lineChunks.length; i = i + 2) {
@@ -89,8 +89,8 @@ export default async function ({
 
   return new Promise(function (resolve) {
     proc.stdout.pipe(
-      concat(async (result: Buffer) => {
-        await E2eConfig.appendToDebugLog(JSON.stringify(chunks, null, 2))
+      concat((result: Buffer) => {
+        E2eConfig.appendToDebugLog(JSON.stringify(chunks, null, 2))
         resolve({
           stdout: result.toString(),
           chunks: chunks.filter((chunk) => chunk !== ''),

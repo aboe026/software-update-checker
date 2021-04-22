@@ -399,7 +399,7 @@ async function testNoSoftwaresEdit() {
   const response = await interactiveExecute({
     inputs: [...E2eHomeUtil.getInputs(HomeChoiceOption.Edit), ...E2eHomeUtil.getInputs(HomeChoiceOption.Exit)],
   })
-  await E2eEditUtil.validateChunks(response.chunks, [
+  E2eEditUtil.validateChunks(response.chunks, [
     ...E2eHomeUtil.getChunks(HomeChoiceOption.Edit),
     E2eEditUtil.MESSAGES.NoSoftwares,
     ...E2eHomeUtil.getChunks(HomeChoiceOption.Exit),
@@ -424,7 +424,7 @@ async function testEditNameAlreadyExists({
       KEYS.Enter,
     ],
   })
-  await E2eEditUtil.validateChunks(response.chunks, [
+  E2eEditUtil.validateChunks(response.chunks, [
     ...E2eHomeUtil.getChunks(HomeChoiceOption.Edit),
     ...E2eEditUtil.getChunksNavigate({
       existingSoftwares,
@@ -466,7 +466,7 @@ async function testReconfigureEdit({
       ...E2eHomeUtil.getInputs(HomeChoiceOption.Exit),
     ],
   })
-  await E2eEditUtil.validateChunks(response.chunks, [
+  E2eEditUtil.validateChunks(response.chunks, [
     ...E2eHomeUtil.getChunks(HomeChoiceOption.Edit),
     ...E2eEditUtil.getChunksReconfigure({
       existingSoftwares,
@@ -503,7 +503,7 @@ async function testDefaultEdit({
       ...E2eHomeUtil.getInputs(HomeChoiceOption.Exit),
     ],
   })
-  await E2eEditUtil.validateChunks(response.chunks, [
+  E2eEditUtil.validateChunks(response.chunks, [
     ...E2eHomeUtil.getChunks(HomeChoiceOption.Edit),
     ...E2eEditUtil.getChunks({
       existingSoftwares,
