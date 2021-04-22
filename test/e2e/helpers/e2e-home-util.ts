@@ -17,7 +17,7 @@ export default class E2eHomeUtil extends E2eBaseUtil {
     },
   }
 
-  static getDefaultOptionInputs(option: HomeChoiceOption): string[] {
+  static getInputs(option: HomeChoiceOption): string[] {
     const inputs: string[] = []
     for (let i = 0; i < Object.keys(HomeChoiceOption).length && !inputs.includes(KEYS.Enter); i++) {
       const choiceKey = Object.keys(HomeChoiceOption)[i] as keyof typeof HomeChoiceOption
@@ -31,7 +31,7 @@ export default class E2eHomeUtil extends E2eBaseUtil {
     return inputs
   }
 
-  static getDefaultOptionChunks(answer: HomeChoiceOption): ChoicePrompt[] {
+  static getChunks(answer: HomeChoiceOption): ChoicePrompt[] {
     return [
       {
         choice: this.CHOICES.Home,

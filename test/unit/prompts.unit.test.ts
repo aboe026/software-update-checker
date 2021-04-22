@@ -1177,7 +1177,7 @@ describe('Prompts Unit Tests', () => {
         expectedRows: [
           {
             name,
-            installedVersion: installedError,
+            installedVersion: 'Error',
             latestVersion: latestVersion,
             color: colors.red,
           },
@@ -1207,7 +1207,7 @@ describe('Prompts Unit Tests', () => {
           {
             name,
             installedVersion: installedVersion,
-            latestVersion: latestError,
+            latestVersion: 'Error',
             color: colors.red,
           },
         ],
@@ -1235,8 +1235,8 @@ describe('Prompts Unit Tests', () => {
         expectedRows: [
           {
             name,
-            installedVersion: installedError,
-            latestVersion: latestError,
+            installedVersion: 'Error',
+            latestVersion: 'Error',
             color: colors.red,
           },
         ],
@@ -1277,14 +1277,14 @@ describe('Prompts Unit Tests', () => {
         expectedRows: [
           {
             name: nameFirst,
-            installedVersion: installedError,
+            installedVersion: 'Error',
             latestVersion: latestVersion,
             color: colors.red,
           },
           {
             name: nameLast,
             installedVersion: installedVersion,
-            latestVersion: latestError,
+            latestVersion: 'Error',
             color: colors.red,
           },
         ],
@@ -1352,8 +1352,8 @@ describe('Prompts Unit Tests', () => {
           },
           {
             name: nameTwo,
-            installedVersion: installedErrorTwo,
-            latestVersion: latestErrorTwo,
+            installedVersion: 'Error',
+            latestVersion: 'Error',
             color: colors.red,
           },
           {

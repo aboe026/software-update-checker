@@ -44,38 +44,38 @@ describe('Lifecycle', () => {
     const response = await interactiveExecute({
       timeoutMs: 17000,
       inputs: [
-        ...E2eHomeUtil.getDefaultOptionInputs(HomeChoiceOption.View),
-        ...E2eHomeUtil.getDefaultOptionInputs(HomeChoiceOption.Add),
-        ...E2eAddUtil.getDefaultAddInputs({
+        ...E2eHomeUtil.getInputs(HomeChoiceOption.View),
+        ...E2eHomeUtil.getInputs(HomeChoiceOption.Add),
+        ...E2eAddUtil.getInputs({
           software,
         }),
-        ...E2eHomeUtil.getDefaultOptionInputs(HomeChoiceOption.View),
-        ...E2eHomeUtil.getDefaultOptionInputs(HomeChoiceOption.Edit),
-        ...E2eEditUtil.getDefaultEditInputs({
+        ...E2eHomeUtil.getInputs(HomeChoiceOption.View),
+        ...E2eHomeUtil.getInputs(HomeChoiceOption.Edit),
+        ...E2eEditUtil.getInputs({
           position: 0,
           newSoftware: updatedSoftware,
           oldSoftware: software,
         }),
-        ...E2eHomeUtil.getDefaultOptionInputs(HomeChoiceOption.View),
-        ...E2eHomeUtil.getDefaultOptionInputs(HomeChoiceOption.Delete),
-        ...E2eDeleteUtil.getDefaultDeleteInputs({
+        ...E2eHomeUtil.getInputs(HomeChoiceOption.View),
+        ...E2eHomeUtil.getInputs(HomeChoiceOption.Delete),
+        ...E2eDeleteUtil.getInputs({
           position: 0,
         }),
-        ...E2eHomeUtil.getDefaultOptionInputs(HomeChoiceOption.View),
-        ...E2eHomeUtil.getDefaultOptionInputs(HomeChoiceOption.Exit),
+        ...E2eHomeUtil.getInputs(HomeChoiceOption.View),
+        ...E2eHomeUtil.getInputs(HomeChoiceOption.Exit),
       ],
     })
-    E2eBaseUtil.validatePromptChunks(response.chunks, [
-      ...E2eHomeUtil.getDefaultOptionChunks(HomeChoiceOption.View),
+    await E2eBaseUtil.validateChunks(response.chunks, [
+      ...E2eHomeUtil.getChunks(HomeChoiceOption.View),
       E2eViewUtil.MESSAGES.NoSoftwares,
-      ...E2eHomeUtil.getDefaultOptionChunks(HomeChoiceOption.Add),
-      ...E2eAddUtil.getDefaultAddChunks({
+      ...E2eHomeUtil.getChunks(HomeChoiceOption.Add),
+      ...E2eAddUtil.getChunks({
         software,
         installedVersion,
         latestVersion,
       }),
-      ...E2eHomeUtil.getDefaultOptionChunks(HomeChoiceOption.View),
-      ...E2eViewUtil.getDefaultViewChunks({
+      ...E2eHomeUtil.getChunks(HomeChoiceOption.View),
+      ...E2eViewUtil.getChunks({
         rows: [
           {
             name: software.name,
@@ -85,16 +85,16 @@ describe('Lifecycle', () => {
           },
         ],
       }),
-      ...E2eHomeUtil.getDefaultOptionChunks(HomeChoiceOption.Edit),
-      ...E2eEditUtil.getDefaultEditChunks({
+      ...E2eHomeUtil.getChunks(HomeChoiceOption.Edit),
+      ...E2eEditUtil.getChunks({
         existingSoftwares: [software],
         newSoftware: updatedSoftware,
         installedVersion: installedVersion,
         latestVersion: updatedLatestVersion,
         oldSoftware: software,
       }),
-      ...E2eHomeUtil.getDefaultOptionChunks(HomeChoiceOption.View),
-      ...E2eViewUtil.getDefaultViewChunks({
+      ...E2eHomeUtil.getChunks(HomeChoiceOption.View),
+      ...E2eViewUtil.getChunks({
         rows: [
           {
             name: software.name,
@@ -103,14 +103,14 @@ describe('Lifecycle', () => {
           },
         ],
       }),
-      ...E2eHomeUtil.getDefaultOptionChunks(HomeChoiceOption.Delete),
-      ...E2eDeleteUtil.getDefaultDeleteChunks({
+      ...E2eHomeUtil.getChunks(HomeChoiceOption.Delete),
+      ...E2eDeleteUtil.getChunks({
         existingSoftwares: [updatedSoftware],
         softwareToDelete: updatedSoftware,
       }),
-      ...E2eHomeUtil.getDefaultOptionChunks(HomeChoiceOption.View),
+      ...E2eHomeUtil.getChunks(HomeChoiceOption.View),
       E2eViewUtil.MESSAGES.NoSoftwares,
-      ...E2eHomeUtil.getDefaultOptionChunks(HomeChoiceOption.Exit),
+      ...E2eHomeUtil.getChunks(HomeChoiceOption.Exit),
     ])
   })
 })

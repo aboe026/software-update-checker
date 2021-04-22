@@ -12,8 +12,8 @@ export default class E2eDeleteUtil extends E2eBaseUtil {
     NoSoftwares: 'No softwares to delete. Please add a software to have something to delete.',
   }
 
-  static getDefaultDeleteInputs({ position, confirm = true }: { position: number; confirm?: boolean }): string[] {
-    const inputs = E2eBaseUtil.getNavigateToPositionInputs(position)
+  static getInputs({ position, confirm = true }: { position: number; confirm?: boolean }): string[] {
+    const inputs = E2eBaseUtil.getInputsNavigate(position)
     if (!confirm) {
       inputs.push('No')
     }
@@ -21,7 +21,7 @@ export default class E2eDeleteUtil extends E2eBaseUtil {
     return inputs
   }
 
-  static getNavigateToSoftwareToDeleteChunks({
+  static getChunksNavigate({
     existingSoftwares,
     nameToDelete,
   }: {
@@ -43,7 +43,7 @@ export default class E2eDeleteUtil extends E2eBaseUtil {
     ]
   }
 
-  static getDefaultDeleteChunks({
+  static getChunks({
     existingSoftwares,
     softwareToDelete,
     confirm = true,
@@ -53,7 +53,7 @@ export default class E2eDeleteUtil extends E2eBaseUtil {
     confirm?: boolean
   }): (string | StringPrompt | BooleanPrompt | ChoicePrompt)[] {
     return [
-      ...this.getNavigateToSoftwareToDeleteChunks({
+      ...this.getChunksNavigate({
         existingSoftwares,
         nameToDelete: softwareToDelete.name,
       }),

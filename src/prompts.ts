@@ -370,20 +370,16 @@ export default class Prompts {
         let latest: string | null = null
         let installedError = false
         let latestError = false
-        let installedErrorMessage = ''
-        let latestErrorMessage = ''
         let color: colors.Color = colors.white
         try {
           installed = await software.getInstalledVersion()
         } catch (err) {
           installedError = true
-          installedErrorMessage = err.message || err
         }
         try {
           latest = await software.getLatestVersion()
         } catch (err) {
           latestError = true
-          latestErrorMessage = err.message || err
         }
         if (installedError || latestError || !installed || !latest) {
           color = colors.red
@@ -392,8 +388,8 @@ export default class Prompts {
         }
         table.push([
           color(software.name),
-          color((installedError ? installedErrorMessage : installed || '').trim()),
-          color((latestError ? latestErrorMessage : latest || '').trim()),
+          color((installedError ? 'Error' : installed || '').trim()),
+          color((latestError ? 'Error' : latest || '').trim()),
         ])
         progress.increment()
       }

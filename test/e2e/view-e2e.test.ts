@@ -76,7 +76,7 @@ describe('View', () => {
       rows: [
         {
           name: software.name,
-          installed: installedError,
+          installed: 'Error',
           latest: latestVersion,
           decoration: RowDecoration.Error,
         },
@@ -101,14 +101,13 @@ describe('View', () => {
       })
       await E2eViewUtil.setSoftwares([software])
       await E2eViewUtil.verifySoftwares([software])
-      const port = Website.getPort()
       await Website.stop()
       await testDefaultView({
         rows: [
           {
             name: software.name,
             installed: installedVersion,
-            latest: `request to ${software.url} failed, reason: connect ECONNREFUSED 127.0.0.1:${port}`,
+            latest: 'Error',
             decoration: RowDecoration.Error,
           },
         ],
@@ -224,7 +223,7 @@ describe('View', () => {
       rows: [
         {
           name: firstSoftware.name,
-          installed: firstInstalledError,
+          installed: 'Error',
           latest: firstLatestVersion,
           decoration: RowDecoration.Error,
         },
@@ -277,7 +276,7 @@ describe('View', () => {
         {
           name: lastSoftware.name,
           installed: lastInstalledVersion,
-          latest: `Could not find match for regex '/latest: v(.*)/' in text '${lastLatestError}'`,
+          latest: 'Error',
           decoration: RowDecoration.Error,
         },
       ],
@@ -288,30 +287,24 @@ describe('View', () => {
 
 async function testNoSoftwaresView() {
   const response = await interactiveExecute({
-    inputs: [
-      ...E2eHomeUtil.getDefaultOptionInputs(HomeChoiceOption.View),
-      ...E2eHomeUtil.getDefaultOptionInputs(HomeChoiceOption.Exit),
-    ],
+    inputs: [...E2eHomeUtil.getInputs(HomeChoiceOption.View), ...E2eHomeUtil.getInputs(HomeChoiceOption.Exit)],
   })
-  E2eViewUtil.validatePromptChunks(response.chunks, [
-    ...E2eHomeUtil.getDefaultOptionChunks(HomeChoiceOption.View),
+  await E2eViewUtil.validateChunks(response.chunks, [
+    ...E2eHomeUtil.getChunks(HomeChoiceOption.View),
     E2eViewUtil.MESSAGES.NoSoftwares,
-    ...E2eHomeUtil.getDefaultOptionChunks(HomeChoiceOption.Exit),
+    ...E2eHomeUtil.getChunks(HomeChoiceOption.Exit),
   ])
 }
 
 async function testDefaultView({ rows }: { rows: TableRow[] }) {
   const response = await interactiveExecute({
-    inputs: [
-      ...E2eHomeUtil.getDefaultOptionInputs(HomeChoiceOption.View),
-      ...E2eHomeUtil.getDefaultOptionInputs(HomeChoiceOption.Exit),
-    ],
+    inputs: [...E2eHomeUtil.getInputs(HomeChoiceOption.View), ...E2eHomeUtil.getInputs(HomeChoiceOption.Exit)],
   })
-  E2eViewUtil.validatePromptChunks(response.chunks, [
-    ...E2eHomeUtil.getDefaultOptionChunks(HomeChoiceOption.View),
-    ...E2eViewUtil.getDefaultViewChunks({
+  await E2eViewUtil.validateChunks(response.chunks, [
+    ...E2eHomeUtil.getChunks(HomeChoiceOption.View),
+    ...E2eViewUtil.getChunks({
       rows,
     }),
-    ...E2eHomeUtil.getDefaultOptionChunks(HomeChoiceOption.Exit),
+    ...E2eHomeUtil.getChunks(HomeChoiceOption.Exit),
   ])
 }

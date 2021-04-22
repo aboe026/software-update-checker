@@ -1,6 +1,5 @@
+import E2eAddUtil, { InstalledReconfiguration, LatestReconfiguration } from './e2e-add-util'
 import E2eBaseUtil, { BooleanPrompt, ChoicePrompt, StringPrompt, Option } from './e2e-base-util'
-import { KEYS } from './interactive-execute'
-import E2eAddUtil from './e2e-add-util'
 import Software from '../../../src/software'
 
 export default class E2eEditUtil extends E2eBaseUtil {
@@ -13,35 +12,49 @@ export default class E2eEditUtil extends E2eBaseUtil {
     NoSoftwares: 'No softwares to edit. Please add a software to have something to edit.',
   }
 
-  static getNavigateToSoftwareToEditInputs(position: number): string[] {
-    const inputs: string[] = []
-    for (let i = 0; i < position; i++) {
-      inputs.push(KEYS.Down)
-    }
-    inputs.push(KEYS.Enter)
-    return inputs
-  }
-
-  static getDefaultEditInputs({
+  static getInputs({
     position,
-    newSoftware,
     oldSoftware,
+    newSoftware,
   }: {
     position: number
-    newSoftware: Software
     oldSoftware: Software
+    newSoftware: Software
   }): string[] {
-    let inputs = E2eBaseUtil.getNavigateToPositionInputs(position)
-    inputs = inputs.concat(
-      E2eAddUtil.getDefaultAddInputs({
+    return [
+      ...E2eBaseUtil.getInputsNavigate(position),
+      ...E2eAddUtil.getInputs({
         software: newSoftware,
         defaults: oldSoftware,
-      })
-    )
-    return inputs
+      }),
+    ]
   }
 
-  static getNavigateToSoftwareToEditChunks({
+  static getInputsReconfigure({
+    position,
+    oldSoftware,
+    name,
+    installed,
+    latest = [],
+  }: {
+    position: number
+    oldSoftware: Software
+    name: string
+    installed: InstalledReconfiguration[]
+    latest: LatestReconfiguration[]
+  }): string[] {
+    return [
+      ...E2eBaseUtil.getInputsNavigate(position),
+      ...E2eAddUtil.getInputsReconfigure({
+        name,
+        installed,
+        latest,
+        defaults: oldSoftware,
+      }),
+    ]
+  }
+
+  static getChunksNavigate({
     existingSoftwares,
     nameToEdit,
   }: {
@@ -63,7 +76,7 @@ export default class E2eEditUtil extends E2eBaseUtil {
     ]
   }
 
-  static getDefaultEditChunks({
+  static getChunks({
     existingSoftwares,
     oldSoftware,
     newSoftware,
@@ -77,15 +90,42 @@ export default class E2eEditUtil extends E2eBaseUtil {
     latestVersion: string
   }): (string | StringPrompt | BooleanPrompt | ChoicePrompt)[] {
     return [
-      ...this.getNavigateToSoftwareToEditChunks({
+      ...this.getChunksNavigate({
         existingSoftwares,
         nameToEdit: oldSoftware.name,
       }),
-      ...E2eAddUtil.getDefaultAddChunks({
+      ...E2eAddUtil.getChunks({
         software: newSoftware,
         installedVersion,
         latestVersion,
         defaults: oldSoftware,
+      }),
+    ]
+  }
+
+  static getChunksReconfigure({
+    existingSoftwares,
+    oldSoftware,
+    name,
+    installed,
+    latest,
+  }: {
+    existingSoftwares: Software[]
+    oldSoftware: Software
+    name: string
+    installed: InstalledReconfiguration[]
+    latest: LatestReconfiguration[]
+  }): (string | StringPrompt | BooleanPrompt | ChoicePrompt)[] {
+    return [
+      ...this.getChunksNavigate({
+        existingSoftwares,
+        nameToEdit: oldSoftware.name,
+      }),
+      ...E2eAddUtil.getChunksReconfigure({
+        defaults: oldSoftware,
+        name,
+        installed,
+        latest,
       }),
     ]
   }
