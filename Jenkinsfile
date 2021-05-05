@@ -114,15 +114,17 @@ node {
                         org: 'suc',
                         version: version,
                       ]
-                      uploadNexusArtifact(nexusOptions +
-                        [ fileName: 'software-update-checker-win.exe' ]
-                      )
-                      uploadNexusArtifact(nexusOptions +
-                        [ fileName: 'software-update-checker-linux' ]
-                      )
-                      uploadNexusArtifact(nexusOptions +
-                        [ fileName: 'software-update-checker-macos' ]
-                      )
+                      dir('dist') {
+                        uploadNexusArtifact(nexusOptions +
+                          [ fileName: 'software-update-checker-win.exe' ]
+                        )
+                        uploadNexusArtifact(nexusOptions +
+                          [ fileName: 'software-update-checker-linux' ]
+                        )
+                        uploadNexusArtifact(nexusOptions +
+                          [ fileName: 'software-update-checker-macos' ]
+                        )
+                      }
                     }
                   }
                 }
