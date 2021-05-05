@@ -82,7 +82,6 @@ node {
 
               stage('Package') {
                 sh 'npm run pack'
-                archiveArtifacts artifacts: 'dist/*', allowEmptyArchive: true
               }
 
               parallel (
