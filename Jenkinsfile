@@ -104,9 +104,7 @@ node {
                 },
                 'upload': {
                   stage('Nexus Upload') {
-                    println "TEST env.BRANCH_NAME: '${env.BRANCH_NAME}'"
-                    // if (env.BRANCH_NAME == 'master') {
-                    if (true) {
+                    if (env.BRANCH_NAME == 'master') {
                       def nexusOptions = [
                         url: 'http://host.docker.internal:8081',
                         credentials: 'NEXUS_CREDENTIALS',
