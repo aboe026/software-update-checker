@@ -9,8 +9,8 @@ export default class Software {
   readonly name: string
   readonly executable: Dynamic | Static
   readonly args?: string
-  readonly installedRegex: string
   readonly shellOverride?: string
+  readonly installedRegex: string
   readonly url: string
   readonly latestRegex: string
 
@@ -18,16 +18,16 @@ export default class Software {
     name,
     executable,
     args,
-    installedRegex,
     shellOverride,
+    installedRegex,
     url,
     latestRegex,
   }: {
     name: string
     executable: Dynamic | Static
     args?: string
-    installedRegex: string
     shellOverride?: string
+    installedRegex: string
     url: string
     latestRegex: string
   }) {
@@ -37,8 +37,8 @@ export default class Software {
     this.name = name
     this.executable = executable
     this.args = args
-    this.installedRegex = installedRegex
     this.shellOverride = shellOverride
+    this.installedRegex = installedRegex
     this.url = url
     this.latestRegex = latestRegex
   }

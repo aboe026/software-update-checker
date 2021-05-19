@@ -85,8 +85,8 @@ export default class Prompts {
     const installedVersion: ConfigureInstalledVersionResponse | undefined = await Prompts.configureInstalledVersion({
       existingExecutable: existingSoftware?.executable,
       existingArgs: existingSoftware?.args,
-      existingInstalledRegex: existingSoftware?.installedRegex,
       existingShellOverride: existingSoftware?.shellOverride,
+      existingInstalledRegex: existingSoftware?.installedRegex,
     })
     if (installedVersion) {
       const latestVersion: ConfigureLatestVersionResponse | undefined = await Prompts.configureLatestVersion({
@@ -98,8 +98,8 @@ export default class Prompts {
           name,
           executable: installedVersion.executable,
           args: installedVersion.args,
-          installedRegex: installedVersion.installedRegex,
           shellOverride: installedVersion.shellOverride || '',
+          installedRegex: installedVersion.installedRegex,
           url: latestVersion.url,
           latestRegex: latestVersion.latestRegex,
         })
@@ -115,22 +115,28 @@ export default class Prompts {
   static async configureInstalledVersion({
     existingExecutable,
     existingArgs,
-    existingInstalledRegex,
     existingShellOverride,
+    existingInstalledRegex,
   }: {
     existingExecutable?: Static | Dynamic
     existingArgs?: string
-    existingInstalledRegex?: string
     existingShellOverride?: string
+    existingInstalledRegex?: string
   }): Promise<ConfigureInstalledVersionResponse | undefined> {
     const executable = await Prompts.configureExecutable(existingExecutable)
     if (executable) {
-      const { args, installedRegex, shellOverride } = await inquirer.prompt([
+      const { args, shellOverride, installedRegex } = await inquirer.prompt([
         {
           name: 'args',
           message: 'Arguments to apply to executable to produce version (eg --version):',
           type: 'input',
           default: existingArgs || undefined,
+        },
+        {
+          name: 'shellOverride',
+          message: 'Shell override to use instead of system default shell (eg powershell):',
+          type: 'input',
+          default: existingShellOverride || undefined,
         },
         {
           name: 'installedRegex',
@@ -139,20 +145,14 @@ export default class Prompts {
           default: existingInstalledRegex || undefined,
           validate: Validators.required,
         },
-        {
-          name: 'shellOverride',
-          message: 'Shell override to use instead of system default shell (eg powershell):',
-          type: 'input',
-          default: existingShellOverride || undefined,
-        },
       ])
       try {
         const software = new Software({
           name: 'Installed Test',
           executable,
           args,
-          installedRegex,
           shellOverride,
+          installedRegex,
           url: '',
           latestRegex: '',
         })
@@ -167,15 +167,15 @@ export default class Prompts {
           return {
             executable,
             args,
-            installedRegex,
             shellOverride,
+            installedRegex,
           }
         }
         return Prompts.configureInstalledVersion({
           existingExecutable: executable,
           existingArgs: args,
-          existingInstalledRegex: installedRegex,
           existingShellOverride: shellOverride,
+          existingInstalledRegex: installedRegex,
         })
       } catch (err) {
         console.error(colors['red'](err.message || err))
@@ -189,8 +189,8 @@ export default class Prompts {
           return Prompts.configureInstalledVersion({
             existingExecutable: executable,
             existingArgs: args,
-            existingInstalledRegex: installedRegex,
             existingShellOverride: shellOverride,
+            existingInstalledRegex: installedRegex,
           })
         }
       }
@@ -315,8 +315,8 @@ export default class Prompts {
           command: 'false',
         },
         args: '',
-        installedRegex: '',
         shellOverride: '',
+        installedRegex: '',
         url,
         latestRegex,
       })
@@ -456,8 +456,8 @@ enum CommandType {
 interface ConfigureInstalledVersionResponse {
   executable: Static | Dynamic
   args?: string
-  installedRegex: string
   shellOverride?: string
+  installedRegex: string
 }
 
 interface ConfigureLatestVersionResponse {

@@ -11,8 +11,8 @@ export enum ExecutableChoiceOption {
 export interface InstalledReconfiguration {
   command?: string
   args?: string
-  regex?: string
   shellOverride?: string
+  regex?: string
   error?: string
   version?: string
   confirmOrReconfigure?: boolean
@@ -50,13 +50,13 @@ export default class E2eAddUtil extends E2eBaseUtil {
         defaultValue: defaults && defaults.args,
       }),
       ...E2eBaseUtil.getInputsPrompt({
-        currentValue: software.installedRegex,
-        defaultValue: defaults && defaults.installedRegex,
-      }),
-      ...E2eBaseUtil.getInputsPrompt({
         currentValue: software.shellOverride,
         defaultValue: defaults && defaults.shellOverride,
         fallbackValue: KEYS.BACK_SPACE,
+      }),
+      ...E2eBaseUtil.getInputsPrompt({
+        currentValue: software.installedRegex,
+        defaultValue: defaults && defaults.installedRegex,
       }),
       KEYS.Enter, // installed version correct
       ...E2eBaseUtil.getInputsPrompt({
@@ -106,14 +106,14 @@ export default class E2eAddUtil extends E2eBaseUtil {
           defaultValue: previousConfig && previousConfig.args,
         }),
         ...E2eBaseUtil.getInputsPrompt({
+          currentValue: currentConfig.shellOverride,
+          defaultValue: previousConfig && previousConfig.shellOverride,
+        }),
+        ...E2eBaseUtil.getInputsPrompt({
           currentValue: currentConfig.regex,
           defaultValue: isSoftware(previousConfig)
             ? previousConfig.installedRegex
             : previousConfig && previousConfig.regex,
-        }),
-        ...E2eBaseUtil.getInputsPrompt({
-          currentValue: currentConfig.shellOverride,
-          defaultValue: previousConfig && previousConfig.shellOverride,
         }),
         ...(currentConfig.confirmOrReconfigure ? [KEYS.Enter] : ['No', KEYS.Enter])
       )
@@ -178,14 +178,14 @@ export default class E2eAddUtil extends E2eBaseUtil {
         default: defaults && defaults.args,
       },
       {
-        question: 'Regex pattern applied to command output to single out installed version (eg version (.*))',
-        answer: software.installedRegex,
-        default: defaults && defaults.installedRegex,
-      },
-      {
         question: 'Shell override to use instead of system default shell (eg powershell)',
         answer: software.shellOverride,
         default: defaults && defaults.shellOverride,
+      },
+      {
+        question: 'Regex pattern applied to command output to single out installed version (eg version (.*))',
+        answer: software.installedRegex,
+        default: defaults && defaults.installedRegex,
       },
       `Installed version: '${installedVersion}'`,
       {
@@ -256,13 +256,6 @@ export default class E2eAddUtil extends E2eBaseUtil {
             default: previousConfig && previousConfig.args,
           },
           {
-            question: 'Regex pattern applied to command output to single out installed version (eg version (.*))',
-            answer: currentConfig.regex,
-            default: isSoftware(previousConfig)
-              ? previousConfig.installedRegex
-              : previousConfig && previousConfig.regex,
-          },
-          {
             question: 'Shell override to use instead of system default shell (eg powershell)',
             answer: currentConfig.shellOverride === KEYS.BACK_SPACE ? '' : currentConfig.shellOverride,
             default: previousConfig
@@ -270,6 +263,13 @@ export default class E2eAddUtil extends E2eBaseUtil {
                 ? ''
                 : previousConfig.shellOverride
               : '',
+          },
+          {
+            question: 'Regex pattern applied to command output to single out installed version (eg version (.*))',
+            answer: currentConfig.regex,
+            default: isSoftware(previousConfig)
+              ? previousConfig.installedRegex
+              : previousConfig && previousConfig.regex,
           },
         ]
       )
