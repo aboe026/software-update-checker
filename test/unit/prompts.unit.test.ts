@@ -91,8 +91,8 @@ describe('Prompts Unit Tests', () => {
           command: 'swords',
         },
         args: 'elvish',
-        installedRegex: 'foe-hammer',
         shellOverride: '',
+        installedRegex: 'foe-hammer',
         url: 'https://lotr-swords.com',
         latestRegex: 'beater',
       })
@@ -117,8 +117,8 @@ describe('Prompts Unit Tests', () => {
           command: 'calendar',
         },
         args: 'months',
-        installedRegex: 'october',
         shellOverride: '',
+        installedRegex: 'october',
         url: 'https://months.com',
         latestRegex: 'halloween',
       })
@@ -131,8 +131,8 @@ describe('Prompts Unit Tests', () => {
           command: 'snowwhite',
         },
         args: 'dwarves',
-        installedRegex: 'hay fever',
         shellOverride: '',
+        installedRegex: 'hay fever',
         url: 'https://dwarfshortlist.com',
         latestRegex: 'sneezy',
       })
@@ -164,8 +164,8 @@ describe('Prompts Unit Tests', () => {
           command: 'milks',
         },
         args: 'percentages',
-        installedRegex: '1',
         shellOverride: '',
+        installedRegex: '1',
         url: 'https://milkbythenumbers.com',
         latestRegex: '1%',
       })
@@ -178,8 +178,8 @@ describe('Prompts Unit Tests', () => {
           command: 'deserts',
         },
         args: 'african',
-        installedRegex: 'the great one',
         shellOverride: '',
+        installedRegex: 'the great one',
         url: 'https://desertcourse.com',
         latestRegex: 'sahara',
       })
@@ -205,8 +205,8 @@ describe('Prompts Unit Tests', () => {
           command: 'colors',
         },
         args: 'green',
-        installedRegex: 'baja blast',
         shellOverride: '',
+        installedRegex: 'baja blast',
         url: 'https://colorwheel.com',
         latestRegex: '#63FFE0',
       })
@@ -219,8 +219,8 @@ describe('Prompts Unit Tests', () => {
           command: 'palette',
         },
         args: 'licorice',
-        installedRegex: 'red',
         shellOverride: '',
+        installedRegex: 'red',
         url: 'https://candycolors.com',
         latestRegex: '#af3c4d',
       })
@@ -245,8 +245,8 @@ describe('Prompts Unit Tests', () => {
           command: 'weather',
         },
         args: 'precipitation',
-        installedRegex: 'snow',
         shellOverride: '',
+        installedRegex: 'snow',
         url: 'https://atmosphericeffects.com',
         latestRegex: 'crystalline',
       })
@@ -256,8 +256,8 @@ describe('Prompts Unit Tests', () => {
           command: 'illusions',
         },
         args: 'optical',
-        installedRegex: 'sun dog',
         shellOverride: '',
+        installedRegex: 'sun dog',
         url: 'https://eyellusions.com',
         latestRegex: 'parhelion',
       })
@@ -267,8 +267,8 @@ describe('Prompts Unit Tests', () => {
           command: 'meteorology',
         },
         args: 'optical-phenomenon',
-        installedRegex: 'parhelion',
         shellOverride: '',
+        installedRegex: 'parhelion',
         url: 'https://sunnydoglight.com',
         latestRegex: 'mock sun',
       })
@@ -573,8 +573,8 @@ describe('Prompts Unit Tests', () => {
       await expect(Prompts.configureInstalledVersion({})).resolves.toStrictEqual({
         executable,
         args,
-        installedRegex,
         shellOverride: undefined,
+        installedRegex,
       })
       expect(getPromptDefault(promptMock.mock.calls[0][0])).toBe(undefined)
       expect(getPromptDefault(promptMock.mock.calls[1][0])).toBe(true)
@@ -599,8 +599,8 @@ describe('Prompts Unit Tests', () => {
       await expect(Prompts.configureInstalledVersion({})).resolves.toStrictEqual({
         executable,
         args: undefined,
-        installedRegex,
         shellOverride: undefined,
+        installedRegex,
       })
       expect(getPromptDefault(promptMock.mock.calls[0][0])).toBe(undefined)
       expect(getPromptDefault(promptMock.mock.calls[1][0])).toBe(true)
@@ -615,11 +615,11 @@ describe('Prompts Unit Tests', () => {
       }
       jest.spyOn(Prompts, 'configureExecutable').mockResolvedValue(executable)
       const args = 'pets'
-      const installedRegex = 'snail'
       const shellOverride = 'spongebob'
+      const installedRegex = 'snail'
       const mockInstalledVersion = 'Garold "Gary" Wilson, Jr.'
       const promptMock = mockedInquirer.prompt
-        .mockResolvedValueOnce({ args, installedRegex, shellOverride })
+        .mockResolvedValueOnce({ args, shellOverride, installedRegex })
         .mockResolvedValueOnce({ versionCorrect: true })
       jest.spyOn(Software.prototype, 'getInstalledVersion').mockResolvedValue(mockInstalledVersion)
       const consoleLogMock = jest.spyOn(console, 'log').mockImplementation()
@@ -627,8 +627,8 @@ describe('Prompts Unit Tests', () => {
       await expect(Prompts.configureInstalledVersion({})).resolves.toStrictEqual({
         executable,
         args,
-        installedRegex,
         shellOverride,
+        installedRegex,
       })
       expect(getPromptDefault(promptMock.mock.calls[0][0])).toBe(undefined)
       expect(getPromptDefault(promptMock.mock.calls[1][0])).toBe(true)
@@ -643,14 +643,14 @@ describe('Prompts Unit Tests', () => {
       }
       jest.spyOn(Prompts, 'configureExecutable').mockResolvedValue(executable)
       const existingArgs = 'dogma'
-      const existingInstalledRegex = 'transmigration'
       const existingShellOverride = 'philosophy'
+      const existingInstalledRegex = 'transmigration'
       const args = 'belief'
-      const installedRegex = 'rebirth'
       const shellOverride = 'religion'
+      const installedRegex = 'rebirth'
       const mockInstalledVersion = 'reincarnation'
       const promptMock = mockedInquirer.prompt
-        .mockResolvedValueOnce({ args, installedRegex, shellOverride })
+        .mockResolvedValueOnce({ args, shellOverride, installedRegex })
         .mockResolvedValueOnce({ versionCorrect: true })
       jest.spyOn(Software.prototype, 'getInstalledVersion').mockResolvedValue(mockInstalledVersion)
       const consoleLogMock = jest.spyOn(console, 'log').mockImplementation()
@@ -658,18 +658,18 @@ describe('Prompts Unit Tests', () => {
       await expect(
         Prompts.configureInstalledVersion({
           existingArgs,
-          existingInstalledRegex,
           existingShellOverride,
+          existingInstalledRegex,
         })
       ).resolves.toStrictEqual({
         executable,
         args,
-        installedRegex,
         shellOverride,
+        installedRegex,
       })
       expect(getPromptDefault(promptMock.mock.calls[0][0], 0)).toBe(existingArgs)
-      expect(getPromptDefault(promptMock.mock.calls[0][0], 1)).toBe(existingInstalledRegex)
-      expect(getPromptDefault(promptMock.mock.calls[0][0], 2)).toBe(existingShellOverride)
+      expect(getPromptDefault(promptMock.mock.calls[0][0], 1)).toBe(existingShellOverride)
+      expect(getPromptDefault(promptMock.mock.calls[0][0], 2)).toBe(existingInstalledRegex)
       expect(getPromptDefault(promptMock.mock.calls[1][0])).toBe(true)
       expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(
         JSON.stringify([[`Installed version: '${mockInstalledVersion}'`]], null, 2)
@@ -721,13 +721,14 @@ describe('Prompts Unit Tests', () => {
       await expect(Prompts.configureInstalledVersion({})).resolves.toStrictEqual({
         executable,
         args: reconfiguredArgs,
-        installedRegex: reconfiguredInstalledRegex,
         shellOverride: undefined,
+        installedRegex: reconfiguredInstalledRegex,
       })
       expect(getPromptDefault(promptMock.mock.calls[0][0])).toBe(undefined)
       expect(getPromptDefault(promptMock.mock.calls[1][0])).toBe(true)
       expect(getPromptDefault(promptMock.mock.calls[2][0], 0)).toBe(initialArgs)
-      expect(getPromptDefault(promptMock.mock.calls[2][0], 1)).toBe(initialInstalledRegex)
+      expect(getPromptDefault(promptMock.mock.calls[2][0], 1)).toBe(undefined)
+      expect(getPromptDefault(promptMock.mock.calls[2][0], 2)).toBe(initialInstalledRegex)
       expect(getPromptDefault(promptMock.mock.calls[3][0])).toBe(true)
       expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(
         JSON.stringify([[`Installed version: '${mockInstalledVersion}'`]], null, 2)
@@ -759,13 +760,14 @@ describe('Prompts Unit Tests', () => {
       await expect(Prompts.configureInstalledVersion({})).resolves.toStrictEqual({
         executable,
         args: reconfiguredArgs,
-        installedRegex: reconfiguredInstalledRegex,
         shellOverride: undefined,
+        installedRegex: reconfiguredInstalledRegex,
       })
       expect(getPromptDefault(promptMock.mock.calls[0][0])).toBe(undefined)
       expect(getPromptDefault(promptMock.mock.calls[1][0])).toBe(true)
       expect(getPromptDefault(promptMock.mock.calls[2][0], 0)).toBe(initialArgs)
-      expect(getPromptDefault(promptMock.mock.calls[2][0], 1)).toBe(initialInstalledRegex)
+      expect(getPromptDefault(promptMock.mock.calls[2][0], 1)).toBe(undefined)
+      expect(getPromptDefault(promptMock.mock.calls[2][0], 2)).toBe(initialInstalledRegex)
       expect(getPromptDefault(promptMock.mock.calls[3][0])).toBe(true)
       expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(
         JSON.stringify(

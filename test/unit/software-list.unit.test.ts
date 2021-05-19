@@ -594,8 +594,8 @@ describe('Software List Unit Tests', () => {
           command: 'shells',
         },
         args: 'koopa',
-        installedRegex: 'blue',
         shellOverride: 'mariokart',
+        installedRegex: 'blue',
         url: 'https://itsame.com',
         latestRegex: 'spiny shell',
       })
@@ -608,8 +608,8 @@ describe('Software List Unit Tests', () => {
         executable: {
           command: 'attitudes',
         },
-        installedRegex: 'unsparing',
         shellOverride: 'force',
+        installedRegex: 'unsparing',
         url: 'https:mywayorthehighway//.com',
         latestRegex: 'obey',
       })
