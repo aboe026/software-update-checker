@@ -1,8 +1,8 @@
 import fs from 'fs-extra'
 import path from 'path'
 
-import { ANSI_CHAR_REPLACEMENT, KEYS } from './interactive-execute'
 import E2eConfig from './e2e-config'
+import interactiveExecute, { ANSI_CHAR_REPLACEMENT, KEYS } from './interactive-execute'
 import Software from '../../../src/software'
 import testUtil from '../../helpers/test-util'
 
@@ -13,7 +13,11 @@ export default class E2eBaseUtil {
   }
 
   static getNameInUseMessage(name: string): string {
-    return `Invalid name '${name}', already in use.`
+    return `Invalid name "${name}", already in use.`
+  }
+
+  static getNotEnoughCommandsMessage(got: number, min: number): string {
+    return `Not enough non-option arguments: got ${got}, need at least ${min}`
   }
 
   static getInputsPrompt({
@@ -71,6 +75,13 @@ export default class E2eBaseUtil {
     }
   }
 
+  static async testSilentError({ args, error }: { args: string[]; error: string }): Promise<void> {
+    const response = await interactiveExecute({
+      args,
+    })
+    expect(response.chunks.join('\n')).toContain(error)
+  }
+
   static async validateChunks(
     actualChunks: string[],
     expectedChunks: (string | StringPrompt | BooleanPrompt | ChoicePrompt | TableOutput)[]
@@ -81,14 +92,19 @@ export default class E2eBaseUtil {
       const expected = expectedChunks[i]
       let actual = actualChunks[actualIndex]
       if (typeof expected === 'string') {
-        expect(actual).toBe(expected)
+        expect(stripNewlines(actual)).toBe(expected)
         actualIndex++
       } else {
         if (isChoice(expected)) {
           const start = expected.default ? Object.values(expected.choice.options).indexOf(expected.default) : 0
           for (let j = start; j <= Object.values(expected.choice.options).indexOf(expected.answer || ''); j++) {
             expect(condenseBackslashes(actual)).toBe(
-              this.getChoiceChunk(expected.choice, j, j === start, expected.default)
+              this.getChoiceChunk({
+                choice: expected.choice,
+                index: j,
+                first: j === start,
+                defaultSelection: expected.default,
+              })
             )
             actualIndex++
             actual = actualChunks[actualIndex]
@@ -114,7 +130,7 @@ export default class E2eBaseUtil {
         } else {
           const question = `? ${expected.question}: `
           expect(condenseBackslashes(stripNewlines(actual))).toBe(
-            `${question}${expected.default ? `(${expected.default}) ` : ''}`
+            `${question}${expected.default !== undefined ? `(${expected.default}) ` : ''}`
           )
           while (
             condenseBackslashes(stripNewlines(actualChunks[actualIndex])).startsWith(question) &&
@@ -130,7 +146,17 @@ export default class E2eBaseUtil {
     expect(actualChunks).toHaveLength(actualIndex)
   }
 
-  static getChoiceChunk(choice: InputChoice, index: number, first?: boolean, defaultSelection?: string): string {
+  static getChoiceChunk({
+    choice,
+    index,
+    first,
+    defaultSelection,
+  }: {
+    choice: InputChoice
+    index: number
+    first?: boolean
+    defaultSelection?: string
+  }): string {
     let chunk = `? ${choice.question}:${defaultSelection ? '\\n' : ''} `
     if (first) {
       chunk += '(Use arrow keys)'

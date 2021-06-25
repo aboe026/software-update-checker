@@ -10,7 +10,7 @@ import E2eConfig from './e2e-config'
 export default async (): Promise<void> => {
   if (await fs.pathExists(E2eConfig.DIRECTORY.BackupConfig)) {
     console.error(
-      `Temporary config directory '${E2eConfig.DIRECTORY.BackupConfig}' exists, previous run must not have exited properly. Please make sure actual user config dir '${E2eConfig.DIRECTORY.UserConfig}' is correct, then delete temporary config directory '${E2eConfig.DIRECTORY.BackupConfig}' to run e2e tests.`
+      `Temporary config directory "${E2eConfig.DIRECTORY.BackupConfig}" exists, previous run must not have exited properly. Please make sure actual user config dir "${E2eConfig.DIRECTORY.UserConfig}" is correct, then delete temporary config directory "${E2eConfig.DIRECTORY.BackupConfig}" to run e2e tests.`
     )
     process.exit(1)
   }

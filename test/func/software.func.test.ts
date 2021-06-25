@@ -50,7 +50,7 @@ describe('Software Func Tests', () => {
           directory,
           regex: 'good-.*',
         })
-      ).rejects.toThrow(`Directory specified '${directory}' does not exist. Please specify a valid path.`)
+      ).rejects.toThrow(`Directory specified "${directory}" does not exist. Please specify a valid path.`)
     })
     it('throws error for no matching file', async () => {
       const directory = path.join(__dirname, '../helpers/test-commands')
@@ -60,7 +60,7 @@ describe('Software Func Tests', () => {
           directory,
           regex,
         })
-      ).rejects.toThrow(`Could not find any file in directory '${directory}' matching regex pattern '${regex}'`)
+      ).rejects.toThrow(`Could not find any file in directory "${directory}" matching regex pattern "${regex}"`)
     })
     it('returns file for dynamic single match', async () => {
       const directory = path.join(__dirname, '../helpers/test-commands')
@@ -121,7 +121,7 @@ describe('Software Func Tests', () => {
           url: '',
           latestRegex: '',
         }).getInstalledVersion()
-      ).rejects.toThrow(`Directory specified '${directory}' does not exist. Please specify a valid path.`)
+      ).rejects.toThrow(`Directory specified "${directory}" does not exist. Please specify a valid path.`)
     })
     it('throws error if dynamic file match not found', async () => {
       const directory = path.join(__dirname, '../helpers/test-commands')
@@ -138,7 +138,7 @@ describe('Software Func Tests', () => {
           url: '',
           latestRegex: '',
         }).getInstalledVersion()
-      ).rejects.toThrow(`Could not find any file in directory '${directory}' matching regex pattern '${regex}'`)
+      ).rejects.toThrow(`Could not find any file in directory "${directory}" matching regex pattern "${regex}"`)
     })
     it('throws error if static version match not found', async () => {
       await expect(

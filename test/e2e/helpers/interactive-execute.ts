@@ -6,21 +6,25 @@ import { spawn } from 'child_process'
 import E2eConfig from './e2e-config'
 
 export default async function ({
-  inputs,
+  args = [],
+  inputs = [],
   timeoutMs = 12000,
   minQuietPeriodMs = 200,
   maxQuietPeriodMs = 1000,
 }: {
-  inputs: (KEYS | string)[]
+  args?: string[]
+  inputs?: (KEYS | string)[]
   timeoutMs?: number
   minQuietPeriodMs?: number
   maxQuietPeriodMs?: number
 }): Promise<ExecutableResponse> {
+  await E2eConfig.appendToDebugLog(`Arguments: ${JSON.stringify(args, null, 2)}`)
   await E2eConfig.appendToDebugLog(`Inputs: ${JSON.stringify(inputs, null, 2)}`)
+  await E2eConfig.appendToDebugLog('Output:')
   const chunks: string[] = []
   let inputIndex = 0
 
-  const proc = spawn(getExecutableName(), [], {
+  const proc = spawn(getExecutableName(), args, {
     stdio: [null, null, null],
     cwd: path.join(__dirname, '../../../dist'),
   })
@@ -49,19 +53,46 @@ export default async function ({
     E2eConfig.appendToDebugLog(`${prefix}: ${JSON.stringify(chunk.toString())}`) // for some reason if this is awaited, chunks get read in incorrect order (stdout vs stderr)
     const line = escapeChunk(chunk.toString())
     if (line !== '' && line !== '\n') {
-      const lineChunks = line.split(/(?<!^)(\? (?!\(|Yes|No))/) // sometimes multiple lines come in a single chunk. Split on those (but not boolean questions or choices)
-      chunks.push(escapeChunk(lineChunks[0]))
-      if (lineChunks.length > 1) {
-        for (let i = 2; i < lineChunks.length; i = i + 2) {
-          chunks.push(escapeChunk(`${lineChunks[i - 1]}${lineChunks[i]}`))
+      const newlinePeriods = line.split(/\.\\n/) // sometimes multiple string outputs get added to same line
+      for (let i = 0; i < newlinePeriods.length; i++) {
+        let newlinePeriod = newlinePeriods[i]
+        if (newlinePeriods.length > 1 && !newlinePeriod.endsWith('.')) {
+          newlinePeriod += '.'
         }
-      }
-      if (inputIndex < inputs.length) {
-        delayReply(inputs[inputIndex])
-      } else {
-        setTimeout(() => {
-          proc.stdin.end()
-        }, maxQuietPeriodMs)
+        let j = i + 1
+        let nonDigitMet = false // sometimes digits split across mulitple lines when they should not be
+        while (j < newlinePeriods.length && !nonDigitMet) {
+          if (new RegExp(/\d+/).test(newlinePeriods[j])) {
+            newlinePeriod += `${newlinePeriod.endsWith('.') ? '' : '.'}${newlinePeriods[j]}`
+            i++
+          } else {
+            nonDigitMet = true
+          }
+          j++
+        }
+        const newlineColons = newlinePeriod.split(/:\\n/) // sometimes multiple string outputs get added to same line
+        for (let newlineColon of newlineColons) {
+          if (
+            newlineColons.length > 1 &&
+            !(newlineColon.endsWith(':') || newlineColon.endsWith('.') || newlineColon.endsWith(']'))
+          ) {
+            newlineColon += ':'
+          }
+          const questionChunks = newlineColon.split(/(?<!^)(\? (?!\(|Yes|No))/) // sometimes multiple lines come in a single chunk. Split on those (but not boolean questions or choices)
+          chunks.push(escapeChunk(questionChunks[0]))
+          if (questionChunks.length > 1) {
+            for (let i = 2; i < questionChunks.length; i = i + 2) {
+              chunks.push(escapeChunk(`${questionChunks[i - 1]}${questionChunks[i]}`))
+            }
+          }
+          if (inputIndex < inputs.length) {
+            delayReply(inputs[inputIndex])
+          } else {
+            setTimeout(() => {
+              proc.stdin.end()
+            }, maxQuietPeriodMs)
+          }
+        }
       }
     }
   }
@@ -100,7 +131,7 @@ export default async function ({
   })
 }
 
-function getExecutableName() {
+export function getExecutableName(): string {
   let name = 'software-update-checker-'
   if (os.platform() === 'win32') {
     name = `${name}win.exe`
@@ -117,6 +148,7 @@ function escapeChunk(chunk: string): string {
   escapedChunk = escapedChunk.substring(1, escapedChunk.length - 1) // remove enclosing double quotes from stringify
   escapedChunk = escapedChunk.replace(/\\+n$/, '') // if ends in newline, remove newline
   escapedChunk = escapedChunk.replace(/❯/g, '>') // some shells print out strange symbol, convert it to standard
+  escapedChunk = escapedChunk.replace(/\\+"/g, '"') // remove escape chars in front of double quotes
   return escapedChunk
 }
 

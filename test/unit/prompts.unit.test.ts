@@ -152,7 +152,7 @@ describe('Prompts Unit Tests', () => {
       await expect(Prompts.configure()).resolves.toStrictEqual(undefined)
       expect(promptMocks.mock.calls.length).toBe(2)
       expect(JSON.stringify(consolemock.mock.calls, null, 2)).toBe(
-        JSON.stringify([[`Invalid name '${existingSoftware.name}', already in use.`.red]], null, 2)
+        JSON.stringify([[`Invalid name "${existingSoftware.name}", already in use.`.red]], null, 2)
       )
       expect(JSON.stringify(addSpy.mock.calls, null, 2)).toBe(JSON.stringify([[software]], null, 2))
       expect(editSpy.mock.calls.length).toBe(0)
@@ -291,7 +291,7 @@ describe('Prompts Unit Tests', () => {
       await expect(Prompts.configure(software)).resolves.toStrictEqual(undefined)
       expect(promptMocks.mock.calls.length).toBe(2)
       expect(JSON.stringify(consolemock.mock.calls, null, 2)).toBe(
-        JSON.stringify([[`Invalid name '${existingSoftware.name}', already in use.`.red]], null, 2)
+        JSON.stringify([[`Invalid name "${existingSoftware.name}", already in use.`.red]], null, 2)
       )
       expect(addSpy.mock.calls.length).toBe(0)
       expect(JSON.stringify(editSpy.mock.calls, null, 2)).toBe(JSON.stringify([[software, editedSoftware]], null, 2))
@@ -401,7 +401,7 @@ describe('Prompts Unit Tests', () => {
       expect(getPromptDefault(promptMock.mock.calls[1][0], 1)).toBe(undefined)
       expect(getPromptDefault(promptMock.mock.calls[2][0])).toBe(true)
       expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(
-        JSON.stringify([[`Resolved executable: '${mockResolvedCommand}'`]], null, 2)
+        JSON.stringify([[`Resolved executable: "${mockResolvedCommand}"`]], null, 2)
       )
       expect(JSON.stringify(consoleErrorMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
     })
@@ -456,7 +456,7 @@ describe('Prompts Unit Tests', () => {
       expect(getPromptDefault(promptMock.mock.calls[4][0], 0)).toBe(initialDirectory)
       expect(getPromptDefault(promptMock.mock.calls[4][0], 1)).toBe(initialRegex)
       expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(
-        JSON.stringify([[`Resolved executable: '${mockResolvedCommand}'`]], null, 2)
+        JSON.stringify([[`Resolved executable: "${mockResolvedCommand}"`]], null, 2)
       )
       expect(JSON.stringify(consoleErrorMock.mock.calls, null, 2)).toBe(JSON.stringify([[mockError.red]], null, 2))
     })
@@ -517,7 +517,7 @@ describe('Prompts Unit Tests', () => {
       expect(getPromptDefault(promptMock.mock.calls[4][0], 1)).toBe(initialRegex)
       expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(
         JSON.stringify(
-          [[`Resolved executable: '${mockInitialCommand}'`], [`Resolved executable: '${mockReconfiguredCommand}'`]],
+          [[`Resolved executable: "${mockInitialCommand}"`], [`Resolved executable: "${mockReconfiguredCommand}"`]],
           null,
           2
         )
@@ -546,7 +546,7 @@ describe('Prompts Unit Tests', () => {
       expect(getPromptDefault(promptMock.mock.calls[3][0])).toBe('dynamic')
       expect(getPromptDefault(promptMock.mock.calls[4][0])).toBe(undefined)
       expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(
-        JSON.stringify([[`Resolved executable: '${mockResolvedCommand}'`]], null, 2)
+        JSON.stringify([[`Resolved executable: "${mockResolvedCommand}"`]], null, 2)
       )
       expect(JSON.stringify(consoleErrorMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
     })
@@ -579,7 +579,7 @@ describe('Prompts Unit Tests', () => {
       expect(getPromptDefault(promptMock.mock.calls[0][0])).toBe(undefined)
       expect(getPromptDefault(promptMock.mock.calls[1][0])).toBe(true)
       expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(
-        JSON.stringify([[`Installed version: '${mockInstalledVersion}'`]], null, 2)
+        JSON.stringify([[`Installed version: "${mockInstalledVersion}"`]], null, 2)
       )
       expect(JSON.stringify(consoleErrorMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
     })
@@ -605,7 +605,7 @@ describe('Prompts Unit Tests', () => {
       expect(getPromptDefault(promptMock.mock.calls[0][0])).toBe(undefined)
       expect(getPromptDefault(promptMock.mock.calls[1][0])).toBe(true)
       expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(
-        JSON.stringify([[`Installed version: '${mockInstalledVersion}'`]], null, 2)
+        JSON.stringify([[`Installed version: "${mockInstalledVersion}"`]], null, 2)
       )
       expect(JSON.stringify(consoleErrorMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
     })
@@ -633,7 +633,7 @@ describe('Prompts Unit Tests', () => {
       expect(getPromptDefault(promptMock.mock.calls[0][0])).toBe(undefined)
       expect(getPromptDefault(promptMock.mock.calls[1][0])).toBe(true)
       expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(
-        JSON.stringify([[`Installed version: '${mockInstalledVersion}'`]], null, 2)
+        JSON.stringify([[`Installed version: "${mockInstalledVersion}"`]], null, 2)
       )
       expect(JSON.stringify(consoleErrorMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
     })
@@ -672,7 +672,7 @@ describe('Prompts Unit Tests', () => {
       expect(getPromptDefault(promptMock.mock.calls[0][0], 2)).toBe(existingInstalledRegex)
       expect(getPromptDefault(promptMock.mock.calls[1][0])).toBe(true)
       expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(
-        JSON.stringify([[`Installed version: '${mockInstalledVersion}'`]], null, 2)
+        JSON.stringify([[`Installed version: "${mockInstalledVersion}"`]], null, 2)
       )
       expect(JSON.stringify(consoleErrorMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
     })
@@ -731,7 +731,7 @@ describe('Prompts Unit Tests', () => {
       expect(getPromptDefault(promptMock.mock.calls[2][0], 2)).toBe(initialInstalledRegex)
       expect(getPromptDefault(promptMock.mock.calls[3][0])).toBe(true)
       expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(
-        JSON.stringify([[`Installed version: '${mockInstalledVersion}'`]], null, 2)
+        JSON.stringify([[`Installed version: "${mockInstalledVersion}"`]], null, 2)
       )
       expect(JSON.stringify(consoleErrorMock.mock.calls, null, 2)).toBe(JSON.stringify([[mockError.red]], null, 2))
     })
@@ -772,8 +772,8 @@ describe('Prompts Unit Tests', () => {
       expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(
         JSON.stringify(
           [
-            [`Installed version: '${initialInstalledVersion}'`],
-            [`Installed version: '${reconfiguredInstalledVersion}'`],
+            [`Installed version: "${initialInstalledVersion}"`],
+            [`Installed version: "${reconfiguredInstalledVersion}"`],
           ],
           null,
           2
@@ -800,7 +800,7 @@ describe('Prompts Unit Tests', () => {
       expect(getPromptDefault(promptMock.mock.calls[0][0])).toBe(undefined)
       expect(getPromptDefault(promptMock.mock.calls[1][0])).toBe(true)
       expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(
-        JSON.stringify([[`Latest version: '${mockLatestVersion}'`]], null, 2)
+        JSON.stringify([[`Latest version: "${mockLatestVersion}"`]], null, 2)
       )
       expect(JSON.stringify(consoleErrorMock.mock.calls, null, 2)).toBe(JSON.stringify([], null, 2))
     })
@@ -848,7 +848,7 @@ describe('Prompts Unit Tests', () => {
       expect(getPromptDefault(promptMock.mock.calls[2][0], 1)).toBe(initialLatestRegex)
       expect(getPromptDefault(promptMock.mock.calls[3][0])).toBe(true)
       expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(
-        JSON.stringify([[`Latest version: '${reconfiguredLatestVersion}'`]], null, 2)
+        JSON.stringify([[`Latest version: "${reconfiguredLatestVersion}"`]], null, 2)
       )
       expect(JSON.stringify(consoleErrorMock.mock.calls, null, 2)).toBe(
         JSON.stringify([[initialLatestVersionError.red]], null, 2)
@@ -883,7 +883,7 @@ describe('Prompts Unit Tests', () => {
       expect(getPromptDefault(promptMock.mock.calls[3][0])).toBe(true)
       expect(JSON.stringify(consoleLogMock.mock.calls, null, 2)).toBe(
         JSON.stringify(
-          [[`Latest version: '${initialLatestVersion}'`], [`Latest version: '${reconfiguredLatestVersion}'`]],
+          [[`Latest version: "${initialLatestVersion}"`], [`Latest version: "${reconfiguredLatestVersion}"`]],
           null,
           2
         )

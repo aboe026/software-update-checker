@@ -27,11 +27,50 @@ export interface LatestReconfiguration {
 }
 
 export default class E2eAddUtil extends E2eBaseUtil {
+  static readonly MESSAGES = {
+    CommandTypes: [
+      'Command types:',
+      'Static - Software executable defined by a fixed, non-changing path (eg executable on $PATH or absolute path to executable file).',
+      'Dynamic - Software executable has changing, evolving name requiring regex patterns to determine (eg executable name includes version, which changes between releases).',
+    ],
+  }
   static readonly CHOICES = {
     Executable: {
-      question: 'Is the executable file a static name or dynamic (eg includes version in name)',
+      question: 'Command type of executable (see definitions above)',
       options: ExecutableChoiceOption,
     },
+  }
+
+  static getInstalledErrorMessage(error: string): string {
+    return `Could not determine installed version: ${error}`
+  }
+
+  static getLatestErrorMessage(error: string): string {
+    return `Could not determine latest version: ${error}`
+  }
+
+  static getSilentCommand({ software }: { software: Software }): string[] {
+    const args: string[] = [
+      'add',
+      isStatic(software.executable) ? 'static' : 'dynamic',
+      `--name="${software.name}"`,
+      `--installedRegex="${software.installedRegex}"`,
+      `--url="${software.url}"`,
+      `--latestRegex="${software.latestRegex}"`,
+    ]
+    if (isStatic(software.executable)) {
+      args.push(`--command="${software.executable.command}"`)
+    } else {
+      args.push(`--directory="${software.executable.directory}"`)
+      args.push(`--regex="${software.executable.regex}"`)
+    }
+    if (software.args) {
+      args.push(`--args="${software.args}"`)
+    }
+    if (software.shellOverride) {
+      args.push(`--shellOverride="${software.shellOverride}"`)
+    }
+    return args
   }
 
   static getInputs({ software, defaults }: { software: Software; defaults?: Software }): string[] {
@@ -142,6 +181,16 @@ export default class E2eAddUtil extends E2eBaseUtil {
     return inputs
   }
 
+  static getChunksSilent({
+    installedVersion,
+    latestVersion,
+  }: {
+    installedVersion: string
+    latestVersion: string
+  }): (string | StringPrompt | BooleanPrompt | ChoicePrompt)[] {
+    return [`Installed version: "${installedVersion}"`, `Latest version: "${latestVersion}"`]
+  }
+
   static getChunks({
     software,
     installedVersion,
@@ -155,54 +204,54 @@ export default class E2eAddUtil extends E2eBaseUtil {
   }): (string | StringPrompt | BooleanPrompt | ChoicePrompt)[] {
     return [
       {
-        question: 'Name to identify new software',
+        question: 'Name to identify software configuration',
         answer: software.name,
         default: defaults && defaults.name,
       },
+      ...this.MESSAGES.CommandTypes,
       {
         choice: this.CHOICES.Executable,
         answer: ExecutableChoiceOption.Static,
-        default:
-          defaults && defaults.executable && !isStatic(defaults.executable)
-            ? ExecutableChoiceOption.Dynamic
-            : ExecutableChoiceOption.Static,
       },
       {
-        question: 'Command or path to executable (eg git or C:\\Program Files\\Git\\bin\\git.exe)',
+        question: 'Command or path to executable (eg "git" or "C:\\Program Files\\Git\\bin\\git.exe")',
         answer: isStatic(software.executable) ? software.executable.command : '',
-        default: defaults && defaults.executable && isStatic(defaults.executable) ? defaults.executable.command : '',
+        default:
+          defaults && defaults.executable && isStatic(defaults.executable) ? defaults.executable.command : undefined,
       },
       {
-        question: 'Arguments to apply to executable to produce version (eg --version)',
+        question: 'Arguments to apply to executable to produce version (eg "--version")',
         answer: software.args,
         default: defaults && defaults.args,
       },
       {
-        question: 'Shell override to use instead of system default shell (eg powershell)',
+        question: 'Shell to use instead of system default shell (eg "powershell")',
         answer: software.shellOverride,
         default: defaults && defaults.shellOverride,
       },
       {
-        question: 'Regex pattern applied to command output to single out installed version (eg version (.*))',
+        question:
+          'Regex pattern applied to executable command output for singling out installed version (eg "version (.*)")',
         answer: software.installedRegex,
         default: defaults && defaults.installedRegex,
       },
-      `Installed version: '${installedVersion}'`,
+      `Installed version: "${installedVersion}"`,
       {
         question: 'Is the above version correct',
         answer: true,
       },
       {
-        question: 'URL containing latest version',
+        question: 'URL to call for latest version',
         answer: software.url,
         default: defaults && defaults.url,
       },
       {
-        question: 'Regex pattern applied to URL contents to single out latest version (eg version (.*))',
+        question:
+          'Regex pattern applied to URL contents for singling out latest version (eg "Version (\\d+\\.\\d+(\\.\\d+)?)")',
         answer: software.latestRegex,
         default: defaults && defaults.latestRegex,
       },
-      `Latest version: '${latestVersion}'`,
+      `Latest version: "${latestVersion}"`,
       {
         question: 'Is the above version correct',
         answer: true,
@@ -223,7 +272,7 @@ export default class E2eAddUtil extends E2eBaseUtil {
   }): (string | StringPrompt | BooleanPrompt | ChoicePrompt)[] {
     const chunks: (string | StringPrompt | BooleanPrompt | ChoicePrompt)[] = [
       {
-        question: 'Name to identify new software',
+        question: 'Name to identify software configuration',
         answer: name,
         default: defaults && defaults.name,
       },
@@ -233,39 +282,37 @@ export default class E2eAddUtil extends E2eBaseUtil {
       const previousConfig = i > 0 ? installed[i - 1] : defaults
       chunks.push(
         ...[
+          ...this.MESSAGES.CommandTypes,
           {
             choice: this.CHOICES.Executable,
             answer: ExecutableChoiceOption.Static,
-            default:
-              isSoftware(previousConfig) && !isStatic(previousConfig.executable)
-                ? ExecutableChoiceOption.Dynamic
-                : ExecutableChoiceOption.Static,
           },
           {
-            question: 'Command or path to executable (eg git or C:\\Program Files\\Git\\bin\\git.exe)',
+            question: 'Command or path to executable (eg "git" or "C:\\Program Files\\Git\\bin\\git.exe")',
             answer: currentConfig.command,
             default: isSoftware(previousConfig)
               ? isStatic(previousConfig.executable)
                 ? previousConfig.executable.command
-                : ''
+                : undefined
               : previousConfig && previousConfig.command,
           },
           {
-            question: 'Arguments to apply to executable to produce version (eg --version)',
+            question: 'Arguments to apply to executable to produce version (eg "--version")',
             answer: currentConfig.args,
             default: previousConfig && previousConfig.args,
           },
           {
-            question: 'Shell override to use instead of system default shell (eg powershell)',
+            question: 'Shell to use instead of system default shell (eg "powershell")',
             answer: currentConfig.shellOverride === KEYS.BACK_SPACE ? '' : currentConfig.shellOverride,
             default: previousConfig
               ? previousConfig.shellOverride === KEYS.BACK_SPACE
                 ? ''
                 : previousConfig.shellOverride
-              : '',
+              : undefined,
           },
           {
-            question: 'Regex pattern applied to command output to single out installed version (eg version (.*))',
+            question:
+              'Regex pattern applied to executable command output for singling out installed version (eg "version (.*)")',
             answer: currentConfig.regex,
             default: isSoftware(previousConfig)
               ? previousConfig.installedRegex
@@ -286,7 +333,7 @@ export default class E2eAddUtil extends E2eBaseUtil {
       } else {
         chunks.push(
           ...[
-            `Installed version: '${currentConfig.version}'`,
+            `Installed version: "${currentConfig.version}"`,
             {
               question: 'Is the above version correct',
               answer: currentConfig.confirmOrReconfigure === true,
@@ -302,12 +349,13 @@ export default class E2eAddUtil extends E2eBaseUtil {
         chunks.push(
           ...[
             {
-              question: 'URL containing latest version',
+              question: 'URL to call for latest version',
               answer: currentConfig.url,
               default: previousConfig && previousConfig.url,
             },
             {
-              question: 'Regex pattern applied to URL contents to single out latest version (eg version (.*))',
+              question:
+                'Regex pattern applied to URL contents for singling out latest version (eg "Version (\\d+\\.\\d+(\\.\\d+)?)")',
               answer: currentConfig.regex,
               default: isSoftware(previousConfig) ? previousConfig.latestRegex : previousConfig && previousConfig.regex,
             },
@@ -326,7 +374,7 @@ export default class E2eAddUtil extends E2eBaseUtil {
         } else {
           chunks.push(
             ...[
-              `Latest version: '${currentConfig.version}'`,
+              `Latest version: "${currentConfig.version}"`,
               {
                 question: 'Is the above version correct',
                 answer: currentConfig.confirmOrReconfigure === true,

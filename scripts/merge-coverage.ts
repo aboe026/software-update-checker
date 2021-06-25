@@ -26,7 +26,7 @@ async function validateCoverageFileExists(coverageDirectory: string, type: strin
     await fs.access(coverageFilePath)
   } catch (err) {
     throw Error(
-      `Cannot access coverage file '${coverageFilePath}' for type '${type}'. Make sure '${type}' type tests have been run.`
+      `Cannot access coverage file "${coverageFilePath}" for type "${type}". Make sure "${type}" type tests have been run.`
     )
   }
 }

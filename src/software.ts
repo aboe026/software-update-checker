@@ -100,7 +100,7 @@ export function getFromRegex(text: string, regex: RegExp): string | null {
   const matches = text.match(regex)
   const matchesLength = matches && matches.length ? matches.length : 0
   if (matchesLength <= 0) {
-    throw Error(`Could not find match for regex '${regex}' in text '${text}'`)
+    throw Error(`Could not find match for regex "${regex}" in text "${text}"`)
   }
   return matches && matches[1]
 }

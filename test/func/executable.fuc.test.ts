@@ -11,7 +11,7 @@ describe('Executable Func Tests', () => {
           directory,
           regex: '(.*)',
         })
-      ).rejects.toThrow(`Directory specified '${directory}' does not exist. Please specify a valid path.`)
+      ).rejects.toThrow(`Directory specified "${directory}" does not exist. Please specify a valid path.`)
     })
     it('No match throws error', async () => {
       const directory = path.join(__dirname, '../helpers/test-commands')
@@ -21,7 +21,7 @@ describe('Executable Func Tests', () => {
           directory,
           regex,
         })
-      ).rejects.toThrow(`Could not find any file in directory '${directory}' matching regex pattern '${regex}'`)
+      ).rejects.toThrow(`Could not find any file in directory "${directory}" matching regex pattern "${regex}"`)
     })
     it('Single match gets returned', async () => {
       const directory = path.join(__dirname, '../helpers/test-commands')
