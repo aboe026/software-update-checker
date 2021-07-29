@@ -1,4 +1,4 @@
-export default class EditPrompts {
+export default class BasePrompts {
   static capitalizeFirstLetters(words?: string): string {
     if (words) {
       words = words

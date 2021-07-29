@@ -131,7 +131,7 @@ describe('Edit Interactive', () => {
           latest: [
             {
               url,
-              regex: 'latest: v(.*)',
+              regex: 'latest: (.*)',
               error: `request to ${url} failed, reason: connect ECONNREFUSED 127.0.0.1:${port}`,
               confirmOrReconfigure: false,
             },
@@ -184,10 +184,10 @@ describe('Edit Interactive', () => {
       const firstSoftware = new Software({
         name: 'e2e edit interactive all fields first of two first',
         executable: {
-          command: 'gods',
+          command: 'superfecundation',
         },
-        args: 'twins',
-        shellOverride: 'greek',
+        args: 'homopaternal',
+        shellOverride: 'grecian',
         installedRegex: 'gemini',
         url: 'https://castortroyandpolluxtroy.com',
         latestRegex: 'dioscuri',

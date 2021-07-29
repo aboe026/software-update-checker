@@ -44,10 +44,10 @@ export default class E2eHelpUtil extends E2eBaseUtil {
     return [
       `${await getExecutableName()} [add|view|edit|remove]`,
       '',
-      'toast edit',
+      'Check if installed software has updates available',
       '',
       'Commands:',
-      '  software-update-checker-win.exe [add|view|edit|remove]     toast edit  [default]',
+      '  software-update-checker-win.exe [add|view|edit|remove]     Check if installed software has updates available  [default]',
       '  software-update-checker-win.exe add <static|dynamic>       Add software configuration  [aliases: create, configure]',
       '  software-update-checker-win.exe view                       View configured software versions  [aliases: list, read]',
       '  software-update-checker-win.exe edit <existing>            Edit software configuration  [aliases: update, reconfigure]',

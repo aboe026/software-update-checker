@@ -45,12 +45,12 @@ describe('Software List Unit Tests', () => {
       const software: Software = new Software({
         name: 'add single',
         executable: {
-          command: 'hello',
+          command: 'salve',
         },
         args: 'world',
-        installedRegex: '(.*)',
+        installedRegex: 'v(.*)',
         url: '',
-        latestRegex: '(.*)',
+        latestRegex: 'latest: v(.*)',
       })
       await expect(SoftwareList.add(software)).resolves.toStrictEqual([software])
     })
@@ -109,30 +109,31 @@ describe('Software List Unit Tests', () => {
           command: 'planets',
         },
         args: 'gas',
-        installedRegex: 'jupiter',
-        url: 'https://planets.com',
-        latestRegex: 'gas planets',
+        installedRegex: 'biggest',
+        url: 'https://getmorestupider.com',
+        latestRegex: 'jupiter',
       })
       const existingSoftwareTwo = new Software({
         name: 'the existing double trouble',
         executable: {
-          command: 'planest',
+          command: 'habitable',
         },
-        args: 'terrestrial',
-        installedRegex: 'earth',
-        url: 'https://planets.com',
-        latestRegex: 'terrestrial planets',
+        args: 'solar-system',
+        installedRegex: 'worlds',
+        url: 'https://bluemarble.com',
+        latestRegex: 'earth',
       })
       jest.spyOn(SoftwareList, 'get').mockImplementation(() => [existingSoftwareOne, existingSoftwareTwo])
       const software: Software = new Software({
         name: 'middling double existing',
         executable: {
-          command: 'planets',
+          command: 'minor',
         },
-        args: 'gas',
-        installedRegex: 'venus',
-        url: 'https://planets.com',
-        latestRegex: 'gas planets venus',
+        args: 'kuiper',
+        shellOverride: 'planet',
+        installedRegex: 'pluto',
+        url: 'https://coldshouldered.com',
+        latestRegex: '134340',
       })
       await expect(SoftwareList.add(software)).resolves.toStrictEqual([
         existingSoftwareOne,
@@ -382,9 +383,9 @@ describe('Software List Unit Tests', () => {
         new Software({
           name,
           executable: {
-            command: 'cheese',
+            command: 'dairy',
           },
-          args: 'hard',
+          args: 'cheese',
           installedRegex: 'Parmesan',
           url: 'https://cheesier.com',
           latestRegex: 'Parmigiano-Reggiano',
@@ -504,7 +505,7 @@ describe('Software List Unit Tests', () => {
             executable: {
               command: 'colors',
             },
-            args: 'light',
+            args: 'white',
             url: 'https://paintbynumbers.com',
             latestRegex: 'eggshell',
           },
@@ -534,7 +535,7 @@ describe('Software List Unit Tests', () => {
       )
     })
     it('throws error if save file has software without a latest regex', async () => {
-      const name = 'no url'
+      const name = 'no latest regex'
       fs.readFile = jest.fn().mockResolvedValue(
         JSON.stringify([
           {
@@ -591,11 +592,11 @@ describe('Software List Unit Tests', () => {
       const software = new Software({
         name: 'valid single with shell override',
         executable: {
-          command: 'shells',
+          command: 'shell',
         },
         args: 'koopa',
         shellOverride: 'mariokart',
-        installedRegex: 'blue',
+        installedRegex: 'leader',
         url: 'https://itsame.com',
         latestRegex: 'spiny shell',
       })

@@ -1,11 +1,12 @@
-import { AddCommands } from './add-options'
+import { AddCommands, AddOptions } from './add-options'
 import AddPrompts from './add-prompts'
+import Base from '../base/base'
 import colors from '../colors'
 import { CommandType, Dynamic, getDynamicExecutable, isStatic, Static } from '../executable'
 import Software from '../software'
 import SoftwareList from '../software-list'
 
-export default class Add {
+export default class Add extends Base {
   static async configure({
     inputs,
     existingSoftware,
@@ -35,7 +36,7 @@ export default class Add {
           name,
           executable: installedVersion.executable,
           args: installedVersion.args,
-          shellOverride: installedVersion.shellOverride || '',
+          shellOverride: installedVersion.shellOverride,
           installedRegex: installedVersion.installedRegex,
           url: latestVersion.url,
           latestRegex: latestVersion.latestRegex,
@@ -49,32 +50,54 @@ export default class Add {
     }
   }
 
+  static isNameDuplicate({
+    newName,
+    potentialConflictName,
+    existingName,
+  }: {
+    newName: string
+    potentialConflictName: string
+    existingName?: string
+  }): boolean {
+    let duplicate = newName === potentialConflictName
+    if (existingName && newName === existingName && existingName === potentialConflictName) {
+      duplicate = false // editing software, but keeping original name
+    }
+    return duplicate
+  }
+
   static async getName({ inputs, existingName }: { inputs?: Inputs; existingName?: string }): Promise<string> {
-    let name = ''
     const softwares = await SoftwareList.load()
-    let validName = false
-    while (!validName) {
-      if (inputs && (inputs.name || !inputs.interactive)) {
-        name = inputs.name || existingName || ''
-      } else {
-        name = await AddPrompts.getName(existingName)
-      }
-      validName = true
-      for (const software of softwares) {
-        let duplicateName = software.name === name
-        if (existingName === software.name && name === existingName) {
-          duplicateName = false // editing software, but keeping original name
+
+    let name = ''
+    if (inputs && (inputs.name || !inputs.interactive)) {
+      name = inputs.name || existingName || ''
+    } else {
+      name = await AddPrompts.getName(existingName)
+    }
+    if (!name) {
+      throw Error(Add.getMissingRequiredOptionErrorMessage(AddOptions.Name.key))
+    }
+
+    for (const software of softwares) {
+      if (
+        Add.isNameDuplicate({
+          newName: name,
+          potentialConflictName: software.name,
+          existingName,
+        })
+      ) {
+        const message = `Invalid name "${name}", already in use.`
+        if (inputs && !inputs.interactive) {
+          throw Error(message)
         }
-        if (duplicateName) {
-          const message = `Invalid name "${name}", already in use.`
-          if (inputs && !inputs.interactive) {
-            throw Error(message)
-          }
-          validName = false
-          console.error(colors.red(message))
-        }
+        console.error(colors.red(message))
+        return Add.getName({
+          existingName,
+        })
       }
     }
+
     return name
   }
 
@@ -106,7 +129,7 @@ export default class Add {
 
       let shellOverride
       if (inputs && (inputs.shellOverride || !inputs.interactive)) {
-        shellOverride = inputs.shellOverride !== undefined ? inputs.shellOverride : existingInstalledRegex
+        shellOverride = inputs.shellOverride !== undefined ? inputs.shellOverride : existingShellOverride
       } else {
         shellOverride = await AddPrompts.getShellOverride(existingShellOverride)
       }
@@ -116,6 +139,9 @@ export default class Add {
         installedRegex = inputs.installedRegex || existingInstalledRegex || ''
       } else {
         installedRegex = await AddPrompts.getInstalledRegex(existingInstalledRegex)
+      }
+      if (!installedRegex) {
+        throw Error(Add.getMissingRequiredOptionErrorMessage(AddOptions.InstalledRegex.key))
       }
 
       try {
@@ -138,8 +164,8 @@ export default class Add {
         if (versionCorrect) {
           return {
             executable,
-            args,
-            shellOverride,
+            args: args || '',
+            shellOverride: shellOverride || '',
             installedRegex,
           }
         }
@@ -156,11 +182,7 @@ export default class Add {
         }
         console.error(colors.red(message))
 
-        let reattempt = false
-        if (!inputs || inputs.interactive) {
-          reattempt = await AddPrompts.getReattemptVersion()
-        }
-
+        const reattempt = await AddPrompts.getReattemptVersion()
         if (reattempt) {
           return Add.configureInstalledVersion({
             existingExecutable: executable,
@@ -199,108 +221,121 @@ export default class Add {
       )
     }
 
-    if (type === CommandType.Static) {
-      let command = ''
-      if (inputs && (inputs.executable || !inputs.interactive)) {
-        if (inputs.executable && isStatic(inputs.executable)) {
-          command = inputs.executable.command
-        } else if (existingExecutable && isStatic(existingExecutable)) {
-          command = existingExecutable.command
-        }
-        if (!command) {
-          throw Error(
-            `The executable type "${CommandType.Static}" requires a value passed into the "--command" option.`
-          )
-        }
-      } else {
-        command = await AddPrompts.getCommand(
-          existingExecutable && isStatic(existingExecutable) ? existingExecutable.command : undefined
-        )
-      }
+    return type === CommandType.Static
+      ? Add.configureStatic({
+          inputs,
+          existingCommand: existingExecutable && isStatic(existingExecutable) ? existingExecutable.command : undefined,
+        })
+      : Add.configureDynamic({
+          inputs,
+          existingDirectory:
+            existingExecutable && !isStatic(existingExecutable) ? existingExecutable.directory : undefined,
+          existingRegex: existingExecutable && !isStatic(existingExecutable) ? existingExecutable.regex : undefined,
+        })
+  }
 
-      return {
-        command,
+  static async configureStatic({
+    inputs,
+    existingCommand,
+  }: {
+    inputs?: Inputs
+    existingCommand?: string
+  }): Promise<Static> {
+    let command = ''
+
+    if (inputs && (inputs.executable || !inputs.interactive)) {
+      if (inputs.executable && isStatic(inputs.executable)) {
+        command = inputs.executable.command
+      } else if (existingCommand) {
+        command = existingCommand
+      }
+      if (!command) {
+        throw Error(`The executable type "${CommandType.Static}" requires a value passed into the "--command" option.`)
       }
     } else {
-      let directory = ''
-      if (inputs && (inputs.executable || !inputs.interactive)) {
-        if (inputs.executable && !isStatic(inputs.executable)) {
-          directory = inputs.executable.directory
-        } else if (existingExecutable && !isStatic(existingExecutable)) {
-          directory = existingExecutable.directory
-        }
-        if (!directory) {
-          throw Error(
-            `The executable type "${CommandType.Dynamic}" requires a value passed into the "--directory" option.`
-          )
-        }
+      command = await AddPrompts.getCommand(existingCommand)
+    }
+
+    return {
+      command,
+    }
+  }
+
+  static async configureDynamic({
+    inputs,
+    existingDirectory,
+    existingRegex,
+  }: {
+    inputs?: Inputs
+    existingDirectory?: string
+    existingRegex?: string
+  }): Promise<Dynamic | undefined> {
+    let directory = ''
+    let regex = ''
+
+    if (inputs && (inputs.executable || !inputs.interactive)) {
+      if (inputs.executable && !isStatic(inputs.executable)) {
+        directory = inputs.executable.directory
+        regex = inputs.executable.regex
       } else {
-        directory = await AddPrompts.getDirectory()
+        if (existingDirectory) {
+          directory = existingDirectory
+        }
+        if (existingRegex) {
+          regex = existingRegex
+        }
+      }
+      if (!directory) {
+        throw Error(
+          `The executable type "${CommandType.Dynamic}" requires a value passed into the "--directory" option.`
+        )
+      }
+      if (!regex) {
+        throw Error(`The executable type "${CommandType.Dynamic}" requires a value passed into the "--regex" option.`)
+      }
+    } else {
+      directory = await AddPrompts.getDirectory(existingDirectory)
+      regex = await AddPrompts.getRegex(existingRegex)
+    }
+
+    try {
+      const command = await getDynamicExecutable({
+        directory,
+        regex,
+      })
+      console.log(`Resolved executable: "${command}"`)
+
+      let executableCorrect = true
+      if (!inputs || inputs.interactive) {
+        executableCorrect = await AddPrompts.getExecutableCorrect()
       }
 
-      let regex = ''
-      if (inputs && (inputs.executable || !inputs.interactive)) {
-        if (inputs.executable && !isStatic(inputs.executable)) {
-          regex = inputs.executable.regex
-        } else if (existingExecutable && !isStatic(existingExecutable)) {
-          regex = existingExecutable.regex
-        }
-        if (!regex) {
-          throw Error(`The executable type "${CommandType.Dynamic}" requires a value passed into the "--regex" option.`)
-        }
-      } else {
-        regex = await AddPrompts.getRegex()
-      }
-
-      try {
-        const command = await getDynamicExecutable({
+      if (executableCorrect) {
+        return {
           directory,
           regex,
+        }
+      } else {
+        return Add.configureDynamic({
+          existingDirectory: directory,
+          existingRegex: regex,
         })
-        console.log(`Resolved executable: "${command}"`)
-
-        let executableCorrect = true
-        if (!inputs || inputs.interactive) {
-          executableCorrect = await AddPrompts.getExecutableCorrect()
-        }
-
-        if (executableCorrect) {
-          return {
-            directory,
-            regex,
-          }
-        } else {
-          return Add.configureExecutable({
-            inputs,
-            existingExecutable: {
-              directory,
-              regex,
-            },
-          })
-        }
-      } catch (err) {
-        const message = err.message || err
-        if (inputs && !inputs.interactive) {
-          throw new Error(`Could not determine dynamic executable: ${message}`)
-        }
-        console.error(colors.red(message))
-
-        let reattempt = false
-        if (!inputs || inputs.interactive) {
-          reattempt = await AddPrompts.getReattemptDynamic()
-        }
-
-        if (reattempt) {
-          return Add.configureExecutable({
-            inputs,
-            existingExecutable: {
-              directory,
-              regex,
-            },
-          })
-        }
-        return undefined
       }
+    } catch (err) {
+      const message = err.message || err
+      if (inputs && !inputs.interactive) {
+        throw new Error(`Could not determine dynamic executable: ${message}`)
+      }
+      console.error(colors.red(message))
+
+      const reattempt = await AddPrompts.getReattemptDynamic()
+      if (reattempt) {
+        return Add.configureDynamic({
+          existingDirectory: directory,
+          existingRegex: regex,
+        })
+      }
+      return undefined
     }
   }
 
@@ -319,12 +354,18 @@ export default class Add {
     } else {
       url = await AddPrompts.getUrl(existingUrl)
     }
+    if (!url) {
+      throw Error(Add.getMissingRequiredOptionErrorMessage(AddOptions.Url.key))
+    }
 
     let latestRegex = ''
     if (inputs && (inputs.latestRegex || !inputs.interactive)) {
       latestRegex = inputs.latestRegex || existingLatestRegex || ''
     } else {
       latestRegex = await AddPrompts.getLatestRegex(existingLatestRegex)
+    }
+    if (!latestRegex) {
+      throw Error(Add.getMissingRequiredOptionErrorMessage(AddOptions.LatestRegex.key))
     }
 
     try {
@@ -354,7 +395,6 @@ export default class Add {
         }
       }
       return Add.configureLatestVersion({
-        inputs,
         existingUrl: url,
         existingLatestRegex: latestRegex,
       })
@@ -365,14 +405,9 @@ export default class Add {
       }
       console.error(colors.red(message))
 
-      let reattempt = false
-      if (!inputs || inputs.interactive) {
-        reattempt = await AddPrompts.getReattemptVersion()
-      }
-
+      const reattempt = await AddPrompts.getReattemptVersion()
       if (reattempt) {
         return Add.configureLatestVersion({
-          inputs,
           existingUrl: url,
           existingLatestRegex: latestRegex,
         })
@@ -392,7 +427,7 @@ export interface Inputs {
   interactive?: boolean
 }
 
-interface ConfigureInstalledVersionResponse {
+export interface ConfigureInstalledVersionResponse {
   executable: Static | Dynamic
   args?: string
   shellOverride?: string

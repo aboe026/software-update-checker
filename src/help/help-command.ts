@@ -10,8 +10,8 @@ export default class HelpCommand extends BaseCommand {
       command: HelpCommands.Help.key,
       describe: addNewlineForExample(HelpCommands.Help.value.description),
       builder: (yargs: Argv) => yargs,
-      handler: async () => {
-        yargs.showHelp()
+      handler: () => {
+        yargs.showHelp() // don't think this actually does anything...
       },
     }
   }

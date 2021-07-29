@@ -5,10 +5,6 @@ import { CommandType } from '../executable'
 import { GenericOptions, Option } from './base-options'
 
 export default class BaseCommand {
-  static getRequiredArgumentErrorText(name: string): string {
-    return `Argument "${name}" must be non-empty string.`
-  }
-
   static sortOptions(commands: OptionsSet): GenericOptions {
     return Object.keys(commands)
       .sort()

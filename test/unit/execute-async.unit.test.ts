@@ -55,7 +55,7 @@ describe('Execute Async Unit Tests', () => {
   })
   describe('stderr', () => {
     it('sdterr command without options resolves with error', async () => {
-      const command = 'erroring no options'
+      const command = 'erroring no options stderr'
       const options = {}
       const stdout = 'i should not be returned'
       const error = null
@@ -69,7 +69,7 @@ describe('Execute Async Unit Tests', () => {
       expect(JSON.stringify(execSpy.mock.calls, null, 2)).toBe(JSON.stringify([[command, options, null]], null, 2))
     })
     it('sdterr command with empty options resolves with error', async () => {
-      const command = 'erroring empty options'
+      const command = 'erroring empty options stderr'
       const options = {}
       const stdout = 'i should not be returned'
       const error = null
@@ -83,7 +83,7 @@ describe('Execute Async Unit Tests', () => {
       expect(JSON.stringify(execSpy.mock.calls, null, 2)).toBe(JSON.stringify([[command, options, null]], null, 2))
     })
     it('sdterr command with options resolves with error', async () => {
-      const command = 'erroring with options'
+      const command = 'erroring with options stderr'
       const options = {
         cwd: path.join(__dirname, '../helpers/test-commands'),
       }
@@ -147,7 +147,7 @@ describe('Execute Async Unit Tests', () => {
   })
   describe('error', () => {
     it('erroring command without options rejects with error', async () => {
-      const command = 'erroring no options'
+      const command = 'erroring no options error'
       const options = {}
       const stdout = 'i should not be returned'
       const error = new Error('no options')
@@ -161,7 +161,7 @@ describe('Execute Async Unit Tests', () => {
       expect(JSON.stringify(execSpy.mock.calls, null, 2)).toBe(JSON.stringify([[command, options, null]], null, 2))
     })
     it('erroring command with empty options rejects with error', async () => {
-      const command = 'erroring empty options'
+      const command = 'erroring empty options error'
       const options = {}
       const stdout = 'i should not be returned'
       const error = new Error('empty options')
@@ -175,7 +175,7 @@ describe('Execute Async Unit Tests', () => {
       expect(JSON.stringify(execSpy.mock.calls, null, 2)).toBe(JSON.stringify([[command, options, null]], null, 2))
     })
     it('erroring command with options rejects with error', async () => {
-      const command = 'erroring with options'
+      const command = 'erroring with options error'
       const options = {
         cwd: path.join(__dirname, '../helpers/test-commands'),
       }
@@ -188,6 +188,20 @@ describe('Execute Async Unit Tests', () => {
         error,
       })
       await expect(execute(command, options)).rejects.toStrictEqual(error)
+      expect(JSON.stringify(execSpy.mock.calls, null, 2)).toBe(JSON.stringify([[command, options, null]], null, 2))
+    })
+    it('erroring command with stderr rejects with stderr', async () => {
+      const command = 'erroring with empty options stderr'
+      const options = {}
+      const stdout = 'i should not be returned'
+      const error = new Error('i should not be returned either')
+      const stderr = 'error with stderr'
+      const execSpy = mockExec({
+        stdout,
+        stderr,
+        error,
+      })
+      await expect(execute(command, options)).rejects.toStrictEqual(stderr)
       expect(JSON.stringify(execSpy.mock.calls, null, 2)).toBe(JSON.stringify([[command, options, null]], null, 2))
     })
   })

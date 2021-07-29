@@ -11,7 +11,7 @@ export default class ViewCommand extends BaseCommand {
       command: ViewCommands.View.key,
       aliases: ViewCommands.View.value.alias,
       describe: addNewlineForExample(ViewCommands.View.value.description),
-      builder: (yargs: Argv) => yargs,
+      builder: (yargs: Argv) => yargs.showHelpOnFail(true),
       handler: async () => {
         await View.showVersions()
       },

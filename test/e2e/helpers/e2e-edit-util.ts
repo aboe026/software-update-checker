@@ -20,9 +20,13 @@ export default class E2eEditUtil extends E2eBaseUtil {
     IncompatibleCommandWithDynamicType: 'The "--command" option is not compatible with "--type=dynamic"',
     IncompatibleCommandWithDirectory: 'Arguments command and directory are mutually exclusive',
     IncompatibleCommandWithRegex: 'Arguments command and regex are mutually exclusive',
-    IncompatibleDirectoryWithStaticExecutable: 'The "--directory" option is not compatible with a static executable',
-    IncompatibleRegexWithStaticExecutable: 'The "--regex" option is not compatible with a static executable',
-    IncompatibleCommandWithDynamicExecutable: 'The "--command" option is not compatible with a dynamic executable',
+    IncompatibleDirectoryWithStaticExecutable: 'The "--directory" option is not compatible with a "static" executable',
+    IncompatibleRegexWithStaticExecutable: 'The "--regex" option is not compatible with a "static" executable',
+    IncompatibleCommandWithDynamicExecutable: 'The "--command" option is not compatible with a "dynamic" executable',
+  }
+
+  static getNoSoftwaresToEditMessage(): string {
+    return 'No softwares to edit. Please add a software to have something to edit.'
   }
 
   static getNonExistingSoftwareMessage(name: string): string {

@@ -10,12 +10,15 @@ export default class Delete extends Base {
     if (softwares.length === 0) {
       console.warn(colors.yellow('No softwares to delete. Please add a software to have something to delete.'))
     } else {
-      const interactive = !inputs || inputs?.interactive === true
-      const existing: Software = await Delete.getExisting({
-        name: inputs?.existing || (await DeletePrompts.getExisting(softwares)),
+      const interactive = !inputs || inputs.interactive === true
+
+      const existing: Software = await Delete.getExistingSoftware({
+        name: inputs?.existing,
+        prompt: DeletePrompts.getExisting,
         softwares,
         interactive,
       })
+
       let deleteConfirmed = true
       if (interactive) {
         deleteConfirmed = await DeletePrompts.getDeleteConfirmed(existing.name)
@@ -27,7 +30,7 @@ export default class Delete extends Base {
   }
 }
 
-interface Inputs {
+export interface Inputs {
   existing?: string
   interactive?: boolean
 }

@@ -7,7 +7,7 @@ export default class HomeCommand extends BaseCommand {
   static getCommand(): CommandModule {
     return {
       command: '$0 [add|view|edit|remove]',
-      describe: 'toast edit', // TODO: have generic description about tool here, then say how it defaults to interactive shell in commands list
+      describe: 'Check if installed software has updates available', // TODO: have the "root" level description be separate from the in-line default description (https://github.com/yargs/yargs/issues/1995)
       builder: (yargs: Argv) => yargs,
       handler: async () => {
         await Home.mainMenu()

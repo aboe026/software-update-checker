@@ -11,9 +11,8 @@ export default class DeleteCommand extends BaseCommand {
       command: `${DeleteCommands.Delete.key} <${DeleteCommands.Existing.key}>`,
       aliases: DeleteCommands.Delete.value.alias,
       describe: addNewlineForExample(DeleteCommands.Delete.value.description),
-      builder: (yargs: Argv) => {
-        return yargs.positional(DeleteCommands.Existing.key, DeleteCommands.Existing.value)
-      },
+      builder: (yargs: Argv) =>
+        yargs.showHelpOnFail(true).positional(DeleteCommands.Existing.key, DeleteCommands.Existing.value),
       handler: async (argv: Arguments) => {
         const existing = DeleteCommand.getStringArgument(argv, DeleteCommands.Existing)
         const interactive = DeleteCommand.getBooleanArgument(argv, BaseOptions.Interactive)

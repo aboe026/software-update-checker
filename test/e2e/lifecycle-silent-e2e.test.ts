@@ -19,7 +19,7 @@ describe('Lifecycle Silent', () => {
     const latestVersion = '1.0.1'
     const updatedLatestVersion = '1.0.0'
     const software = new Software({
-      name: 'e2e lifecycle',
+      name: 'e2e lifecycle silent',
       executable: {
         command: 'node',
       },

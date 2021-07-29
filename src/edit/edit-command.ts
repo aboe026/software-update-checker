@@ -12,10 +12,11 @@ export default class EditCommand extends BaseCommand {
       command: `${EditCommands.Edit.key} <${EditCommands.Existing.key}>`,
       aliases: EditCommands.Edit.value.alias,
       describe: addNewlineForExample(EditCommands.Edit.value.description),
-      builder: (yargs: Argv) => {
-        yargs.options(EditCommand.sortOptions(convertToGenericOptions(EditOptions)))
-        return yargs.positional(EditCommands.Existing.key, EditCommands.Existing.value)
-      },
+      builder: (yargs: Argv) =>
+        yargs
+          .showHelpOnFail(true)
+          .options(EditCommand.sortOptions(convertToGenericOptions(EditOptions)))
+          .positional(EditCommands.Existing.key, EditCommands.Existing.value),
       handler: async (argv: Arguments) => {
         const typeKey = EditOptions.Type.key
         let executable: Static | Dynamic | undefined = undefined
@@ -65,7 +66,7 @@ export default class EditCommand extends BaseCommand {
 
         if (command) {
           executable = {
-            command: command || '',
+            command,
           }
         } else if (directory || regex) {
           executable = {

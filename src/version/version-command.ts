@@ -11,7 +11,7 @@ export default class VersionCommand extends BaseCommand {
       command: VersionCommands.Version.key,
       describe: addNewlineForExample(VersionCommands.Version.value.description),
       builder: (yargs: Argv) => yargs.help(false),
-      handler: async () => {
+      handler: () => {
         console.log(version) // for some reason, yargs.showVersion() was not available (which would be preferable)
       },
     }

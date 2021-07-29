@@ -13,7 +13,7 @@ describe('Edit Silent', () => {
     await Website.stop()
   })
   describe('invalid', () => {
-    it('edit silent with non-existent softwares file says does not exist', async () => {
+    it('edit silent with non-existent softwares file says no softwares to edit', async () => {
       await E2eEditUtil.verifySoftwares(undefined, false)
       const existingName = 'Chinook'
       await E2eEditUtil.testSilentError({
@@ -22,19 +22,19 @@ describe('Edit Silent', () => {
           newSoftware: {
             name: 'Sockeye',
             type: CommandType.Static,
-            command: 'fish',
-            args: 'salmon',
+            command: 'salmon',
+            args: 'anadromous',
             shellOverride: 'animals',
             installedRegex: 'red',
             url: 'https://swimupstream.com',
             latestRegex: 'oncorhynchus nerka',
           },
         }),
-        error: E2eEditUtil.getNonExistingSoftwareMessage(existingName),
+        error: E2eEditUtil.getNoSoftwaresToEditMessage(),
       })
       await E2eEditUtil.verifySoftwares([])
     })
-    it('edit silent with no content softwares file says does not exist', async () => {
+    it('edit silent with no content softwares file says no softwares to edit', async () => {
       await E2eEditUtil.setSoftwares(undefined)
       await E2eEditUtil.verifySoftwares(undefined)
       const existingName = 'Douglas Fir'
@@ -52,11 +52,11 @@ describe('Edit Silent', () => {
             latestRegex: 'sequoia',
           },
         }),
-        error: E2eEditUtil.getNonExistingSoftwareMessage(existingName),
+        error: E2eEditUtil.getNoSoftwaresToEditMessage(),
       })
       await E2eEditUtil.verifySoftwares([])
     })
-    it('edit silent with empty array softwares file says does not exist', async () => {
+    it('edit silent with empty array softwares file says no softwares to edit', async () => {
       await E2eEditUtil.setSoftwares([])
       await E2eEditUtil.verifySoftwares([])
       const existingName = 'VGA'
@@ -74,9 +74,43 @@ describe('Edit Silent', () => {
             latestRegex: 'high definition multimedia interface',
           },
         }),
-        error: E2eEditUtil.getNonExistingSoftwareMessage(existingName),
+        error: E2eEditUtil.getNoSoftwaresToEditMessage(),
       })
       await E2eEditUtil.verifySoftwares([])
+    })
+    it('edit silent with single software file referring to non existent one says it does not exist', async () => {
+      const name = 'e2e edit silent does not exist'
+      const software = new Software({
+        name,
+        executable: {
+          command: 'navigation',
+        },
+        args: 'celestial',
+        shellOverride: 'instrument',
+        installedRegex: 'doubly reflecting',
+        url: 'https://bringmethathorizon.com',
+        latestRegex: 'sextant',
+      })
+      await E2eEditUtil.setSoftwares([software])
+      await E2eEditUtil.verifySoftwares([software])
+      const existingName = `${name} non existent`
+      await E2eEditUtil.testSilentError({
+        args: E2eEditUtil.getSilentCommand({
+          existingName,
+          newSoftware: {
+            name: `${name} edited`,
+            type: CommandType.Static,
+            command: 'detection',
+            args: 'sound',
+            shellOverride: 'technique',
+            installedRegex: 'propagation',
+            url: 'https://batsub.com',
+            latestRegex: 'sonar',
+          },
+        }),
+        error: E2eEditUtil.getNonExistingSoftwareMessage(existingName),
+      })
+      await E2eEditUtil.verifySoftwares([software])
     })
     it('edit silent prevents using an existing name', async () => {
       const firstSoftware = new Software({
@@ -365,7 +399,7 @@ describe('Edit Silent', () => {
           directory: 'bread',
           regex: 'flat',
         },
-        args: 'italian',
+        args: 'mediterranean',
         shellOverride: 'carbohydrates',
         installedRegex: 'focaccia',
         url: 'https://protopizza.com',
@@ -470,7 +504,7 @@ describe('Edit Silent', () => {
         executable: {
           command: 'mathematician',
         },
-        args: 'male',
+        args: 'ww2',
         shellOverride: 'english',
         installedRegex: 'computer\\ scientist|logician|cryptanalyst|philosopher|theoretical biologist',
         url: 'https://fatherofcomputers.com',
@@ -528,7 +562,7 @@ describe('Edit Silent', () => {
         },
         args: 'north dakota',
         shellOverride: 'geography',
-        installedRegex: 'largest',
+        installedRegex: 'populous',
         url: 'https://youbetcha.com',
         latestRegex: 'fargo',
       })
@@ -620,7 +654,7 @@ describe('Edit Silent', () => {
         },
         args: 'factory',
         shellOverride: 'character',
-        installedRegex: 'candy',
+        installedRegex: 'candies',
         url: 'https://snozberries.com',
         latestRegex: 'willy wonka',
       })

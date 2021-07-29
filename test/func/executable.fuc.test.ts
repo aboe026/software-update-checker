@@ -9,7 +9,7 @@ describe('Executable Func Tests', () => {
       await expect(
         getDynamicExecutable({
           directory,
-          regex: '(.*)',
+          regex: 'v(.*)',
         })
       ).rejects.toThrow(`Directory specified "${directory}" does not exist. Please specify a valid path.`)
     })

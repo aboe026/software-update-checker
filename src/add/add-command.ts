@@ -17,7 +17,7 @@ export default class AddCommand extends BaseCommand {
         const interactive = AddCommand.getBooleanArgument(argv, BaseOptions.Interactive)
 
         if (!command && !interactive) {
-          throw Error(AddCommand.getRequiredArgumentErrorText(StaticOptions.Command.key))
+          throw Error(Add.getMissingRequiredOptionErrorMessage(StaticOptions.Command.key))
         }
 
         return AddCommand.configure(argv, {
@@ -38,10 +38,10 @@ export default class AddCommand extends BaseCommand {
         const interactive = AddCommand.getBooleanArgument(argv, BaseOptions.Interactive)
 
         if (!directory && !interactive) {
-          throw Error(AddCommand.getRequiredArgumentErrorText(DynamicOptions.Directory.key))
+          throw Error(Add.getMissingRequiredOptionErrorMessage(DynamicOptions.Directory.key))
         }
         if (!regex && !interactive) {
-          throw Error(AddCommand.getRequiredArgumentErrorText(DynamicOptions.Regex.key))
+          throw Error(Add.getMissingRequiredOptionErrorMessage(DynamicOptions.Regex.key))
         }
 
         return AddCommand.configure(argv, {
@@ -52,7 +52,7 @@ export default class AddCommand extends BaseCommand {
     }
   }
 
-  private static configure(argv: Arguments, executable: Static | Dynamic): Promise<void> {
+  static async configure(argv: Arguments, executable: Static | Dynamic): Promise<void> {
     const name = AddCommand.getStringArgument(argv, AddOptions.Name)
     const installedRegex = AddCommand.getStringArgument(argv, AddOptions.InstalledRegex)
     const url = AddCommand.getStringArgument(argv, AddOptions.Url)
@@ -60,16 +60,16 @@ export default class AddCommand extends BaseCommand {
     const interactive = AddCommand.getBooleanArgument(argv, BaseOptions.Interactive)
 
     if (!name && !interactive) {
-      throw Error(AddCommand.getRequiredArgumentErrorText(AddOptions.Name.key))
+      throw Error(Add.getMissingRequiredOptionErrorMessage(AddOptions.Name.key))
     }
     if (!installedRegex && !interactive) {
-      throw Error(AddCommand.getRequiredArgumentErrorText(AddOptions.InstalledRegex.key))
+      throw Error(Add.getMissingRequiredOptionErrorMessage(AddOptions.InstalledRegex.key))
     }
     if (!url && !interactive) {
-      throw Error(AddCommand.getRequiredArgumentErrorText(AddOptions.Url.key))
+      throw Error(Add.getMissingRequiredOptionErrorMessage(AddOptions.Url.key))
     }
     if (!latestRegex && !interactive) {
-      throw Error(AddCommand.getRequiredArgumentErrorText(AddOptions.LatestRegex.key))
+      throw Error(Add.getMissingRequiredOptionErrorMessage(AddOptions.LatestRegex.key))
     }
 
     return Add.configure({
@@ -91,7 +91,8 @@ export default class AddCommand extends BaseCommand {
       command: `${AddCommands.Add.key} <${AddCommands.Static.key}|${AddCommands.Dynamic.key}>`,
       aliases: AddCommands.Add.value.alias,
       describe: addNewlineForExample(AddCommands.Add.value.description),
-      builder: (yargs: Argv) => yargs.command(AddCommand.getStaticCommand()).command(AddCommand.getDynamicCommand()),
+      builder: (yargs: Argv) =>
+        yargs.command(AddCommand.getStaticCommand()).command(AddCommand.getDynamicCommand()).showHelpOnFail(true),
       handler: () => {
         throw Error(`Must specify sub-command of either "${AddCommands.Static.key}" or "${AddCommands.Dynamic.key}"`)
       },

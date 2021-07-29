@@ -59,7 +59,7 @@ describe('Add Silent', () => {
             shellOverride: '',
             installedRegex: 'v(.*)',
             url: 'https://donbot.com',
-            latestRegex: '(.*)',
+            latestRegex: 'latest: v(.*)',
           }),
         }),
         error: E2eAddUtil.getInstalledErrorMessage(installedError),
