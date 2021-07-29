@@ -22,7 +22,7 @@ export default class E2eHelpUtil extends E2eBaseUtil {
     return splitChunks
   }
 
-  static async getExecutableName(): Promise<string> {
+  static async getHelpExecutableName(): Promise<string> {
     let executableName = await getExecutableName()
     const nonWindowsStart = './'
     if (executableName.startsWith(nonWindowsStart)) {
@@ -42,7 +42,7 @@ export default class E2eHelpUtil extends E2eBaseUtil {
 
   static async getRootChunks(): Promise<string[]> {
     return [
-      `${await getExecutableName()} [add|view|edit|remove]`,
+      `${await E2eHelpUtil.getHelpExecutableName()} [add|view|edit|remove]`,
       '',
       'Check if installed software has updates available',
       '',
@@ -61,7 +61,7 @@ export default class E2eHelpUtil extends E2eBaseUtil {
 
   static async getAddChunks(): Promise<string[]> {
     return [
-      `${await getExecutableName()} add <static|dynamic>`,
+      `${await E2eHelpUtil.getHelpExecutableName()} add <static|dynamic>`,
       '',
       'Add software configuration',
       '',
@@ -77,7 +77,7 @@ export default class E2eHelpUtil extends E2eBaseUtil {
 
   static async getStaticChunks(): Promise<string[]> {
     return [
-      `${await getExecutableName()} add static`,
+      `${await E2eHelpUtil.getHelpExecutableName()} add static`,
       '',
       'Software executable defined by a fixed, non-changing path',
       '(eg executable on $PATH or absolute path to executable file)',
@@ -102,7 +102,7 @@ export default class E2eHelpUtil extends E2eBaseUtil {
 
   static async getDynamicChunks(): Promise<string[]> {
     return [
-      `${await getExecutableName()} add dynamic`,
+      `${await E2eHelpUtil.getHelpExecutableName()} add dynamic`,
       '',
       'Software executable has changing, evolving name requiring regex patterns to determine',
       '(eg executable name includes version, which changes between releases)',
@@ -129,7 +129,7 @@ export default class E2eHelpUtil extends E2eBaseUtil {
 
   static async getViewChunks(): Promise<string[]> {
     return [
-      `${await getExecutableName()} view`,
+      `${await E2eHelpUtil.getHelpExecutableName()} view`,
       '',
       'View configured software versions',
       '',
@@ -139,7 +139,7 @@ export default class E2eHelpUtil extends E2eBaseUtil {
 
   static async getEditChunks(): Promise<string[]> {
     return [
-      `${await getExecutableName()} edit <existing>`,
+      `${await E2eHelpUtil.getHelpExecutableName()} edit <existing>`,
       '',
       'Edit software configuration',
       '',
@@ -171,7 +171,7 @@ export default class E2eHelpUtil extends E2eBaseUtil {
 
   static async getRemoveChunks(): Promise<string[]> {
     return [
-      `${await getExecutableName()} remove <existing>`,
+      `${await E2eHelpUtil.getHelpExecutableName()} remove <existing>`,
       '',
       'Remove software configuration',
       '',
