@@ -1,17 +1,17 @@
 import colors from './colors'
-import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
+import yargs from 'yargs'
 
 import AddCommand from './add/add-command'
 import BaseCommand from './base/base-command'
-import { GROUP } from './base/base-options'
-import ViewCommand from './view/view-command'
-import EditCommand from './edit/edit-command'
 import { BaseOptions, convertToGenericOptions } from './base/base-options'
-import HomeCommand from './home/home-command'
 import DeleteCommand from './delete/delete-command'
-import VersionCommand from './version/version-command'
+import EditCommand from './edit/edit-command'
+import { GROUP } from './base/base-options'
 import HelpCommand from './help/help-command'
+import HomeCommand from './home/home-command'
+import VersionCommand from './version/version-command'
+import ViewCommand from './view/view-command'
 ;(async () => {
   try {
     await yargs(hideBin(process.argv))

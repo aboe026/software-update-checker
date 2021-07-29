@@ -30,7 +30,7 @@ describe('Edit Silent', () => {
             latestRegex: 'oncorhynchus nerka',
           },
         }),
-        error: E2eEditUtil.getNoSoftwaresToEditMessage(),
+        error: E2eEditUtil.MESSAGES.NoSoftwares,
       })
       await E2eEditUtil.verifySoftwares([])
     })
@@ -52,7 +52,7 @@ describe('Edit Silent', () => {
             latestRegex: 'sequoia',
           },
         }),
-        error: E2eEditUtil.getNoSoftwaresToEditMessage(),
+        error: E2eEditUtil.MESSAGES.NoSoftwares,
       })
       await E2eEditUtil.verifySoftwares([])
     })
@@ -74,7 +74,7 @@ describe('Edit Silent', () => {
             latestRegex: 'high definition multimedia interface',
           },
         }),
-        error: E2eEditUtil.getNoSoftwaresToEditMessage(),
+        error: E2eEditUtil.MESSAGES.NoSoftwares,
       })
       await E2eEditUtil.verifySoftwares([])
     })

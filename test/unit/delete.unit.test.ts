@@ -1,6 +1,6 @@
+import colors from '../../src/colors'
 import Delete, { Inputs as DeleteInputs } from '../../src/delete/delete'
 import DeletePrompts from '../../src/delete/delete-prompts'
-import colors from '../../src/colors'
 import Software from '../../src/software'
 import SoftwareList from '../../src/software-list'
 import TestUtil, { ExpectedCalls, Response } from '../helpers/test-util'

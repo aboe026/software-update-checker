@@ -719,7 +719,7 @@ interface TestRemoveConfigurationInput {
 interface TestRemoveConfigurationOutput {
   expected: Response
   loadSoftwareListCalls?: ExpectedCalls[][]
-  getExistingSoftwareCalls?: ExpectedCalls[][] // TODO: see if other instances of ExpectedCalls[] should have double array instead...
+  getExistingSoftwareCalls?: ExpectedCalls[][]
   configureCalls?: ExpectedCalls[][]
   consoleWarnCalls?: (string[] | undefined)[]
 }

@@ -25,10 +25,6 @@ export default class E2eEditUtil extends E2eBaseUtil {
     IncompatibleCommandWithDynamicExecutable: 'The "--command" option is not compatible with a "dynamic" executable',
   }
 
-  static getNoSoftwaresToEditMessage(): string {
-    return 'No softwares to edit. Please add a software to have something to edit.'
-  }
-
   static getNonExistingSoftwareMessage(name: string): string {
     return `Invalid existing software "${name}", does not exist.`
   }
