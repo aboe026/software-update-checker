@@ -1,6 +1,11 @@
 import fs from 'fs-extra'
 import path from 'path'
 
+export enum CommandType {
+  Static = 'static',
+  Dynamic = 'dynamic',
+}
+
 export type Static = {
   command: string
 }
@@ -23,7 +28,7 @@ export async function getDynamicExecutable({
 }): Promise<string> {
   let executable = ''
   if (!(await fs.pathExists(directory))) {
-    throw Error(`Directory specified '${directory}' does not exist. Please specify a valid path.`)
+    throw Error(`Directory specified "${directory}" does not exist. Please specify a valid path.`)
   }
   const files = await fs.readdir(directory)
   for (const file of files) {
@@ -32,7 +37,7 @@ export async function getDynamicExecutable({
     }
   }
   if (!executable) {
-    throw Error(`Could not find any file in directory '${directory}' matching regex pattern '${regex}'`)
+    throw Error(`Could not find any file in directory "${directory}" matching regex pattern "${regex}"`)
   }
   return executable
 }

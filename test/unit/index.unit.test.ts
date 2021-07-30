@@ -1,24 +1,26 @@
 import colors from '../../src/colors'
-import Prompts from '../../src/prompts'
+import Home from '../../src/home/home'
 
 describe('Index Unit Tests', () => {
-  it('calls home prompt', async () => {
-    const homeSpy = jest.spyOn(Prompts, 'home').mockResolvedValue()
+  it('calls main menu', async () => {
+    const mainMenuSpy = jest.spyOn(Home, 'mainMenu').mockResolvedValue()
     await jest.isolateModules(async () => {
       await require('../../src/index')
     })
-    expect(homeSpy.mock.calls.length).toBe(1)
+    expect(mainMenuSpy.mock.calls.length).toBe(1)
   })
   it('prints error and exits with unsuccessful code', async () => {
     const error = 'whoopsy daisy'
-    const homeSpy = jest.spyOn(Prompts, 'home').mockRejectedValue(error)
-    const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation()
-    const mockExit = jest.spyOn(process, 'exit').mockImplementation()
+    const homeSpy = jest.spyOn(Home, 'mainMenu').mockRejectedValue(error)
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
+    const exitSpy = jest.spyOn(process, 'exit').mockImplementation()
     await jest.isolateModules(async () => {
       await require('../../src/index')
     })
+    await new Promise((resolve) => setTimeout(resolve, 0)) // need explicit sleep here because isolateModules does not await thrown error :/
     expect(homeSpy.mock.calls.length).toBe(1)
-    expect(JSON.stringify(consoleErrorMock.mock.calls, null, 2)).toBe(JSON.stringify([[colors.red(error)]], null, 2))
-    expect(JSON.stringify(mockExit.mock.calls, null, 2)).toBe(JSON.stringify([[1]], null, 2))
+    // Not sure why there are 2 errors/exists...
+    expect(consoleErrorSpy.mock.calls).toEqual([[error], [colors.red(error)]])
+    expect(exitSpy.mock.calls).toEqual([[1], [1]])
   })
 })

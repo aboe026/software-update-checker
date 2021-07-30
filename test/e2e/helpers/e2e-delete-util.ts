@@ -5,11 +5,19 @@ import Software from '../../../src/software'
 export default class E2eDeleteUtil extends E2eBaseUtil {
   static readonly CHOICES = {
     Delete: {
-      question: 'Select configured software to delete',
+      question: 'Name of existing software configuration to delete',
     },
   }
   static readonly MESSAGES = {
     NoSoftwares: 'No softwares to delete. Please add a software to have something to delete.',
+  }
+
+  static getSilentCommand({ existingName }: { existingName: string | undefined }): string[] {
+    const args: string[] = ['remove']
+    if (existingName !== undefined) {
+      args.push(existingName)
+    }
+    return args
   }
 
   static getInputs({ position, confirm = true }: { position: number; confirm?: boolean }): string[] {
@@ -19,6 +27,10 @@ export default class E2eDeleteUtil extends E2eBaseUtil {
     }
     inputs.push(KEYS.Enter)
     return inputs
+  }
+
+  static getChunksSilent(): (string | StringPrompt | BooleanPrompt | ChoicePrompt)[] {
+    return []
   }
 
   static getChunksNavigate({
@@ -58,7 +70,7 @@ export default class E2eDeleteUtil extends E2eBaseUtil {
         nameToDelete: softwareToDelete.name,
       }),
       {
-        question: `Are you sure you want to delete '${softwareToDelete.name}'`,
+        question: `Are you sure you want to delete "${softwareToDelete.name}"`,
         answer: confirm,
       },
     ]

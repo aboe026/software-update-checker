@@ -2,10 +2,10 @@ import E2eBaseUtil, { ChoicePrompt } from './e2e-base-util'
 import { KEYS } from './interactive-execute'
 
 export enum HomeChoiceOption {
-  Add = 'Add New Software',
-  View = 'View Installed Softwares',
+  Add = 'Add Software Configuration',
+  View = 'View Configured Software Versions',
   Edit = 'Edit Software Configuration',
-  Delete = 'Delete Software Configuration',
+  Delete = 'Remove Software Configuration',
   Exit = 'Exit',
 }
 

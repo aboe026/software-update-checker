@@ -36,7 +36,7 @@ describe('Software Func Tests', () => {
   })
   describe('getExecutable', () => {
     it('returns command for static', async () => {
-      const command = 'foo'
+      const command = 'caramel'
       await expect(
         getExecutable({
           command,
@@ -48,9 +48,9 @@ describe('Software Func Tests', () => {
       await expect(
         getExecutable({
           directory,
-          regex: 'good-.*',
+          regex: 'good-c.*',
         })
-      ).rejects.toThrow(`Directory specified '${directory}' does not exist. Please specify a valid path.`)
+      ).rejects.toThrow(`Directory specified "${directory}" does not exist. Please specify a valid path.`)
     })
     it('throws error for no matching file', async () => {
       const directory = path.join(__dirname, '../helpers/test-commands')
@@ -60,7 +60,7 @@ describe('Software Func Tests', () => {
           directory,
           regex,
         })
-      ).rejects.toThrow(`Could not find any file in directory '${directory}' matching regex pattern '${regex}'`)
+      ).rejects.toThrow(`Could not find any file in directory "${directory}" matching regex pattern "${regex}"`)
     })
     it('returns file for dynamic single match', async () => {
       const directory = path.join(__dirname, '../helpers/test-commands')
@@ -77,7 +77,7 @@ describe('Software Func Tests', () => {
       await expect(
         getExecutable({
           directory,
-          regex: '.*-command.js',
+          regex: '.*-command.*',
         })
       ).resolves.toBe(path.join(directory, 'bad-command.js'))
     })
@@ -86,7 +86,7 @@ describe('Software Func Tests', () => {
       await expect(
         getExecutable({
           directory,
-          regex: 'good-.*',
+          regex: 'good-command.*',
         })
       ).resolves.toBe(path.join(directory, 'good-command.js'))
     })
@@ -101,7 +101,7 @@ describe('Software Func Tests', () => {
             command: 'node',
           },
           args: path.join(__dirname, `../helpers/test-commands/bad-command.js ${error}`),
-          installedRegex: '(.*)',
+          installedRegex: 'v(.*)',
           url: '',
           latestRegex: '',
         }).getInstalledVersion()
@@ -117,11 +117,11 @@ describe('Software Func Tests', () => {
             regex: '',
           },
           args: '',
-          installedRegex: '(.*)',
+          installedRegex: 'v(.*)',
           url: '',
           latestRegex: '',
         }).getInstalledVersion()
-      ).rejects.toThrow(`Directory specified '${directory}' does not exist. Please specify a valid path.`)
+      ).rejects.toThrow(`Directory specified "${directory}" does not exist. Please specify a valid path.`)
     })
     it('throws error if dynamic file match not found', async () => {
       const directory = path.join(__dirname, '../helpers/test-commands')
@@ -134,11 +134,11 @@ describe('Software Func Tests', () => {
             regex,
           },
           args: '',
-          installedRegex: '(.*)',
+          installedRegex: 'v(.*)',
           url: '',
           latestRegex: '',
         }).getInstalledVersion()
-      ).rejects.toThrow(`Could not find any file in directory '${directory}' matching regex pattern '${regex}'`)
+      ).rejects.toThrow(`Could not find any file in directory "${directory}" matching regex pattern "${regex}"`)
     })
     it('throws error if static version match not found', async () => {
       await expect(
@@ -148,11 +148,11 @@ describe('Software Func Tests', () => {
             command: 'node',
           },
           args: `${path.join(__dirname, '../helpers/test-commands/good-command.js')} version 1.2.3`,
-          installedRegex: 'version v(.*)',
+          installedRegex: 'spanish inquisition(.*)',
           url: '',
           latestRegex: '',
         }).getInstalledVersion()
-      ).rejects.toThrow(`Could not find match for regex '/version v(.*)/' in text 'version 1.2.3'`)
+      ).rejects.toThrow(`Could not find match for regex "/spanish inquisition(.*)/" in text "version 1.2.3"`)
     })
     it('returns only match static', async () => {
       await expect(
@@ -162,7 +162,7 @@ describe('Software Func Tests', () => {
             command: 'node',
           },
           args: `${path.join(__dirname, '../helpers/test-commands/good-command.js')} version v1.2.3`,
-          installedRegex: 'version v(.*)',
+          installedRegex: ' v(\\S+)$',
           url: '',
           latestRegex: '',
         }).getInstalledVersion()
@@ -217,7 +217,7 @@ describe('Software Func Tests', () => {
           latestRegex: 'The current stable release of GIMP is <b>(.*)</b>',
         }).getLatestVersion()
       ).rejects.toThrow(
-        "Could not find match for regex '/The current stable release of GIMP is <b>(.*)<\\/b>/' in text ''"
+        'Could not find match for regex "/The current stable release of GIMP is <b>(.*)<\\/b>/" in text ""'
       )
     })
     it('throws error if no match from website', async () => {
@@ -233,7 +233,7 @@ describe('Software Func Tests', () => {
           latestRegex: 'version (.*)',
         }).getLatestVersion()
       ).rejects.toThrow(
-        "Could not find match for regex '/version (.*)/' in text 'Hello World!\nThe current stable release of GIMP is <b>1.2.3</b>\nThe End!'"
+        'Could not find match for regex "/version (.*)/" in text "Hello World!\nThe current stable release of GIMP is <b>1.2.3</b>\nThe End!"'
       )
     })
     it('returns correct single match', async () => {
@@ -246,10 +246,8 @@ describe('Software Func Tests', () => {
           },
           args: '',
           installedRegex: '',
-          url: Website.getResponseUrl(
-            `Hello World!\nThe current stable release of GIMP is <b>${version}</b>\nThe End!`
-          ),
-          latestRegex: 'The current stable release of GIMP is <b>(.*)</b>',
+          url: Website.getResponseUrl(`Hello World!\nMy latest version is <b>${version}</b>\nThe End!`),
+          latestRegex: 'My latest version is <b>(.*)</b>',
         }).getLatestVersion()
       ).resolves.toBe(version)
     })

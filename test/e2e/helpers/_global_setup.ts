@@ -2,6 +2,7 @@ import fs from 'fs-extra'
 import path from 'path'
 
 import E2eConfig from './e2e-config'
+import { getExecutableName } from './interactive-execute'
 
 /**
  * Run once before all tests execute
@@ -10,7 +11,7 @@ import E2eConfig from './e2e-config'
 export default async (): Promise<void> => {
   if (await fs.pathExists(E2eConfig.DIRECTORY.BackupConfig)) {
     console.error(
-      `Temporary config directory '${E2eConfig.DIRECTORY.BackupConfig}' exists, previous run must not have exited properly. Please make sure actual user config dir '${E2eConfig.DIRECTORY.UserConfig}' is correct, then delete temporary config directory '${E2eConfig.DIRECTORY.BackupConfig}' to run e2e tests.`
+      `Temporary config directory "${E2eConfig.DIRECTORY.BackupConfig}" exists, previous run must not have exited properly. Please make sure actual user config dir "${E2eConfig.DIRECTORY.UserConfig}" is correct, then delete temporary config directory "${E2eConfig.DIRECTORY.BackupConfig}" to run e2e tests.`
     )
     process.exit(1)
   }
@@ -29,4 +30,5 @@ export default async (): Promise<void> => {
     // debug file does not exist, no need to delete
   }
   await fs.createFile(E2eConfig.FILE.Debug)
+  await E2eConfig.appendToDebugLog(`getExecutableName(): '${getExecutableName()}'`)
 }

@@ -5,6 +5,10 @@ export default class E2eViewUtil extends E2eBaseUtil {
     NoSoftwares: 'No softwares to view. Please add a software to have something to view.',
   }
 
+  static getSilentCommand(): string[] {
+    return ['view']
+  }
+
   static getChunks({ rows }: { rows: TableRow[] }): TableOutput[] {
     return [
       {

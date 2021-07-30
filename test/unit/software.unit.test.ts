@@ -36,7 +36,7 @@ describe('Software Unit Tests', () => {
   describe('getFromRegex', () => {
     it('throw error if no match', () => {
       expect(() => getFromRegex('version 1.0.0', /version v(.*)/)).toThrow(
-        "Could not find match for regex '/version v(.*)/' in text 'version 1.0.0'"
+        'Could not find match for regex "/version v(.*)/" in text "version 1.0.0"'
       )
     })
     it('retuns correct single match at end', () => {
@@ -66,8 +66,8 @@ describe('Software Unit Tests', () => {
       const getDynamicExecutableSpy = jest.spyOn(executable, 'getDynamicExecutable').mockResolvedValue(mockExecutable)
       await expect(
         getExecutable({
-          directory: 'hello',
-          regex: 'world',
+          directory: 'ola',
+          regex: 'goodbye',
         })
       ).resolves.toBe(mockExecutable)
       expect(getDynamicExecutableSpy.mock.calls.length).toBe(1)

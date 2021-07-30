@@ -1,6 +1,6 @@
 {
   "name": "software-update-checker-cli",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "author": "Adam Boe",
   "description": "A command line interface to check if local software installs have updates",
   "private": false,
@@ -24,10 +24,12 @@
     "clean:coverage": "rimraf coverage",
     "clean:dist": "rimraf dist",
     "coverage:merge": "ts-node scripts/merge-coverage.ts",
+    "detect:duplicate-test-resources": "ts-node scripts/detect-duplicate-test-resources.ts",
+    "debug:record-and-replay": "ts-node scripts/debug-record-and-replay.ts",
     "dist": "npm run build && npm run pack",
-    "lint": "eslint . && prettier --check .",
+    "lint": "eslint . && prettier --check . && npm run detect:duplicate-test-resources",
     "lint:fix": "eslint --fix . && prettier --write .",
-    "pack": "pkg --targets=node14-linux-x64,node14-macos-x64,node14-win-x64 --out-path=dist --config=.pkg.config.json build/index.js",
+    "pack": "pkg --targets=node14-linux-x64,node14-macos-x64,node14-win-x64 --out-path=dist --config=.pkg.config.json build/src/index.js",
     "run-mock-server": "ts-node scripts/run-mock-server.ts",
     "start": "ts-node src/index.ts",
     "test": "npm run lint && npm run test:unit && npm run test:func && npm run coverage:merge && npm run test:e2e",
@@ -45,7 +47,8 @@
     "colors": "1.4.0",
     "fs-extra": "10.0.0",
     "inquirer": "8.0.0",
-    "node-fetch": "2.6.1"
+    "node-fetch": "2.6.1",
+    "yargs": "17.0.1"
   },
   "devDependencies": {
     "@types/cli-progress": "3.9.1",
@@ -56,6 +59,7 @@
     "@types/inquirer": "7.3.1",
     "@types/jest": "26.0.23",
     "@types/node-fetch": "2.5.10",
+    "@types/yargs": "16.0.2",
     "@typescript-eslint/parser": "4.24.0",
     "@typescript-eslint/eslint-plugin": "4.24.0",
     "concat-stream": "2.0.0",

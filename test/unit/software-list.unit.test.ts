@@ -38,19 +38,19 @@ describe('Software List Unit Tests', () => {
             latestRegex: 'allfather',
           })
         )
-      ).rejects.toThrow(`Software with name '${existingName}' already exists.`)
+      ).rejects.toThrow(`Software with name "${existingName}" already exists.`)
     })
     it('returns list with software added at end on empty list', async () => {
       jest.spyOn(SoftwareList, 'get').mockImplementation(() => [])
       const software: Software = new Software({
         name: 'add single',
         executable: {
-          command: 'hello',
+          command: 'salve',
         },
         args: 'world',
-        installedRegex: '(.*)',
+        installedRegex: 'v(.*)',
         url: '',
-        latestRegex: '(.*)',
+        latestRegex: 'latest: v(.*)',
       })
       await expect(SoftwareList.add(software)).resolves.toStrictEqual([software])
     })
@@ -97,7 +97,7 @@ describe('Software List Unit Tests', () => {
         },
         args: 'gpu',
         installedRegex: 'GeForce',
-        url: 'https://turing.com',
+        url: 'https://ampere.com',
         latestRegex: 'nvidia',
       })
       await expect(SoftwareList.add(software)).resolves.toStrictEqual([existingSoftware, software])
@@ -109,30 +109,31 @@ describe('Software List Unit Tests', () => {
           command: 'planets',
         },
         args: 'gas',
-        installedRegex: 'jupiter',
-        url: 'https://planets.com',
-        latestRegex: 'gas planets',
+        installedRegex: 'biggest',
+        url: 'https://getmorestupider.com',
+        latestRegex: 'jupiter',
       })
       const existingSoftwareTwo = new Software({
         name: 'the existing double trouble',
         executable: {
-          command: 'planest',
+          command: 'habitable',
         },
-        args: 'terrestrial',
-        installedRegex: 'earth',
-        url: 'https://planets.com',
-        latestRegex: 'terrestrial planets',
+        args: 'solar-system',
+        installedRegex: 'worlds',
+        url: 'https://bluemarble.com',
+        latestRegex: 'earth',
       })
       jest.spyOn(SoftwareList, 'get').mockImplementation(() => [existingSoftwareOne, existingSoftwareTwo])
       const software: Software = new Software({
         name: 'middling double existing',
         executable: {
-          command: 'planets',
+          command: 'minor',
         },
-        args: 'gas',
-        installedRegex: 'venus',
-        url: 'https://planets.com',
-        latestRegex: 'gas planets venus',
+        args: 'kuiper',
+        shellOverride: 'planet',
+        installedRegex: 'pluto',
+        url: 'https://coldshouldered.com',
+        latestRegex: '134340',
       })
       await expect(SoftwareList.add(software)).resolves.toStrictEqual([
         existingSoftwareOne,
@@ -165,7 +166,7 @@ describe('Software List Unit Tests', () => {
         latestRegex: 'sol',
       })
       await expect(SoftwareList.edit(oldSoftware, newSoftware)).rejects.toThrow(
-        `Could not find software to edit with name '${oldSoftware.name}'.`
+        `Could not find software to edit with name "${oldSoftware.name}".`
       )
     })
     it('throws error if editing a software not in list', async () => {
@@ -202,7 +203,7 @@ describe('Software List Unit Tests', () => {
         latestRegex: 'Nephropidae',
       })
       await expect(SoftwareList.edit(oldSoftware, newSoftware)).rejects.toThrow(
-        `Could not find software to edit with name '${oldSoftware.name}'.`
+        `Could not find software to edit with name "${oldSoftware.name}".`
       )
     })
     it('edit only software in list', async () => {
@@ -304,7 +305,7 @@ describe('Software List Unit Tests', () => {
     })
     it('throw error if no softwares in list', async () => {
       const name = 'test-delete-no-softwares'
-      await expect(SoftwareList.delete(name)).rejects.toThrow(`Could not find software to delete with name '${name}'.`)
+      await expect(SoftwareList.delete(name)).rejects.toThrow(`Could not find software to delete with name "${name}".`)
     })
     it('throw error if software not in list', async () => {
       const name = 'test-delete-not-in-list'
@@ -320,7 +321,7 @@ describe('Software List Unit Tests', () => {
           latestRegex: 'prunus',
         }),
       ])
-      await expect(SoftwareList.delete(name)).rejects.toThrow(`Could not find software to delete with name '${name}'.`)
+      await expect(SoftwareList.delete(name)).rejects.toThrow(`Could not find software to delete with name "${name}".`)
     })
     it('removes only software in list', async () => {
       const name = 'test-delete-only-in-list'
@@ -382,9 +383,9 @@ describe('Software List Unit Tests', () => {
         new Software({
           name,
           executable: {
-            command: 'cheese',
+            command: 'dairy',
           },
-          args: 'hard',
+          args: 'cheese',
           installedRegex: 'Parmesan',
           url: 'https://cheesier.com',
           latestRegex: 'Parmigiano-Reggiano',
@@ -402,7 +403,7 @@ describe('Software List Unit Tests', () => {
     it('throws error if save file does not contain valid json', async () => {
       fs.readFile = jest.fn().mockResolvedValue('i am not valid JSON')
       await expect(SoftwareList.load()).rejects.toThrow(
-        `Cannot parse saved file '${file}' as JSON: Unexpected token i in JSON at position 0`
+        `Cannot parse saved file "${file}" as JSON: Unexpected token i in JSON at position 0`
       )
     })
     it('throws error if save file does not contain JSON array', async () => {
@@ -418,7 +419,7 @@ describe('Software List Unit Tests', () => {
           latestRegex: 'lobatus gigas',
         })
       )
-      await expect(SoftwareList.load()).rejects.toThrow(`Saved file '${file}' does not contain a valid JSON array`)
+      await expect(SoftwareList.load()).rejects.toThrow(`Saved file "${file}" does not contain a valid JSON array`)
     })
     it('throws error if save file has software without a name', async () => {
       fs.readFile = jest.fn().mockResolvedValue(
@@ -435,7 +436,7 @@ describe('Software List Unit Tests', () => {
         ])
       )
       await expect(SoftwareList.load()).rejects.toThrow(
-        `Saved file '${file}' contains an invalid software entry that does not have a name`
+        `Saved file "${file}" contains an invalid software entry that does not have a name`
       )
     })
     it('throws error if save file has software without an executable', async () => {
@@ -452,7 +453,7 @@ describe('Software List Unit Tests', () => {
         ])
       )
       await expect(SoftwareList.load()).rejects.toThrow(
-        `Saved file '${file}' contains an invalid software entry '${name}' that does not have an executable`
+        `Saved file "${file}" contains an invalid software entry "${name}" that does not have an executable`
       )
     })
     it('throws error if save file has dynamic software without a directory', async () => {
@@ -472,7 +473,7 @@ describe('Software List Unit Tests', () => {
         ])
       )
       await expect(SoftwareList.load()).rejects.toThrow(
-        `Saved file '${file}' contains an invalid software entry '${name}' that is dynamic but does not have an executable directory`
+        `Saved file "${file}" contains an invalid software entry "${name}" that is dynamic but does not have an executable directory`
       )
     })
     it('throws error if save file has dynamic software without a regex', async () => {
@@ -492,7 +493,7 @@ describe('Software List Unit Tests', () => {
         ])
       )
       await expect(SoftwareList.load()).rejects.toThrow(
-        `Saved file '${file}' contains an invalid software entry '${name}' that is dynamic but does not have an executable regex`
+        `Saved file "${file}" contains an invalid software entry "${name}" that is dynamic but does not have an executable regex`
       )
     })
     it('throws error if save file has software without an installed regex', async () => {
@@ -504,14 +505,14 @@ describe('Software List Unit Tests', () => {
             executable: {
               command: 'colors',
             },
-            args: 'light',
+            args: 'white',
             url: 'https://paintbynumbers.com',
             latestRegex: 'eggshell',
           },
         ])
       )
       await expect(SoftwareList.load()).rejects.toThrow(
-        `Saved file '${file}' contains an invalid software entry '${name}' that does not have an installedRegex`
+        `Saved file "${file}" contains an invalid software entry "${name}" that does not have an installedRegex`
       )
     })
     it('throws error if save file has software without a url', async () => {
@@ -530,11 +531,11 @@ describe('Software List Unit Tests', () => {
         ])
       )
       await expect(SoftwareList.load()).rejects.toThrow(
-        `Saved file '${file}' contains an invalid software entry '${name}' that does not have a url`
+        `Saved file "${file}" contains an invalid software entry "${name}" that does not have a url`
       )
     })
     it('throws error if save file has software without a latest regex', async () => {
-      const name = 'no url'
+      const name = 'no latest regex'
       fs.readFile = jest.fn().mockResolvedValue(
         JSON.stringify([
           {
@@ -549,7 +550,7 @@ describe('Software List Unit Tests', () => {
         ])
       )
       await expect(SoftwareList.load()).rejects.toThrow(
-        `Saved file '${file}' contains an invalid software entry '${name}' that does not have a latestRegex`
+        `Saved file "${file}" contains an invalid software entry "${name}" that does not have a latestRegex`
       )
     })
     it('loads empty list if save file does not exist', async () => {
@@ -591,11 +592,11 @@ describe('Software List Unit Tests', () => {
       const software = new Software({
         name: 'valid single with shell override',
         executable: {
-          command: 'shells',
+          command: 'shell',
         },
         args: 'koopa',
         shellOverride: 'mariokart',
-        installedRegex: 'blue',
+        installedRegex: 'leader',
         url: 'https://itsame.com',
         latestRegex: 'spiny shell',
       })

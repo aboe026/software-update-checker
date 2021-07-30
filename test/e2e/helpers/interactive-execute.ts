@@ -1,67 +1,143 @@
+import { ChildProcessWithoutNullStreams, spawn } from 'child_process'
 import concat from 'concat-stream'
 import os from 'os'
 import path from 'path'
-import { spawn } from 'child_process'
 
 import E2eConfig from './e2e-config'
 
 export default async function ({
-  inputs,
+  args = [],
+  inputs = [],
   timeoutMs = 12000,
   minQuietPeriodMs = 200,
   maxQuietPeriodMs = 1000,
+  debugRecordAndReplyChunk,
 }: {
-  inputs: (KEYS | string)[]
+  args?: string[]
+  inputs?: (KEYS | string)[]
   timeoutMs?: number
   minQuietPeriodMs?: number
   maxQuietPeriodMs?: number
+  debugRecordAndReplyChunk?: string
 }): Promise<ExecutableResponse> {
-  await E2eConfig.appendToDebugLog(`Inputs: ${JSON.stringify(inputs, null, 2)}`)
+  if (!debugRecordAndReplyChunk) {
+    await E2eConfig.appendToDebugLog(`Arguments: ${JSON.stringify(args, null, 2)}`)
+    await E2eConfig.appendToDebugLog(`Inputs: ${JSON.stringify(inputs, null, 2)}`)
+    await E2eConfig.appendToDebugLog('Output:')
+  }
   const chunks: string[] = []
   let inputIndex = 0
 
-  const proc = spawn(getExecutableName(), [], {
-    stdio: [null, null, null],
-    cwd: path.join(__dirname, '../../../dist'),
-  })
-  proc.stdin.setDefaultEncoding('utf-8')
+  let proc: ChildProcessWithoutNullStreams | undefined = undefined
+  if (!debugRecordAndReplyChunk) {
+    proc = spawn(getExecutableName(), args, {
+      stdio: [null, null, null],
+      cwd: path.join(__dirname, '../../../dist'),
+    })
+    proc.stdin.setDefaultEncoding('utf-8')
+  }
 
   let minQuietTimer: NodeJS.Timeout
   let maxQuietTimer: NodeJS.Timeout
-  const timeoutTimer: NodeJS.Timeout = setTimeout(() => {
-    proc.stdin.end()
-  }, timeoutMs)
+  let timeoutTimer: NodeJS.Timeout
 
-  proc.stdout.on('data', (chunk: Buffer) => {
-    recordAndReply(chunk.toString(), 'stdout')
-  })
-  proc.stderr.on('data', (chunk: Buffer) => {
-    recordAndReply(chunk.toString(), 'stderr')
-  })
-  proc.stdout.on('close', () => {
-    cleanUp()
-  })
-  proc.stderr.on('close', () => {
-    cleanUp()
-  })
+  if (proc) {
+    timeoutTimer = setTimeout(() => {
+      proc?.stdin?.end()
+    }, timeoutMs)
+  }
+
+  if (proc) {
+    proc.stdout.on('data', (chunk: Buffer) => {
+      recordAndReply(chunk.toString(), 'stdout')
+    })
+    proc.stderr.on('data', (chunk: Buffer) => {
+      recordAndReply(chunk.toString(), 'stderr')
+    })
+    proc.stdout.on('close', () => {
+      cleanUp()
+    })
+    proc.stderr.on('close', () => {
+      cleanUp()
+    })
+  }
+
+  if (debugRecordAndReplyChunk) {
+    recordAndReply(`"${debugRecordAndReplyChunk}"`, '')
+    console.log(`chunks: '${JSON.stringify(chunks, null, 2)}'`)
+  }
+
+  function printOutDebug(key: string, value: string | boolean | number) {
+    if (debugRecordAndReplyChunk) {
+      console.log(`${key}: '${value}'`)
+    }
+  }
 
   function recordAndReply(chunk: string, prefix: string) {
-    E2eConfig.appendToDebugLog(`${prefix}: ${JSON.stringify(chunk.toString())}`) // for some reason if this is awaited, chunks get read in incorrect order (stdout vs stderr)
-    const line = escapeChunk(chunk.toString())
+    if (!debugRecordAndReplyChunk) {
+      E2eConfig.appendToDebugLog(`${prefix}: ${JSON.stringify(chunk.toString())}`) // for some reason if this is awaited, chunks get read in incorrect order (stdout vs stderr)
+    }
+    const line = escapeChunk(chunk.toString(), !debugRecordAndReplyChunk)
+    printOutDebug('line', line)
     if (line !== '' && line !== '\n') {
-      const lineChunks = line.split(/(?<!^)(\? (?!\(|Yes|No))/) // sometimes multiple lines come in a single chunk. Split on those (but not boolean questions or choices)
-      chunks.push(escapeChunk(lineChunks[0]))
-      if (lineChunks.length > 1) {
-        for (let i = 2; i < lineChunks.length; i = i + 2) {
-          chunks.push(escapeChunk(`${lineChunks[i - 1]}${lineChunks[i]}`))
+      const nlCommandTypes = line.split(/(Command types:\\n)/) // sometimes the "Command types:" does not get output to its own line
+      printOutDebug('nlCommandTypes', JSON.stringify(nlCommandTypes, null, 2))
+      for (let i = 0; i < nlCommandTypes.length; i++) {
+        const nlCommandType = nlCommandTypes[i]
+        printOutDebug('nlCommandType', nlCommandType)
+        const nlPeriods = nlCommandType.split(/\.\\n/) // sometimes multiple string outputs get added to same line
+        printOutDebug('nlPeriods', JSON.stringify(nlPeriods, null, 2))
+        for (let j = 0; j < nlPeriods.length; j++) {
+          let nlPeriod = nlPeriods[j]
+          printOutDebug('nlPeriod', nlPeriod)
+          if (nlPeriods.length > 1 && !nlPeriod.endsWith('.') && !nlPeriod.startsWith('?')) {
+            printOutDebug('adding period to nlPeriod', true)
+            nlPeriod += '.'
+          }
+          let k: number = j + 1
+          let nonDigitMet = false // sometimes digits split across mulitple lines when they should not be
+          while (k < nlPeriods.length && !nonDigitMet) {
+            printOutDebug('k', k)
+            printOutDebug('nlPeriods[j]', nlPeriods[k])
+            if (new RegExp(/\d+/).test(nlPeriods[k])) {
+              printOutDebug('new RegExp(/\\d+/).test(nlPeriods[j])', true)
+              nlPeriod += `${nlPeriod.endsWith('.') ? '' : '.'}${nlPeriods[k]}`
+              j++
+            } else {
+              printOutDebug('nonDigitMet', true)
+              nonDigitMet = true
+            }
+            k++
+          }
+          const nlColons = nlPeriod.split(/:\\n/) // sometimes multiple string outputs get added to same line
+          printOutDebug('nlColons', JSON.stringify(nlColons, null, 2))
+          for (let nlColon of nlColons) {
+            printOutDebug('nlColon', nlColon)
+            if (nlColon) {
+              if (nlColons.length > 1 && !(nlColon.endsWith(':') || nlColon.endsWith('.') || nlColon.endsWith(']'))) {
+                printOutDebug('adding colon to nlColon', true)
+                nlColon += ':'
+              }
+              const questionChunks = nlColon.split(/(?<!^)(\? (?!\(|Yes|No))/) // sometimes multiple lines come in a single chunk. Split on those (but not boolean questions or choices)
+              printOutDebug('questionChunks', JSON.stringify(questionChunks, null, 2))
+              chunks.push(escapeChunk(questionChunks[0]))
+              if (questionChunks.length > 1) {
+                for (let m = 2; m < questionChunks.length; m = m + 2) {
+                  chunks.push(escapeChunk(`${questionChunks[m - 1]}${questionChunks[m]}`))
+                }
+              }
+              if (proc) {
+                if (inputIndex < inputs.length) {
+                  delayReply(inputs[inputIndex])
+                } else {
+                  setTimeout(() => {
+                    proc?.stdin?.end()
+                  }, maxQuietPeriodMs)
+                }
+              }
+            }
+          }
         }
-      }
-      if (inputIndex < inputs.length) {
-        delayReply(inputs[inputIndex])
-      } else {
-        setTimeout(() => {
-          proc.stdin.end()
-        }, maxQuietPeriodMs)
       }
     }
   }
@@ -88,19 +164,21 @@ export default async function ({
   }
 
   return new Promise(function (resolve) {
-    proc.stdout.pipe(
-      concat(async (result: Buffer) => {
-        await E2eConfig.appendToDebugLog(`Chunks: ${JSON.stringify(chunks, null, 2)}`)
-        resolve({
-          stdout: result.toString(),
-          chunks: chunks.filter((chunk) => chunk !== ''),
+    if (proc) {
+      proc.stdout.pipe(
+        concat(async (result: Buffer) => {
+          await E2eConfig.appendToDebugLog(`Chunks: ${JSON.stringify(chunks, null, 2)}`)
+          resolve({
+            stdout: result.toString(),
+            chunks: chunks.filter((chunk) => chunk !== ''),
+          })
         })
-      })
-    )
+      )
+    }
   })
 }
 
-function getExecutableName() {
+export function getExecutableName(): string {
   let name = 'software-update-checker-'
   if (os.platform() === 'win32') {
     name = `${name}win.exe`
@@ -112,11 +190,12 @@ function getExecutableName() {
   return name
 }
 
-function escapeChunk(chunk: string): string {
-  let escapedChunk = `${stripAnsiChars(JSON.stringify(chunk))}`
+function escapeChunk(chunk: string, stringify = true): string {
+  let escapedChunk = `${stripAnsiChars(stringify ? JSON.stringify(chunk) : chunk)}`
   escapedChunk = escapedChunk.substring(1, escapedChunk.length - 1) // remove enclosing double quotes from stringify
   escapedChunk = escapedChunk.replace(/\\+n$/, '') // if ends in newline, remove newline
   escapedChunk = escapedChunk.replace(/❯/g, '>') // some shells print out strange symbol, convert it to standard
+  escapedChunk = escapedChunk.replace(/\\+"/g, '"') // remove escape chars in front of double quotes
   return escapedChunk
 }
 

@@ -8,19 +8,19 @@ import interactiveExecute from './helpers/interactive-execute'
 import Software from '../../src/software'
 import Website from '../helpers/website'
 
-describe('Lifecycle', () => {
+describe('Lifecycle Interactive', () => {
   beforeAll(async () => {
     await Website.start()
   })
   afterAll(async () => {
     await Website.stop()
   })
-  it('lifecycle adds, edits, views and deletes correctly', async () => {
+  it('lifecycle interactive adds, edits, views and deletes correctly', async () => {
     const installedVersion = '1.0.0'
     const latestVersion = '1.0.1'
     const updatedLatestVersion = '1.0.0'
     const software = new Software({
-      name: 'e2e lifecycle',
+      name: 'e2e lifecycle interactive',
       executable: {
         command: 'node',
       },

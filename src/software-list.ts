@@ -19,7 +19,7 @@ export default class SoftwareList {
   static async add(software: Software): Promise<Software[]> {
     const softwares: Software[] = SoftwareList.get()
     if (softwares.find((s) => s.name === software.name)) {
-      throw Error(`Software with name '${software.name}' already exists.`)
+      throw Error(`Software with name "${software.name}" already exists.`)
     }
     softwares.push(software)
     return SoftwareList.save(softwares)
@@ -29,7 +29,7 @@ export default class SoftwareList {
     const softwares: Software[] = SoftwareList.get()
     const index = softwares.findIndex((software) => software.name === oldSoftware.name)
     if (index < 0) {
-      throw Error(`Could not find software to edit with name '${oldSoftware.name}'.`)
+      throw Error(`Could not find software to edit with name "${oldSoftware.name}".`)
     }
     softwares.splice(index, 1, newSoftware)
     return SoftwareList.save(softwares)
@@ -42,7 +42,7 @@ export default class SoftwareList {
     const softwares: Software[] = SoftwareList.get()
     const index = softwares.findIndex((software) => software.name === name)
     if (index < 0) {
-      throw Error(`Could not find software to delete with name '${name}'.`)
+      throw Error(`Could not find software to delete with name "${name}".`)
     }
     softwares.splice(index, 1)
     return SoftwareList.save(softwares)
@@ -69,40 +69,40 @@ export default class SoftwareList {
         }
         let json = JSON.parse(contents.toString())
         if (!json || !Array.isArray(json)) {
-          throw Error(`Saved file '${file}' does not contain a valid JSON array`)
+          throw Error(`Saved file "${file}" does not contain a valid JSON array`)
         }
         for (const obj of json) {
           if (!obj.name) {
-            throw Error(`Saved file '${file}' contains an invalid software entry that does not have a name`)
+            throw Error(`Saved file "${file}" contains an invalid software entry that does not have a name`)
           }
           if (!obj.executable) {
             throw Error(
-              `Saved file '${file}' contains an invalid software entry '${obj.name}' that does not have an executable`
+              `Saved file "${file}" contains an invalid software entry "${obj.name}" that does not have an executable`
             )
           }
           if (!obj.executable.command && !obj.executable.directory) {
             throw Error(
-              `Saved file '${file}' contains an invalid software entry '${obj.name}' that is dynamic but does not have an executable directory`
+              `Saved file "${file}" contains an invalid software entry "${obj.name}" that is dynamic but does not have an executable directory`
             )
           }
           if (!obj.executable.command && !obj.executable.regex) {
             throw Error(
-              `Saved file '${file}' contains an invalid software entry '${obj.name}' that is dynamic but does not have an executable regex`
+              `Saved file "${file}" contains an invalid software entry "${obj.name}" that is dynamic but does not have an executable regex`
             )
           }
           if (!obj.installedRegex) {
             throw Error(
-              `Saved file '${file}' contains an invalid software entry '${obj.name}' that does not have an installedRegex`
+              `Saved file "${file}" contains an invalid software entry "${obj.name}" that does not have an installedRegex`
             )
           }
           if (!obj.url) {
             throw Error(
-              `Saved file '${file}' contains an invalid software entry '${obj.name}' that does not have a url`
+              `Saved file "${file}" contains an invalid software entry "${obj.name}" that does not have a url`
             )
           }
           if (!obj.latestRegex) {
             throw Error(
-              `Saved file '${file}' contains an invalid software entry '${obj.name}' that does not have a latestRegex`
+              `Saved file "${file}" contains an invalid software entry "${obj.name}" that does not have a latestRegex`
             )
           }
         }
@@ -121,7 +121,7 @@ export default class SoftwareList {
           )
         }
       } catch (err) {
-        throw Error(`Cannot parse saved file '${file}' as JSON: ${err.message}`)
+        throw Error(`Cannot parse saved file "${file}" as JSON: ${err.message}`)
       }
     }
     return SoftwareList.save(softwares)
