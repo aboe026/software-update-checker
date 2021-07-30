@@ -31,6 +31,14 @@ export default class E2eHelpUtil extends E2eBaseUtil {
     return executableName
   }
 
+  static getSpacesForExecutableName(executableName: string): string {
+    let spaces = ''
+    for (let i = 0; i < executableName.length; i++) {
+      spaces += ' '
+    }
+    return spaces
+  }
+
   static getGlobalsChunks(): string[] {
     return [
       'Globals:',
@@ -62,6 +70,7 @@ export default class E2eHelpUtil extends E2eBaseUtil {
 
   static async getAddChunks(): Promise<string[]> {
     const executableName = await E2eHelpUtil.getHelpExecutableName()
+    const spaces = E2eHelpUtil.getSpacesForExecutableName(executableName)
     return [
       `${executableName} add <static|dynamic>`,
       '',
@@ -69,9 +78,9 @@ export default class E2eHelpUtil extends E2eBaseUtil {
       '',
       'Commands:',
       `  ${executableName} add static   Software executable defined by a fixed, non-changing path`,
-      '                                               (eg executable on $PATH or absolute path to executable file)',
+      `  ${spaces}              (eg executable on $PATH or absolute path to executable file)`,
       `  ${executableName} add dynamic  Software executable has changing, evolving name requiring regex patterns to determine`,
-      '                                               (eg executable name includes version, which changes between releases)',
+      `  ${spaces}              (eg executable name includes version, which changes between releases)`,
       '',
       ...this.getGlobalsChunks(),
     ]
