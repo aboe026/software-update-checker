@@ -41,34 +41,36 @@ export default class E2eHelpUtil extends E2eBaseUtil {
   }
 
   static async getRootChunks(): Promise<string[]> {
+    const executableName = await E2eHelpUtil.getHelpExecutableName()
     return [
-      `${await E2eHelpUtil.getHelpExecutableName()} [add|view|edit|remove]`,
+      `${executableName} [add|view|edit|remove]`,
       '',
       'Check if installed software has updates available',
       '',
       'Commands:',
-      '  software-update-checker-win.exe [add|view|edit|remove]     Check if installed software has updates available  [default]',
-      '  software-update-checker-win.exe add <static|dynamic>       Add software configuration  [aliases: create, configure]',
-      '  software-update-checker-win.exe view                       View configured software versions  [aliases: list, read]',
-      '  software-update-checker-win.exe edit <existing>            Edit software configuration  [aliases: update, reconfigure]',
-      '  software-update-checker-win.exe remove <existing>          Remove software configuration  [aliases: delete]',
-      '  software-update-checker-win.exe version                    Show version number',
-      '  software-update-checker-win.exe help                       Show help',
+      `  ${executableName} [add|view|edit|remove]     Check if installed software has updates available  [default]`,
+      `  ${executableName} add <static|dynamic>       Add software configuration  [aliases: create, configure]`,
+      `  ${executableName} view                       View configured software versions  [aliases: list, read]`,
+      `  ${executableName} edit <existing>            Edit software configuration  [aliases: update, reconfigure]`,
+      `  ${executableName} remove <existing>          Remove software configuration  [aliases: delete]`,
+      `  ${executableName} version                    Show version number`,
+      `  ${executableName} help                       Show help`,
       '',
       ...this.getGlobalsChunks(),
     ]
   }
 
   static async getAddChunks(): Promise<string[]> {
+    const executableName = await E2eHelpUtil.getHelpExecutableName()
     return [
-      `${await E2eHelpUtil.getHelpExecutableName()} add <static|dynamic>`,
+      `${executableName} add <static|dynamic>`,
       '',
       'Add software configuration',
       '',
       'Commands:',
-      '  software-update-checker-win.exe add static   Software executable defined by a fixed, non-changing path',
+      `  ${executableName} add static   Software executable defined by a fixed, non-changing path`,
       '                                               (eg executable on $PATH or absolute path to executable file)',
-      '  software-update-checker-win.exe add dynamic  Software executable has changing, evolving name requiring regex patterns to determine',
+      `  ${executableName} add dynamic  Software executable has changing, evolving name requiring regex patterns to determine`,
       '                                               (eg executable name includes version, which changes between releases)',
       '',
       ...this.getGlobalsChunks(),
