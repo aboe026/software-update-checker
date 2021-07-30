@@ -25,6 +25,7 @@
     "clean:dist": "rimraf dist",
     "coverage:merge": "ts-node scripts/merge-coverage.ts",
     "detect:duplicate-test-resources": "ts-node scripts/detect-duplicate-test-resources.ts",
+    "debug:record-and-replay": "ts-node scripts/debug-record-and-replay.ts",
     "dist": "npm run build && npm run pack",
     "lint": "eslint . && prettier --check . && npm run detect:duplicate-test-resources",
     "lint:fix": "eslint --fix . && prettier --write .",
