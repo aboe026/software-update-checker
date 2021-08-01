@@ -11,10 +11,10 @@ describe('Version Command Unit Tests', () => {
       builder(yargs)
       expect(helpSpy.mock.calls).toEqual([[false]])
     })
-    it('handler prints package version', () => {
+    it('handler prints package version', async () => {
       const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation()
       const handler = VersionCommand.getCommand().handler as (args: Arguments) => void
-      handler(yargs.argv)
+      handler(await yargs.argv)
       expect(consoleLogSpy.mock.calls).toEqual([[version]])
     })
   })

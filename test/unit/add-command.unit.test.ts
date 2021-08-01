@@ -18,21 +18,22 @@ describe('Add Command Unit Tests', () => {
       expect(staticCommandSpy.mock.calls).toHaveLength(1)
       expect(dynamicCommandSpy.mock.calls).toHaveLength(1)
     })
-    it('handler throws error', () => {
+    it('handler throws error', async () => {
       const handler = AddCommand.getCommand().handler as (args: Arguments) => void
-      expect(() => handler(yargs.argv)).toThrow('Must specify sub-command of either "static" or "dynamic"')
+      const args = await yargs.argv
+      expect(() => handler(args)).toThrow('Must specify sub-command of either "static" or "dynamic"')
     })
   })
   describe('getStaticCommand', () => {
     it('handler throws error if command missing and non-interactive', async () => {
       const handler = AddCommand.getStaticCommand().handler as (args: Arguments) => void
-      await expect(handler(yargs.argv)).rejects.toThrow('Option "command" must be non-empty string')
+      await expect(handler(await yargs.argv)).rejects.toThrow('Option "command" must be non-empty string')
     })
     it('handler calls configure if command passed', async () => {
       jest.spyOn(AddCommand, 'getStringArgument').mockReturnValue('test')
       const configureSpy = jest.spyOn(AddCommand, 'configure').mockResolvedValue()
       const handler = AddCommand.getStaticCommand().handler as (args: Arguments) => void
-      await expect(handler(yargs.argv)).resolves.toBe(undefined)
+      await expect(handler(await yargs.argv)).resolves.toBe(undefined)
       expect(configureSpy.mock.calls).toHaveLength(1)
     })
   })
@@ -42,20 +43,20 @@ describe('Add Command Unit Tests', () => {
         return option.key === 'directory' ? '' : 'test'
       })
       const handler = AddCommand.getDynamicCommand().handler as (args: Arguments) => void
-      await expect(handler(yargs.argv)).rejects.toThrow('Option "directory" must be non-empty string')
+      await expect(handler(await yargs.argv)).rejects.toThrow('Option "directory" must be non-empty string')
     })
     it('handler throws error if regex missing and non-interactive', async () => {
       jest.spyOn(AddCommand, 'getStringArgument').mockImplementation((argv: Arguments, option: Option): string => {
         return option.key === 'regex' ? '' : 'test'
       })
       const handler = AddCommand.getDynamicCommand().handler as (args: Arguments) => void
-      await expect(handler(yargs.argv)).rejects.toThrow('Option "regex" must be non-empty string')
+      await expect(handler(await yargs.argv)).rejects.toThrow('Option "regex" must be non-empty string')
     })
     it('handler calls configure if directory and regex passed', async () => {
       jest.spyOn(AddCommand, 'getStringArgument').mockReturnValue('test')
       const configureSpy = jest.spyOn(AddCommand, 'configure').mockResolvedValue()
       const handler = AddCommand.getDynamicCommand().handler as (args: Arguments) => void
-      await expect(handler(yargs.argv)).resolves.toBe(undefined)
+      await expect(handler(await yargs.argv)).resolves.toBe(undefined)
       expect(configureSpy.mock.calls).toHaveLength(1)
     })
   })
@@ -64,7 +65,7 @@ describe('Add Command Unit Tests', () => {
       jest.spyOn(AddCommand, 'getStringArgument').mockImplementation((argv: Arguments, option: Option): string => {
         return option.key === 'name' ? '' : 'test'
       })
-      await expect(AddCommand.configure(yargs.argv, { command: 'sunrise' })).rejects.toThrow(
+      await expect(AddCommand.configure(await yargs.argv, { command: 'sunrise' })).rejects.toThrow(
         'Option "name" must be non-empty string'
       )
     })
@@ -72,7 +73,7 @@ describe('Add Command Unit Tests', () => {
       jest.spyOn(AddCommand, 'getStringArgument').mockImplementation((argv: Arguments, option: Option): string => {
         return option.key === 'installedRegex' ? '' : 'test'
       })
-      await expect(AddCommand.configure(yargs.argv, { command: 'horizon' })).rejects.toThrow(
+      await expect(AddCommand.configure(await yargs.argv, { command: 'horizon' })).rejects.toThrow(
         'Option "installedRegex" must be non-empty string'
       )
     })
@@ -80,7 +81,7 @@ describe('Add Command Unit Tests', () => {
       jest.spyOn(AddCommand, 'getStringArgument').mockImplementation((argv: Arguments, option: Option): string => {
         return option.key === 'url' ? '' : 'test'
       })
-      await expect(AddCommand.configure(yargs.argv, { command: 'sunset' })).rejects.toThrow(
+      await expect(AddCommand.configure(await yargs.argv, { command: 'sunset' })).rejects.toThrow(
         'Option "url" must be non-empty string'
       )
     })
@@ -88,14 +89,14 @@ describe('Add Command Unit Tests', () => {
       jest.spyOn(AddCommand, 'getStringArgument').mockImplementation((argv: Arguments, option: Option): string => {
         return option.key === 'latestRegex' ? '' : 'test'
       })
-      await expect(AddCommand.configure(yargs.argv, { command: 'dusk' })).rejects.toThrow(
+      await expect(AddCommand.configure(await yargs.argv, { command: 'dusk' })).rejects.toThrow(
         'Option "latestRegex" must be non-empty string'
       )
     })
     it('calls configure if required params passed', async () => {
       jest.spyOn(AddCommand, 'getStringArgument').mockReturnValue('test')
       const configureSpy = jest.spyOn(Add, 'configure').mockResolvedValue()
-      await expect(AddCommand.configure(yargs.argv, { command: 'eve' })).resolves.toBe(undefined)
+      await expect(AddCommand.configure(await yargs.argv, { command: 'eve' })).resolves.toBe(undefined)
       expect(configureSpy.mock.calls).toHaveLength(1)
     })
   })

@@ -24,7 +24,7 @@ describe('Edit Command Unit Tests', () => {
     })
     it('handler throws error if no options passed', async () => {
       const handler = EditCommand.getCommand().handler as (args: Arguments) => void
-      await expect(handler(yargs.argv)).rejects.toThrow('Must provide something to change as an option/flag')
+      await expect(handler(await yargs.argv)).rejects.toThrow('Must provide something to change as an option/flag')
     })
     it('handler throws error if static type and directory specified', async () => {
       jest.spyOn(EditCommand, 'getCommandTypeArgument').mockReturnValueOnce(CommandType.Static)
@@ -32,7 +32,7 @@ describe('Edit Command Unit Tests', () => {
         return option.key === 'directory' ? 'test' : ''
       })
       const handler = EditCommand.getCommand().handler as (args: Arguments) => void
-      await expect(handler(yargs.argv)).rejects.toThrow(
+      await expect(handler(await yargs.argv)).rejects.toThrow(
         'The "--directory" option is not compatible with "--type=static"'
       )
     })
@@ -42,7 +42,9 @@ describe('Edit Command Unit Tests', () => {
         return option.key === 'regex' ? 'test' : ''
       })
       const handler = EditCommand.getCommand().handler as (args: Arguments) => void
-      await expect(handler(yargs.argv)).rejects.toThrow('The "--regex" option is not compatible with "--type=static"')
+      await expect(handler(await yargs.argv)).rejects.toThrow(
+        'The "--regex" option is not compatible with "--type=static"'
+      )
     })
     it('handler throws error if dynamic type and command specified', async () => {
       jest.spyOn(EditCommand, 'getCommandTypeArgument').mockReturnValueOnce(CommandType.Dynamic)
@@ -50,7 +52,7 @@ describe('Edit Command Unit Tests', () => {
         return option.key === 'command' ? 'test' : ''
       })
       const handler = EditCommand.getCommand().handler as (args: Arguments) => void
-      await expect(handler(yargs.argv)).rejects.toThrow(
+      await expect(handler(await yargs.argv)).rejects.toThrow(
         'The "--command" option is not compatible with "--type=dynamic"'
       )
     })
@@ -61,7 +63,7 @@ describe('Edit Command Unit Tests', () => {
         return option.key === 'name' ? name : ''
       })
       const handler = EditCommand.getCommand().handler as (args: Arguments) => void
-      await handler(yargs.argv)
+      await handler(await yargs.argv)
       expect(editConfigurationSpy.mock.calls).toEqual([
         [
           {
@@ -88,7 +90,7 @@ describe('Edit Command Unit Tests', () => {
         return option.key === 'command' ? command : ''
       })
       const handler = EditCommand.getCommand().handler as (args: Arguments) => void
-      await handler(yargs.argv)
+      await handler(await yargs.argv)
       expect(editConfigurationSpy.mock.calls).toEqual([
         [
           {
@@ -117,7 +119,7 @@ describe('Edit Command Unit Tests', () => {
         return option.key === 'directory' ? directory : ''
       })
       const handler = EditCommand.getCommand().handler as (args: Arguments) => void
-      await handler(yargs.argv)
+      await handler(await yargs.argv)
       expect(editConfigurationSpy.mock.calls).toEqual([
         [
           {
@@ -147,7 +149,7 @@ describe('Edit Command Unit Tests', () => {
         return option.key === 'regex' ? regex : ''
       })
       const handler = EditCommand.getCommand().handler as (args: Arguments) => void
-      await handler(yargs.argv)
+      await handler(await yargs.argv)
       expect(editConfigurationSpy.mock.calls).toEqual([
         [
           {
@@ -184,7 +186,7 @@ describe('Edit Command Unit Tests', () => {
         }
       })
       const handler = EditCommand.getCommand().handler as (args: Arguments) => void
-      await handler(yargs.argv)
+      await handler(await yargs.argv)
       expect(editConfigurationSpy.mock.calls).toEqual([
         [
           {
@@ -243,7 +245,7 @@ describe('Edit Command Unit Tests', () => {
         }
       })
       const handler = EditCommand.getCommand().handler as (args: Arguments) => void
-      await handler(yargs.argv)
+      await handler(await yargs.argv)
       expect(editConfigurationSpy.mock.calls).toEqual([
         [
           {
@@ -304,7 +306,7 @@ describe('Edit Command Unit Tests', () => {
         }
       })
       const handler = EditCommand.getCommand().handler as (args: Arguments) => void
-      await handler(yargs.argv)
+      await handler(await yargs.argv)
       expect(editConfigurationSpy.mock.calls).toEqual([
         [
           {
