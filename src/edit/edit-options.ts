@@ -70,10 +70,10 @@ export const EditOptions = {
       demandOption: false,
     },
   }),
-  ShellOverride: new Option({
-    key: AddOptions.ShellOverride.key,
+  Shell: new Option({
+    key: AddOptions.Shell.key,
     value: {
-      ...AddOptions.ShellOverride.value,
+      ...AddOptions.Shell.value,
       demandOption: false,
     },
   }),

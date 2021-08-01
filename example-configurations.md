@@ -13,7 +13,7 @@
   - command: `Get-ItemProperty`
   - arguments: `HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | select DisplayName,DisplayVersion | where {$_.DisplayName -like "Docker*"}`
   - installed regex: `Docker Desktop (.*)`
-  - shell override: `powershell`
+  - shell: `powershell`
   - latest URL: `https://docs.docker.com/docker-for-windows/release-notes/`,
   - latest regex: `Docker Desktop Community (.*)\<\/h2\>`
 

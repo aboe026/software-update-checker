@@ -34,7 +34,7 @@ describe('Add Unit Tests', () => {
                 inputs,
                 existingExecutable: undefined,
                 existingArgs: undefined,
-                existingShellOverride: undefined,
+                existingShell: undefined,
                 existingInstalledRegex: undefined,
               },
             ],
@@ -84,7 +84,7 @@ describe('Add Unit Tests', () => {
                 inputs,
                 existingExecutable: undefined,
                 existingArgs: undefined,
-                existingShellOverride: undefined,
+                existingShell: undefined,
                 existingInstalledRegex: undefined,
               },
             ],
@@ -108,7 +108,7 @@ describe('Add Unit Tests', () => {
           command: 'puzzle',
         },
         args: 'combination',
-        shellOverride: '3d',
+        shell: '3d',
         installedRegex: 'white|red|blue|orange|green|yellow',
         url: 'https://3by3by3solveme.com',
         latestRegex: "Rubik's Cube",
@@ -122,7 +122,7 @@ describe('Add Unit Tests', () => {
               resolve: {
                 executable: software.executable,
                 args: software.args,
-                shellOverride: software.shellOverride,
+                shell: software.shell,
                 installedRegex: software.installedRegex,
               },
             },
@@ -152,7 +152,7 @@ describe('Add Unit Tests', () => {
                 inputs: software,
                 existingExecutable: undefined,
                 existingArgs: undefined,
-                existingShellOverride: undefined,
+                existingShell: undefined,
                 existingInstalledRegex: undefined,
               },
             ],
@@ -177,7 +177,7 @@ describe('Add Unit Tests', () => {
           command: 'snl',
         },
         args: 'cast',
-        shellOverride: 'movies',
+        shell: 'movies',
         installedRegex: 'matt foley',
         url: 'https://livininavandownbytheriver.com',
         latestRegex: 'chris farley',
@@ -188,7 +188,7 @@ describe('Add Unit Tests', () => {
           command: 'comedy',
         },
         args: 'musician',
-        shellOverride: 'movie',
+        shell: 'movie',
         installedRegex: 'joliet jake blues',
         url: 'https://ihateillinoisnazis.com',
         latestRegex: 'john belushi',
@@ -203,7 +203,7 @@ describe('Add Unit Tests', () => {
               resolve: {
                 executable: software.executable,
                 args: software.args,
-                shellOverride: software.shellOverride,
+                shell: software.shell,
                 installedRegex: software.installedRegex,
               },
             },
@@ -233,7 +233,7 @@ describe('Add Unit Tests', () => {
                 inputs: software,
                 existingExecutable: existing.executable,
                 existingArgs: existing.args,
-                existingShellOverride: existing.shellOverride,
+                existingShell: existing.shell,
                 existingInstalledRegex: existing.installedRegex,
               },
             ],
@@ -670,7 +670,7 @@ describe('Add Unit Tests', () => {
             resolve: {
               executable,
               args: '',
-              shellOverride: '',
+              shell: '',
               installedRegex,
             },
           },
@@ -710,7 +710,7 @@ describe('Add Unit Tests', () => {
             resolve: {
               executable,
               args: '',
-              shellOverride: '',
+              shell: '',
               installedRegex,
             },
           },
@@ -759,7 +759,7 @@ describe('Add Unit Tests', () => {
         command: `${description} executable`,
       }
       const args = ''
-      const shellOverride = ''
+      const shell = ''
       const installedRegex = `${description} installedRegex`
       const installedVersion = `${description} installed version`
       const inputs = {
@@ -770,7 +770,7 @@ describe('Add Unit Tests', () => {
           inputs,
           configureExecutableMocks: [{ resolve: executable }],
           getArgsMocks: [{ resolve: args }],
-          getShellOverrideMocks: [{ resolve: shellOverride }],
+          getshellMocks: [{ resolve: shell }],
           getInstalledRegexMocks: [{ resolve: installedRegex }],
           getInstalledVersionMocks: [{ resolve: installedVersion }],
           getVersionCorrectMocks: [{ resolve: true }],
@@ -780,7 +780,7 @@ describe('Add Unit Tests', () => {
             resolve: {
               executable,
               args,
-              shellOverride,
+              shell,
               installedRegex,
             },
           },
@@ -793,7 +793,7 @@ describe('Add Unit Tests', () => {
             ],
           ],
           getArgsCalls: [[undefined]],
-          getShellOverrideCalls: [[undefined]],
+          getshellCalls: [[undefined]],
           getInstalledRegexCalls: [[undefined]],
           getInstalledVersionCalls: [[]],
           getVersionCorrectCalls: [[]],
@@ -807,7 +807,7 @@ describe('Add Unit Tests', () => {
         command: `${description} executable`,
       }
       const args = ''
-      const shellOverride = ''
+      const shell = ''
       const installedRegex = `${description} installedRegex`
       const installedVersionInitial = `${description} installed version initial`
       const installedVersionReconfigured = `${description} installed version reconfigured`
@@ -821,7 +821,7 @@ describe('Add Unit Tests', () => {
           inputs,
           configureExecutableMocks: [{ resolve: executable }, { resolve: executable }],
           getArgsMocks: [{ resolve: args }, { resolve: args }],
-          getShellOverrideMocks: [{ resolve: shellOverride }, { resolve: shellOverride }],
+          getshellMocks: [{ resolve: shell }, { resolve: shell }],
           getInstalledRegexMocks: [{ resolve: installedRegex }],
           getInstalledVersionMocks: [{ resolve: installedVersionInitial }, { resolve: installedVersionReconfigured }],
           getVersionCorrectMocks: [{ resolve: false }, { resolve: true }],
@@ -831,7 +831,7 @@ describe('Add Unit Tests', () => {
             resolve: {
               executable,
               args,
-              shellOverride,
+              shell,
               installedRegex,
             },
           },
@@ -850,7 +850,7 @@ describe('Add Unit Tests', () => {
             ],
           ],
           getArgsCalls: [[undefined], [args]],
-          getShellOverrideCalls: [[undefined], [shellOverride]],
+          getshellCalls: [[undefined], [shell]],
           getInstalledRegexCalls: [[installedRegex]],
           getInstalledVersionCalls: [[], []],
           getVersionCorrectCalls: [[], []],
@@ -867,7 +867,7 @@ describe('Add Unit Tests', () => {
         command: `${description} executable`,
       }
       const args = ''
-      const shellOverride = ''
+      const shell = ''
       const installedRegex = `${description} installedRegex`
       const installedVersionInitial = `${description} installed version initial`
       const installedVersionReconfigured = `${description} installed version reconfigured`
@@ -875,7 +875,7 @@ describe('Add Unit Tests', () => {
         input: {
           configureExecutableMocks: [{ resolve: executable }, { resolve: executable }],
           getArgsMocks: [{ resolve: args }, { resolve: args }],
-          getShellOverrideMocks: [{ resolve: shellOverride }, { resolve: shellOverride }],
+          getshellMocks: [{ resolve: shell }, { resolve: shell }],
           getInstalledRegexMocks: [{ resolve: installedRegex }, { resolve: installedRegex }],
           getInstalledVersionMocks: [{ resolve: installedVersionInitial }, { resolve: installedVersionReconfigured }],
           getVersionCorrectMocks: [{ resolve: false }, { resolve: true }],
@@ -885,7 +885,7 @@ describe('Add Unit Tests', () => {
             resolve: {
               executable,
               args,
-              shellOverride,
+              shell,
               installedRegex,
             },
           },
@@ -904,7 +904,7 @@ describe('Add Unit Tests', () => {
             ],
           ],
           getArgsCalls: [[undefined], [args]],
-          getShellOverrideCalls: [[undefined], [shellOverride]],
+          getshellCalls: [[undefined], [shell]],
           getInstalledRegexCalls: [[undefined], [installedRegex]],
           getInstalledVersionCalls: [[], []],
           getVersionCorrectCalls: [[], []],
@@ -921,7 +921,7 @@ describe('Add Unit Tests', () => {
         command: `${description} executable`,
       }
       const args = ''
-      const shellOverride = ''
+      const shell = ''
       const installedRegex = `${description} installedRegex`
       const installedError = `${description} installed error`
       const installedVersion = `${description} installed version`
@@ -935,7 +935,7 @@ describe('Add Unit Tests', () => {
           inputs,
           configureExecutableMocks: [{ resolve: executable }, { resolve: executable }],
           getArgsMocks: [{ resolve: args }, { resolve: args }],
-          getShellOverrideMocks: [{ resolve: shellOverride }, { resolve: shellOverride }],
+          getshellMocks: [{ resolve: shell }, { resolve: shell }],
           getInstalledRegexMocks: [{ resolve: installedRegex }],
           getInstalledVersionMocks: [{ reject: installedError }, { resolve: installedVersion }],
           getVersionCorrectMocks: [{ resolve: true }],
@@ -946,7 +946,7 @@ describe('Add Unit Tests', () => {
             resolve: {
               executable,
               args,
-              shellOverride,
+              shell,
               installedRegex,
             },
           },
@@ -965,7 +965,7 @@ describe('Add Unit Tests', () => {
             ],
           ],
           getArgsCalls: [[undefined], [args]],
-          getShellOverrideCalls: [[undefined], [shellOverride]],
+          getshellCalls: [[undefined], [shell]],
           getInstalledRegexCalls: [[installedRegex]],
           getInstalledVersionCalls: [[], []],
           getVersionCorrectCalls: [[]],
@@ -981,7 +981,7 @@ describe('Add Unit Tests', () => {
         command: `${description} executable`,
       }
       const args = ''
-      const shellOverride = ''
+      const shell = ''
       const installedRegex = `${description} installedRegex`
       const installedError = `${description} installed error`
       const installedVersion = `${description} installed version`
@@ -989,7 +989,7 @@ describe('Add Unit Tests', () => {
         input: {
           configureExecutableMocks: [{ resolve: executable }, { resolve: executable }],
           getArgsMocks: [{ resolve: args }, { resolve: args }],
-          getShellOverrideMocks: [{ resolve: shellOverride }, { resolve: shellOverride }],
+          getshellMocks: [{ resolve: shell }, { resolve: shell }],
           getInstalledRegexMocks: [{ resolve: installedRegex }, { resolve: installedRegex }],
           getInstalledVersionMocks: [{ reject: installedError }, { resolve: installedVersion }],
           getVersionCorrectMocks: [{ resolve: true }],
@@ -1000,7 +1000,7 @@ describe('Add Unit Tests', () => {
             resolve: {
               executable,
               args,
-              shellOverride,
+              shell,
               installedRegex,
             },
           },
@@ -1019,7 +1019,7 @@ describe('Add Unit Tests', () => {
             ],
           ],
           getArgsCalls: [[undefined], [args]],
-          getShellOverrideCalls: [[undefined], [shellOverride]],
+          getshellCalls: [[undefined], [shell]],
           getInstalledRegexCalls: [[undefined], [installedRegex]],
           getInstalledVersionCalls: [[], []],
           getVersionCorrectCalls: [[]],
@@ -1068,14 +1068,14 @@ describe('Add Unit Tests', () => {
         command: `${description} executable`,
       }
       const args = ''
-      const shellOverride = ''
+      const shell = ''
       const installedRegex = `${description} installedRegex`
       const installedError = `${description} installed error`
       await testConfigureInstalledVersion({
         input: {
           configureExecutableMocks: [{ resolve: executable }],
           getArgsMocks: [{ resolve: args }, { resolve: args }],
-          getShellOverrideMocks: [{ resolve: shellOverride }],
+          getshellMocks: [{ resolve: shell }],
           getInstalledRegexMocks: [{ resolve: installedRegex }],
           getInstalledVersionMocks: [{ reject: installedError }],
           getReattemptVersionMocks: [{ resolve: false }],
@@ -1091,7 +1091,7 @@ describe('Add Unit Tests', () => {
             ],
           ],
           getArgsCalls: [[undefined]],
-          getShellOverrideCalls: [[undefined]],
+          getshellCalls: [[undefined]],
           getInstalledRegexCalls: [[undefined]],
           getInstalledVersionCalls: [[]],
           getReattemptVersionCalls: [[]],
@@ -1105,13 +1105,13 @@ describe('Add Unit Tests', () => {
         command: `${description} executable`,
       }
       const args = `${description} args`
-      const shellOverride = `${description} shellOverride`
+      const shell = `${description} shell`
       const installedRegex = `${description} installedRegex`
       const installedVersion = `${description} installed version`
       const inputs = {
         executable,
         args,
-        shellOverride,
+        shell,
         installedRegex,
       }
       await testConfigureInstalledVersion({
@@ -1125,7 +1125,7 @@ describe('Add Unit Tests', () => {
             resolve: {
               executable,
               args,
-              shellOverride,
+              shell,
               installedRegex,
             },
           },
@@ -1148,7 +1148,7 @@ describe('Add Unit Tests', () => {
         command: `${description} executable`,
       }
       const args = `${description} args`
-      const shellOverride = `${description} shellOverride`
+      const shell = `${description} shell`
       const installedRegex = `${description} installedRegex`
       const installedVersion = `${description} installed version`
       const inputs = {
@@ -1159,7 +1159,7 @@ describe('Add Unit Tests', () => {
           inputs,
           configureExecutableMocks: [{ resolve: executable }],
           getArgsMocks: [{ resolve: args }],
-          getShellOverrideMocks: [{ resolve: shellOverride }],
+          getshellMocks: [{ resolve: shell }],
           getInstalledRegexMocks: [{ resolve: installedRegex }],
           getInstalledVersionMocks: [{ resolve: installedVersion }],
           getVersionCorrectMocks: [{ resolve: true }],
@@ -1169,7 +1169,7 @@ describe('Add Unit Tests', () => {
             resolve: {
               executable,
               args,
-              shellOverride,
+              shell,
               installedRegex,
             },
           },
@@ -1182,7 +1182,7 @@ describe('Add Unit Tests', () => {
             ],
           ],
           getArgsCalls: [[undefined]],
-          getShellOverrideCalls: [[undefined]],
+          getshellCalls: [[undefined]],
           getInstalledRegexCalls: [[undefined]],
           getInstalledVersionCalls: [[]],
           getVersionCorrectCalls: [[]],
@@ -2236,13 +2236,13 @@ interface TestConfigureInstalledVersionInput {
   inputs?: AddInputs
   existingExecutable?: Static | Dynamic
   existingArgs?: string
-  existingShellOverride?: string
+  existingShell?: string
   existingInstalledRegex?: string
   installedVersion?: string
   installedError?: string
   configureExecutableMocks?: Response[]
   getArgsMocks?: Response[]
-  getShellOverrideMocks?: Response[]
+  getshellMocks?: Response[]
   getInstalledRegexMocks?: Response[]
   getInstalledVersionMocks?: Response[]
   getVersionCorrectMocks?: Response[]
@@ -2253,7 +2253,7 @@ interface TestConfigureInstalledVersionOutput {
   expected: Response
   configureExecutableCalls?: ExpectedCalls[][]
   getArgsCalls?: ExpectedCalls[][]
-  getShellOverrideCalls?: ExpectedCalls[][]
+  getshellCalls?: ExpectedCalls[][]
   getInstalledRegexCalls?: ExpectedCalls[][]
   getInstalledVersionCalls?: ExpectedCalls[][]
   getVersionCorrectCalls?: ExpectedCalls[][]
@@ -2279,8 +2279,8 @@ async function testConfigureInstalledVersion({
   if (input.existingArgs) {
     methodParams.existingArgs = input.existingArgs
   }
-  if (input.existingShellOverride) {
-    methodParams.existingShellOverride = input.existingShellOverride
+  if (input.existingShell) {
+    methodParams.existingShell = input.existingShell
   }
   if (input.existingInstalledRegex) {
     methodParams.existingInstalledRegex = input.existingInstalledRegex
@@ -2293,9 +2293,9 @@ async function testConfigureInstalledVersion({
     spy: jest.spyOn(AddPrompts, 'getArgs'),
     responses: input.getArgsMocks,
   })
-  const getShellOverrideSpy = TestUtil.mockResponses({
-    spy: jest.spyOn(AddPrompts, 'getShellOverride'),
-    responses: input.getShellOverrideMocks,
+  const getshellSpy = TestUtil.mockResponses({
+    spy: jest.spyOn(AddPrompts, 'getShell'),
+    responses: input.getshellMocks,
   })
   const getInstalledRegexSpy = TestUtil.mockResponses({
     spy: jest.spyOn(AddPrompts, 'getInstalledRegex'),
@@ -2322,7 +2322,7 @@ async function testConfigureInstalledVersion({
   }
   expect(configureExecutableSpy.mock.calls).toEqual(output.configureExecutableCalls || [])
   expect(getArgsSpy.mock.calls).toEqual(output.getArgsCalls || [])
-  expect(getShellOverrideSpy.mock.calls).toEqual(output.getShellOverrideCalls || [])
+  expect(getshellSpy.mock.calls).toEqual(output.getshellCalls || [])
   expect(getInstalledRegexSpy.mock.calls).toEqual(output.getInstalledRegexCalls || [])
   expect(getInstalledVersionSpy.mock.calls).toEqual(output.getInstalledVersionCalls || [])
   expect(getVersionCorrectSpy.mock.calls).toEqual(output.getVersionCorrectCalls || [])

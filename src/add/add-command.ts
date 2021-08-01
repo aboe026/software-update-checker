@@ -77,7 +77,7 @@ export default class AddCommand extends BaseCommand {
         name,
         executable,
         args: AddCommand.getStringArgument(argv, AddOptions.Arguments),
-        shellOverride: AddCommand.getStringArgument(argv, AddOptions.ShellOverride),
+        shell: AddCommand.getStringArgument(argv, AddOptions.Shell),
         installedRegex,
         url,
         latestRegex,

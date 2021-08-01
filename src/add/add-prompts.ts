@@ -98,14 +98,14 @@ export default class AddPrompts {
     return args
   }
 
-  static async getShellOverride(existingShellOverride?: string): Promise<string> {
-    const { shellOverride }: { shellOverride: string } = await inquirer.prompt({
-      name: 'shellOverride',
-      message: `${AddOptions.ShellOverride.value.description}:`,
+  static async getShell(existingShell?: string): Promise<string> {
+    const { shell }: { shell: string } = await inquirer.prompt({
+      name: 'shell',
+      message: `${AddOptions.Shell.value.description}:`,
       type: 'input',
-      default: existingShellOverride,
+      default: existingShell,
     })
-    return shellOverride
+    return shell
   }
 
   static async getInstalledRegex(existingInstalledRegex?: string): Promise<string> {

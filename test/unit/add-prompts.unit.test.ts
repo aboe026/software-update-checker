@@ -171,18 +171,18 @@ describe('Add Prompts Unit Tests', () => {
       })
     })
   })
-  describe('getShellOverride', () => {
+  describe('getShell', () => {
     it('returns inquirer output setting no default without existing', async () => {
       await TestUtil.validateStringPrompt({
-        method: AddPrompts.getShellOverride,
-        property: 'shellOverride',
+        method: AddPrompts.getShell,
+        property: 'shell',
         expected: 'sand dollar',
       })
     })
     it('returns inquirer output setting default with existing', async () => {
       await TestUtil.validateStringPrompt({
-        method: AddPrompts.getShellOverride,
-        property: 'shellOverride',
+        method: AddPrompts.getShell,
+        property: 'shell',
         expected: 'nautilus',
         input: 'fossil',
         expectedDefault: 'fossil',

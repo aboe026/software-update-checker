@@ -73,7 +73,7 @@ describe('Edit Command Unit Tests', () => {
               type: undefined,
               executable: undefined,
               args: '',
-              shellOverride: '',
+              shell: '',
               installedRegex: '',
               url: '',
               latestRegex: '',
@@ -102,7 +102,7 @@ describe('Edit Command Unit Tests', () => {
                 command,
               },
               args: '',
-              shellOverride: '',
+              shell: '',
               installedRegex: '',
               url: '',
               latestRegex: '',
@@ -132,7 +132,7 @@ describe('Edit Command Unit Tests', () => {
                 regex: '',
               },
               args: '',
-              shellOverride: '',
+              shell: '',
               installedRegex: '',
               url: '',
               latestRegex: '',
@@ -162,7 +162,7 @@ describe('Edit Command Unit Tests', () => {
                 regex,
               },
               args: '',
-              shellOverride: '',
+              shell: '',
               installedRegex: '',
               url: '',
               latestRegex: '',
@@ -199,7 +199,7 @@ describe('Edit Command Unit Tests', () => {
                 regex,
               },
               args: '',
-              shellOverride: '',
+              shell: '',
               installedRegex: '',
               url: '',
               latestRegex: '',
@@ -215,7 +215,7 @@ describe('Edit Command Unit Tests', () => {
       const type = CommandType.Static
       const command = 'test all static command'
       const args = 'test all static args'
-      const shellOverride = 'test all static shellOverride'
+      const shell = 'test all static shell'
       const installedRegex = 'test all static installedRegex'
       const latestRegex = 'test all static latestRegex'
       const url = 'test all static url'
@@ -232,8 +232,8 @@ describe('Edit Command Unit Tests', () => {
           return command
         } else if (option.key === 'arguments') {
           return args
-        } else if (option.key === 'shellOverride') {
-          return shellOverride
+        } else if (option.key === 'shell') {
+          return shell
         } else if (option.key === 'installedRegex') {
           return installedRegex
         } else if (option.key === 'url') {
@@ -257,7 +257,7 @@ describe('Edit Command Unit Tests', () => {
                 command,
               },
               args,
-              shellOverride,
+              shell,
               installedRegex,
               url,
               latestRegex,
@@ -274,7 +274,7 @@ describe('Edit Command Unit Tests', () => {
       const directory = 'test all dynamic directory'
       const regex = 'test all dynamic regex'
       const args = 'test all dynamic args'
-      const shellOverride = 'test all dynamic shellOverride'
+      const shell = 'test all dynamic shell'
       const installedRegex = 'test all dynamic installedRegex'
       const latestRegex = 'test all dynamic latestRegex'
       const url = 'test all dynamic url'
@@ -293,8 +293,8 @@ describe('Edit Command Unit Tests', () => {
           return regex
         } else if (option.key === 'arguments') {
           return args
-        } else if (option.key === 'shellOverride') {
-          return shellOverride
+        } else if (option.key === 'shell') {
+          return shell
         } else if (option.key === 'installedRegex') {
           return installedRegex
         } else if (option.key === 'url') {
@@ -319,7 +319,7 @@ describe('Edit Command Unit Tests', () => {
                 regex,
               },
               args,
-              shellOverride,
+              shell,
               installedRegex,
               url,
               latestRegex,

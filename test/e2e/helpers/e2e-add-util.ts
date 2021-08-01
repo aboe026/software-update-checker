@@ -11,7 +11,7 @@ export enum ExecutableChoiceOption {
 export interface InstalledReconfiguration {
   command?: string
   args?: string
-  shellOverride?: string
+  shell?: string
   regex?: string
   error?: string
   version?: string
@@ -67,8 +67,8 @@ export default class E2eAddUtil extends E2eBaseUtil {
     if (software.args) {
       args.push(`--args="${software.args}"`)
     }
-    if (software.shellOverride) {
-      args.push(`--shellOverride="${software.shellOverride}"`)
+    if (software.shell) {
+      args.push(`--shell="${software.shell}"`)
     }
     return args
   }
@@ -89,8 +89,8 @@ export default class E2eAddUtil extends E2eBaseUtil {
         defaultValue: defaults && defaults.args,
       }),
       ...E2eBaseUtil.getInputsPrompt({
-        currentValue: software.shellOverride,
-        defaultValue: defaults && defaults.shellOverride,
+        currentValue: software.shell,
+        defaultValue: defaults && defaults.shell,
         fallbackValue: KEYS.BACK_SPACE,
       }),
       ...E2eBaseUtil.getInputsPrompt({
@@ -145,8 +145,8 @@ export default class E2eAddUtil extends E2eBaseUtil {
           defaultValue: previousConfig && previousConfig.args,
         }),
         ...E2eBaseUtil.getInputsPrompt({
-          currentValue: currentConfig.shellOverride,
-          defaultValue: previousConfig && previousConfig.shellOverride,
+          currentValue: currentConfig.shell,
+          defaultValue: previousConfig && previousConfig.shell,
         }),
         ...E2eBaseUtil.getInputsPrompt({
           currentValue: currentConfig.regex,
@@ -226,8 +226,8 @@ export default class E2eAddUtil extends E2eBaseUtil {
       },
       {
         question: 'Shell to use instead of system default shell (eg "powershell")',
-        answer: software.shellOverride,
-        default: defaults && defaults.shellOverride,
+        answer: software.shell,
+        default: defaults && defaults.shell,
       },
       {
         question:
@@ -303,11 +303,11 @@ export default class E2eAddUtil extends E2eBaseUtil {
           },
           {
             question: 'Shell to use instead of system default shell (eg "powershell")',
-            answer: currentConfig.shellOverride === KEYS.BACK_SPACE ? '' : currentConfig.shellOverride,
+            answer: currentConfig.shell === KEYS.BACK_SPACE ? '' : currentConfig.shell,
             default: previousConfig
-              ? previousConfig.shellOverride === KEYS.BACK_SPACE
+              ? previousConfig.shell === KEYS.BACK_SPACE
                 ? ''
-                : previousConfig.shellOverride
+                : previousConfig.shell
               : undefined,
           },
           {

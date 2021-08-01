@@ -113,7 +113,7 @@ export default class SoftwareList {
               name: obj.name,
               executable: obj.executable,
               args: obj.args,
-              shellOverride: obj.shellOverride,
+              shell: obj.shell,
               installedRegex: obj.installedRegex,
               url: obj.url,
               latestRegex: obj.latestRegex,

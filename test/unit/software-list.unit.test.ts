@@ -130,7 +130,7 @@ describe('Software List Unit Tests', () => {
           command: 'minor',
         },
         args: 'kuiper',
-        shellOverride: 'planet',
+        shell: 'planet',
         installedRegex: 'pluto',
         url: 'https://coldshouldered.com',
         latestRegex: '134340',
@@ -588,14 +588,14 @@ describe('Software List Unit Tests', () => {
       fs.readFile = jest.fn().mockResolvedValue(JSON.stringify([software]))
       await expect(SoftwareList.load()).resolves.toStrictEqual([software])
     })
-    it('loads software if software list is single valid entry with shell override', async () => {
+    it('loads software if software list is single valid entry with shell', async () => {
       const software = new Software({
-        name: 'valid single with shell override',
+        name: 'valid single with shell',
         executable: {
           command: 'shell',
         },
         args: 'koopa',
-        shellOverride: 'mariokart',
+        shell: 'mariokart',
         installedRegex: 'leader',
         url: 'https://itsame.com',
         latestRegex: 'spiny shell',
@@ -603,13 +603,13 @@ describe('Software List Unit Tests', () => {
       fs.readFile = jest.fn().mockResolvedValue(JSON.stringify([software]))
       await expect(SoftwareList.load()).resolves.toStrictEqual([software])
     })
-    it('loads software if software list is single valid entry without args and with shell override', async () => {
+    it('loads software if software list is single valid entry without args and with shell', async () => {
       const software = new Software({
-        name: 'valid single without args and with shell override',
+        name: 'valid single without args and with shell',
         executable: {
           command: 'attitudes',
         },
-        shellOverride: 'force',
+        shell: 'force',
         installedRegex: 'unsparing',
         url: 'https:mywayorthehighway//.com',
         latestRegex: 'obey',

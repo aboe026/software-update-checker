@@ -28,7 +28,7 @@ export default class EditCommand extends BaseCommand {
         const directory = EditCommand.getStringArgument(argv, EditOptions.Directory)
         const regex = EditCommand.getStringArgument(argv, EditOptions.Regex)
         const args = EditCommand.getStringArgument(argv, EditOptions.Arguments)
-        const shellOverride = EditCommand.getStringArgument(argv, EditOptions.ShellOverride)
+        const shell = EditCommand.getStringArgument(argv, EditOptions.Shell)
         const installedRegex = EditCommand.getStringArgument(argv, EditOptions.InstalledRegex)
         const url = EditCommand.getStringArgument(argv, EditOptions.Url)
         const latestRegex = EditCommand.getStringArgument(argv, EditOptions.LatestRegex)
@@ -41,7 +41,7 @@ export default class EditCommand extends BaseCommand {
           directory === undefined &&
           regex === undefined &&
           args === undefined &&
-          shellOverride === undefined &&
+          shell === undefined &&
           installedRegex === undefined &&
           url === undefined &&
           latestRegex === undefined
@@ -82,7 +82,7 @@ export default class EditCommand extends BaseCommand {
             type,
             executable,
             args,
-            shellOverride,
+            shell,
             installedRegex,
             url,
             latestRegex,
