@@ -25,7 +25,7 @@ describe('Delete Command Unit Tests', () => {
     it('handler calls removeConfiguration', async () => {
       const removeConfigurationSpy = jest.spyOn(Delete, 'removeConfiguration').mockResolvedValue()
       const handler = DeleteCommand.getCommand().handler as (args: Arguments) => void
-      await handler(yargs.argv)
+      await handler(await yargs.argv)
       expect(removeConfigurationSpy.mock.calls).toHaveLength(1)
     })
   })

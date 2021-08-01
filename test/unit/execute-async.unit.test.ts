@@ -1,5 +1,5 @@
 import child_process, { ExecOptions, ExecException } from 'child_process'
-import { BaseEncodingOptions } from 'fs-extra'
+import { ObjectEncodingOptions } from 'fs-extra'
 import path from 'path'
 
 import execute from '../../src/execute-async'
@@ -219,7 +219,7 @@ function mockExec({
   child_process.ChildProcess,
   [
     command: string,
-    options: (BaseEncodingOptions & ExecOptions) | null | undefined,
+    options: (ObjectEncodingOptions & ExecOptions) | null | undefined,
     callback?: (error: ExecException | null, stdout: string | Buffer, stderr: string | Buffer) => void
   ]
 > {

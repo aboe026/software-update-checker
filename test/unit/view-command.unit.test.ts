@@ -14,7 +14,7 @@ describe('View Command Unit Tests', () => {
     it('handler calls showVersions', async () => {
       const showVersionsSpy = jest.spyOn(View, 'showVersions').mockResolvedValue()
       const handler = ViewCommand.getCommand().handler as (args: Arguments) => void
-      await handler(yargs.argv)
+      await handler(await yargs.argv)
       expect(showVersionsSpy.mock.calls).toHaveLength(1)
     })
   })
