@@ -4,7 +4,7 @@ import Add from './add'
 import { AddCommands, AddOptions, DynamicOptions, StaticOptions } from './add-options'
 import { addNewlineForExample, BaseOptions, convertToGenericOptions } from '../base/base-options'
 import BaseCommand from '../base/base-command'
-import { Dynamic, Static } from '../executable'
+import { Dynamic, Static } from '../../software/executable'
 
 export default class AddCommand extends BaseCommand {
   static getStaticCommand(): CommandModule {

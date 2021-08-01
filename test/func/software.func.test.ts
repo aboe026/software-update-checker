@@ -1,6 +1,6 @@
 import path from 'path'
 
-import Software, { getFromExecutable, getFromUrl, getExecutable } from '../../src/software'
+import Software, { getFromExecutable, getFromUrl, getExecutable } from '../../src/software/software'
 import Website from '../helpers/website'
 import TestUtil from '../helpers/test-util'
 

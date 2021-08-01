@@ -1,7 +1,7 @@
 import fs from 'fs-extra'
 
-import Software from '../../src/software'
-import SoftwareList from '../../src/software-list'
+import Software from '../../src/software/software'
+import SoftwareList from '../../src/software/software-list'
 
 jest.mock('fs-extra')
 

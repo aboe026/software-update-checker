@@ -1,8 +1,8 @@
 import cliProgress from 'cli-progress'
 import Table from 'cli-table3'
 
-import colors from '../colors'
-import SoftwareList from '../software-list'
+import colors from '../../util/colors'
+import SoftwareList from '../../software/software-list'
 
 export default class View {
   static async showVersions(): Promise<void> {

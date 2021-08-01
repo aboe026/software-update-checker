@@ -1,8 +1,8 @@
-import colors from '../../src/colors'
-import Delete, { Inputs as DeleteInputs } from '../../src/delete/delete'
-import DeletePrompts from '../../src/delete/delete-prompts'
-import Software from '../../src/software'
-import SoftwareList from '../../src/software-list'
+import colors from '../../src/util/colors'
+import Delete, { Inputs as DeleteInputs } from '../../src/actions/delete/delete'
+import DeletePrompts from '../../src/actions/delete/delete-prompts'
+import Software from '../../src/software/software'
+import SoftwareList from '../../src/software/software-list'
 import TestUtil, { ExpectedCalls, Response } from '../helpers/test-util'
 
 describe('Delete Unit Tests', () => {

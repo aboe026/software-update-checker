@@ -1,7 +1,7 @@
 import yargs, { Arguments, Argv } from 'yargs'
 
-import View from '../../src/view/view'
-import ViewCommand from '../../src/view/view-command'
+import View from '../../src/actions/view/view'
+import ViewCommand from '../../src/actions/view/view-command'
 
 describe('View Command Unit Tests', () => {
   describe('getCommand', () => {

@@ -1,4 +1,4 @@
-import colors from '../../src/colors'
+import colors from '../../src/util/colors'
 import inquirer from 'inquirer'
 
 export default class TestUtil {

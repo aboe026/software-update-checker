@@ -1,7 +1,7 @@
 import E2eBaseUtil, { BooleanPrompt, ChoicePrompt, StringPrompt } from './e2e-base-util'
 import { KEYS } from './interactive-execute'
-import { isStatic } from '../../../src/executable'
-import Software from '../../../src/software'
+import { isStatic } from '../../../src/software/executable'
+import Software from '../../../src/software/software'
 
 export enum ExecutableChoiceOption {
   Static = 'Static',

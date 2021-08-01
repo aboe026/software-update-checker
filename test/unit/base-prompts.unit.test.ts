@@ -1,4 +1,4 @@
-import BasePrompts from '../../src/base/base-prompts'
+import BasePrompts from '../../src/actions/base/base-prompts'
 
 describe('Base Prompts Unit Tests', () => {
   describe('capitalizeFirstLetters', () => {

@@ -1,4 +1,4 @@
-import HomePrompts from '../../src/home/home-prompts'
+import HomePrompts from '../../src/actions/home/home-prompts'
 import TestUtil from '../helpers/test-util'
 
 describe('Home Prompts Unit Tests', () => {

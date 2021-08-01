@@ -3,7 +3,7 @@ import { ExecOptions } from 'child_process'
 import path from 'path'
 
 import { Dynamic, Static, isStatic, getDynamicExecutable } from './executable'
-import execute from './execute-async'
+import execute from '../util/execute-async'
 
 export default class Software {
   readonly name: string

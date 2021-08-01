@@ -1,6 +1,6 @@
 import { AddOptions, DynamicOptions, StaticOptions } from '../add/add-options'
 import { Command, Option } from '../base/base-options'
-import { CommandType } from '../executable'
+import { CommandType } from '../../software/executable'
 
 export const EditCommands = {
   Edit: new Command({

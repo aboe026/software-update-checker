@@ -3,7 +3,7 @@ import path from 'path'
 
 import E2eConfig from './e2e-config'
 import interactiveExecute, { ANSI_CHAR_REPLACEMENT, KEYS } from './interactive-execute'
-import Software from '../../../src/software'
+import Software from '../../../src/software/software'
 import testUtil from '../../helpers/test-util'
 
 export default class E2eBaseUtil {

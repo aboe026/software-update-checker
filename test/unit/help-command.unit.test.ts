@@ -1,6 +1,6 @@
 import yargs, { Arguments, Argv } from 'yargs'
 
-import HelpCommand from '../../src/help/help-command'
+import HelpCommand from '../../src/actions/help/help-command'
 
 describe('View Command Unit Tests', () => {
   describe('getCommand', () => {

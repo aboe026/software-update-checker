@@ -1,7 +1,7 @@
 import { Arguments, Options } from 'yargs'
 import os from 'os'
 
-import { CommandType } from '../executable'
+import { CommandType } from '../../software/executable'
 import { GenericOptions, Option } from './base-options'
 
 export default class BaseCommand {

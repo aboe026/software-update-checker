@@ -1,6 +1,6 @@
 import E2eBaseUtil, { BooleanPrompt, ChoicePrompt, StringPrompt, Option } from './e2e-base-util'
 import { KEYS } from './interactive-execute'
-import Software from '../../../src/software'
+import Software from '../../../src/software/software'
 
 export default class E2eDeleteUtil extends E2eBaseUtil {
   static readonly CHOICES = {

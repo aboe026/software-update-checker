@@ -1,11 +1,11 @@
-import colors from '../../src/colors'
+import colors from '../../src/util/colors'
 
-import Add, { Inputs as AddInputs } from '../../src/add/add'
-import AddPrompts from '../../src/add/add-prompts'
-import { Dynamic, Static } from '../../src/executable'
-import * as executable from '../../src/executable'
-import Software from '../../src/software'
-import SoftwareList from '../../src/software-list'
+import Add, { Inputs as AddInputs } from '../../src/actions/add/add'
+import AddPrompts from '../../src/actions/add/add-prompts'
+import { Dynamic, Static } from '../../src/software/executable'
+import * as executable from '../../src/software/executable'
+import Software from '../../src/software/software'
+import SoftwareList from '../../src/software/software-list'
 import TestUtil, { ExpectedCalls, Response } from '../helpers/test-util'
 
 describe('Add Unit Tests', () => {

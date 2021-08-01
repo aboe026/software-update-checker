@@ -1,4 +1,4 @@
-import Validators from '../../src/validators'
+import Validators from '../../src/util/validators'
 
 describe('Validators Unit Tests', () => {
   describe('Required', () => {

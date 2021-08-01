@@ -1,7 +1,7 @@
 import inquirer from 'inquirer'
 
-import EditPrompts from '../../src/edit/edit-prompts'
-import Software from '../../src/software'
+import EditPrompts from '../../src/actions/edit/edit-prompts'
+import Software from '../../src/software/software'
 import TestUtil from '../helpers/test-util'
 
 describe('Edit Prompts Unit Tests', () => {

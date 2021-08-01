@@ -1,7 +1,7 @@
 import inquirer from 'inquirer'
 
-import AddPrompts from '../../src/add/add-prompts'
-import { CommandType } from '../../src/executable'
+import AddPrompts from '../../src/actions/add/add-prompts'
+import { CommandType } from '../../src/software/executable'
 import TestUtil from '../helpers/test-util'
 
 describe('Add Prompts Unit Tests', () => {

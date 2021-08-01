@@ -1,9 +1,9 @@
 import yargs, { Arguments, Argv } from 'yargs'
 
-import { CommandType } from '../../src/executable'
-import Edit from '../../src/edit/edit'
-import EditCommand from '../../src/edit/edit-command'
-import { Option } from '../../src/base/base-options'
+import { CommandType } from '../../src/software/executable'
+import Edit from '../../src/actions/edit/edit'
+import EditCommand from '../../src/actions/edit/edit-command'
+import { Option } from '../../src/actions/base/base-options'
 
 describe('Edit Command Unit Tests', () => {
   describe('getCommand', () => {

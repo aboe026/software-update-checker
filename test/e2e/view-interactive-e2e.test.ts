@@ -2,7 +2,7 @@ import E2eHomeUtil, { HomeChoiceOption } from './helpers/e2e-home-util'
 import E2eViewUtil from './helpers/e2e-view-util'
 import interactiveExecute from './helpers/interactive-execute'
 import { RowDecoration, TableRow } from './helpers/e2e-base-util'
-import Software from '../../src/software'
+import Software from '../../src/software/software'
 import Website from '../helpers/website'
 
 describe('View Interactive', () => {
