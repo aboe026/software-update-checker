@@ -58,8 +58,8 @@ export default class E2eEditUtil extends E2eBaseUtil {
     if (newSoftware.args !== undefined) {
       args.push(`--args="${newSoftware.args}"`)
     }
-    if (newSoftware.shellOverride !== undefined) {
-      args.push(`--shellOverride="${newSoftware.shellOverride}"`)
+    if (newSoftware.shell !== undefined) {
+      args.push(`--shell="${newSoftware.shell}"`)
     }
     if (newSoftware.installedRegex !== undefined) {
       args.push(`--installedRegex="${newSoftware.installedRegex}"`)
@@ -209,7 +209,7 @@ export interface EditOptions {
   directory?: string
   regex?: string
   args?: string
-  shellOverride?: string
+  shell?: string
   installedRegex?: string
   url?: string
   latestRegex?: string

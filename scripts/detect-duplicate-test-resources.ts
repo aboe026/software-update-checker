@@ -160,8 +160,8 @@ async function getTestResources(filePath: string): Promise<TestResource[]> {
       resources,
     })
     addResourceMatchingRegex({
-      type: TestResourceType.shellOverride,
-      regex: /shellOverride: '(.*)'/,
+      type: TestResourceType.shell,
+      regex: /shell: '(.*)'/,
       ignore: [''],
       lines,
       line: i + 1,
@@ -169,8 +169,8 @@ async function getTestResources(filePath: string): Promise<TestResource[]> {
       resources,
     })
     addResourceMatchingRegex({
-      type: TestResourceType.shellOverride,
-      regex: /shellOverride = '(.*)'/,
+      type: TestResourceType.shell,
+      regex: /shell = '(.*)'/,
       ignore: [''],
       lines,
       line: i + 1,
@@ -272,7 +272,7 @@ enum TestResourceType {
   directory = 'directory',
   regex = 'regex',
   args = 'args',
-  shellOverride = 'shellOverride',
+  shell = 'shell',
   installedRegex = 'installedRegex',
   url = 'url',
   latestRegex = 'latestRegex',

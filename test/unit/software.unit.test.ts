@@ -74,56 +74,56 @@ describe('Software Unit Tests', () => {
     })
   })
   describe('getFromExecutable', () => {
-    it('does not add shell to options if shell override not provided', async () => {
-      const stdout = 'no shell override'
+    it('does not add shell to options if shell not provided', async () => {
+      const stdout = 'no shell'
       await testGetFromExecutable({
         command: 'hermits',
         directory: 'anomuran decapod crustaceans',
         args: 'mollusc',
-        addShellOverride: false,
-        expectShellOverride: false,
+        addshell: false,
+        expectshell: false,
         stdout,
         stderr: '',
         expectedReturn: stdout,
       })
     })
-    it('does not add shell to options if shell override undefined', async () => {
-      const stdout = 'undefined shell override'
+    it('does not add shell to options if shell undefined', async () => {
+      const stdout = 'undefined shell'
       await testGetFromExecutable({
         command: 'cone murex',
         directory: 'muricidae',
         args: 'venus',
-        shellOverride: undefined,
-        addShellOverride: true,
-        expectShellOverride: false,
+        shell: undefined,
+        addshell: true,
+        expectshell: false,
         stdout,
         stderr: '',
         expectedReturn: stdout,
       })
     })
-    it('does not add shell to options if shell override empty string', async () => {
-      const stdout = 'empty string shell override'
+    it('does not add shell to options if shell empty string', async () => {
+      const stdout = 'empty string shell'
       await testGetFromExecutable({
         command: 'vacancy',
         directory: 'crab',
         args: 'bigger',
-        shellOverride: '',
-        addShellOverride: true,
-        expectShellOverride: false,
+        shell: '',
+        addshell: true,
+        expectshell: false,
         stdout,
         stderr: '',
         expectedReturn: stdout,
       })
     })
-    it('adds shell to options if shell override provided', async () => {
-      const stdout = 'shell override provided'
+    it('adds shell to options if shell provided', async () => {
+      const stdout = 'shell provided'
       await testGetFromExecutable({
         command: 'villians',
         directory: 'comics',
         args: 'Dr. Gregory Herd',
-        shellOverride: 'shadrac',
-        addShellOverride: true,
-        expectShellOverride: true,
+        shell: 'shadrac',
+        addshell: true,
+        expectshell: true,
         stdout,
         stderr: '',
         expectedReturn: stdout,
@@ -168,9 +168,9 @@ describe('Software Unit Tests', () => {
 async function testGetFromExecutable({
   command,
   directory,
-  shellOverride,
-  addShellOverride = false,
-  expectShellOverride = false,
+  shell,
+  addshell = false,
+  expectshell = false,
   args,
   stdout,
   stderr,
@@ -178,9 +178,9 @@ async function testGetFromExecutable({
 }: {
   command: string
   directory: string
-  shellOverride?: string
-  addShellOverride?: boolean
-  expectShellOverride?: boolean
+  shell?: string
+  addshell?: boolean
+  expectshell?: boolean
   args?: string
   stdout: string
   stderr: string
@@ -196,16 +196,16 @@ async function testGetFromExecutable({
     directory,
     args,
   }
-  if (addShellOverride) {
-    options.shellOverride = shellOverride
+  if (addshell) {
+    options.shell = shell
   }
   await expect(getFromExecutable(options)).resolves.toBe(expectedReturn)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const executeOptions: any = {
     cwd: directory,
   }
-  if (expectShellOverride) {
-    executeOptions.shell = shellOverride
+  if (expectshell) {
+    executeOptions.shell = shell
   }
   expect(JSON.stringify(executeSpy.mock.calls, null, 2)).toBe(
     JSON.stringify([[`${command} ${args}`, executeOptions]], null, 2)

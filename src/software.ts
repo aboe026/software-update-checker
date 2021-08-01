@@ -9,7 +9,7 @@ export default class Software {
   readonly name: string
   readonly executable: Dynamic | Static
   readonly args?: string
-  readonly shellOverride?: string
+  readonly shell?: string
   readonly installedRegex: string
   readonly url: string
   readonly latestRegex: string
@@ -18,7 +18,7 @@ export default class Software {
     name,
     executable,
     args,
-    shellOverride,
+    shell,
     installedRegex,
     url,
     latestRegex,
@@ -26,7 +26,7 @@ export default class Software {
     name: string
     executable: Dynamic | Static
     args?: string
-    shellOverride?: string
+    shell?: string
     installedRegex: string
     url: string
     latestRegex: string
@@ -37,7 +37,7 @@ export default class Software {
     this.name = name
     this.executable = executable
     this.args = args
-    this.shellOverride = shellOverride
+    this.shell = shell
     this.installedRegex = installedRegex
     this.url = url
     this.latestRegex = latestRegex
@@ -49,7 +49,7 @@ export default class Software {
       directory: path.dirname(executable),
       command: path.basename(executable),
       args: this.args,
-      shellOverride: this.shellOverride,
+      shell: this.shell,
     })
     return getFromRegex(output, new RegExp(this.installedRegex))
   }
@@ -74,18 +74,18 @@ export async function getFromExecutable({
   directory,
   command,
   args,
-  shellOverride,
+  shell,
 }: {
   directory: string
   command: string
   args?: string
-  shellOverride?: string
+  shell?: string
 }): Promise<string> {
   const options: ExecOptions = {
     cwd: directory,
   }
-  if (shellOverride) {
-    options.shell = shellOverride
+  if (shell) {
+    options.shell = shell
   }
   const { stdout, stderr } = await execute(`${command} ${args}`, options)
   return `${stdout.trim()}${stderr.trim()}`

@@ -47,10 +47,10 @@ export const AddOptions = {
       nargs: 1,
     },
   }),
-  ShellOverride: new Option({
-    key: 'shellOverride',
+  Shell: new Option({
+    key: 'shell',
     value: {
-      alias: ['s', 'shell'],
+      alias: ['s'],
       description: 'Shell to use instead of system default shell (eg "powershell")',
       type: 'string',
       demandOption: false,

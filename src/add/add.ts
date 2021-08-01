@@ -22,7 +22,7 @@ export default class Add extends Base {
       inputs,
       existingExecutable: existingSoftware?.executable,
       existingArgs: existingSoftware?.args,
-      existingShellOverride: existingSoftware?.shellOverride,
+      existingShell: existingSoftware?.shell,
       existingInstalledRegex: existingSoftware?.installedRegex,
     })
     if (installedVersion) {
@@ -36,7 +36,7 @@ export default class Add extends Base {
           name,
           executable: installedVersion.executable,
           args: installedVersion.args,
-          shellOverride: installedVersion.shellOverride,
+          shell: installedVersion.shell,
           installedRegex: installedVersion.installedRegex,
           url: latestVersion.url,
           latestRegex: latestVersion.latestRegex,
@@ -105,13 +105,13 @@ export default class Add extends Base {
     inputs,
     existingExecutable,
     existingArgs,
-    existingShellOverride,
+    existingShell,
     existingInstalledRegex,
   }: {
     inputs?: Inputs
     existingExecutable?: Static | Dynamic
     existingArgs?: string
-    existingShellOverride?: string
+    existingShell?: string
     existingInstalledRegex?: string
   }): Promise<ConfigureInstalledVersionResponse | undefined> {
     const executable = await Add.configureExecutable({
@@ -127,11 +127,11 @@ export default class Add extends Base {
         args = await AddPrompts.getArgs(existingArgs)
       }
 
-      let shellOverride
-      if (inputs && (inputs.shellOverride || !inputs.interactive)) {
-        shellOverride = inputs.shellOverride !== undefined ? inputs.shellOverride : existingShellOverride
+      let shell
+      if (inputs && (inputs.shell || !inputs.interactive)) {
+        shell = inputs.shell !== undefined ? inputs.shell : existingShell
       } else {
-        shellOverride = await AddPrompts.getShellOverride(existingShellOverride)
+        shell = await AddPrompts.getShell(existingShell)
       }
 
       let installedRegex = ''
@@ -149,7 +149,7 @@ export default class Add extends Base {
           name: 'Installed Test',
           executable,
           args,
-          shellOverride,
+          shell,
           installedRegex,
           url: '',
           latestRegex: '',
@@ -165,14 +165,14 @@ export default class Add extends Base {
           return {
             executable,
             args: args || '',
-            shellOverride: shellOverride || '',
+            shell: shell || '',
             installedRegex,
           }
         }
         return Add.configureInstalledVersion({
           existingExecutable: executable,
           existingArgs: args,
-          existingShellOverride: shellOverride,
+          existingShell: shell,
           existingInstalledRegex: installedRegex,
         })
       } catch (err) {
@@ -187,7 +187,7 @@ export default class Add extends Base {
           return Add.configureInstalledVersion({
             existingExecutable: executable,
             existingArgs: args,
-            existingShellOverride: shellOverride,
+            existingShell: shell,
             existingInstalledRegex: installedRegex,
           })
         }
@@ -375,7 +375,7 @@ export default class Add extends Base {
           command: 'false',
         },
         args: '',
-        shellOverride: '',
+        shell: '',
         installedRegex: '',
         url,
         latestRegex,
@@ -420,7 +420,7 @@ export interface Inputs {
   name?: string
   executable?: Static | Dynamic
   args?: string | undefined
-  shellOverride?: string | undefined
+  shell?: string | undefined
   installedRegex?: string
   url?: string
   latestRegex?: string
@@ -430,7 +430,7 @@ export interface Inputs {
 export interface ConfigureInstalledVersionResponse {
   executable: Static | Dynamic
   args?: string
-  shellOverride?: string
+  shell?: string
   installedRegex: string
 }
 
