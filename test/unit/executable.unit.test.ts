@@ -1,7 +1,7 @@
 import fs from 'fs-extra'
 import path from 'path'
 
-import { getDynamicExecutable, isStatic } from '../../src/executable'
+import { getDynamicExecutable, isStatic } from '../../src/software/executable'
 
 jest.mock('fs-extra')
 

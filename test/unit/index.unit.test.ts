@@ -1,8 +1,8 @@
-import colors from '../../src/colors'
-import Home from '../../src/home/home'
+import colors from '../../src/util/colors'
+import Home from '../../src/actions/home/home'
 
 describe('Index Unit Tests', () => {
-  // for some reason, having both of these files caused the second test to fail
+  // TODO: for some reason, having both of these files caused the second test to fail
   // something to do wtih isolateModules and "await import" being called twice?
   // it('calls main menu', async () => {
   //   const mainMenuSpy = jest.spyOn(Home, 'mainMenu').mockResolvedValueOnce()

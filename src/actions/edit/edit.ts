@@ -1,11 +1,11 @@
 import Add, { Inputs as AddInputs } from '../add/add'
 import Base from '../base/base'
-import colors from '../colors'
-import { CommandType, isStatic } from '../executable'
+import colors from '../../util/colors'
+import { CommandType, isStatic } from '../../software/executable'
 import { EditOptions } from './edit-options'
 import EditPrompts from './edit-prompts'
-import Software from '../software'
-import SoftwareList from '../software-list'
+import Software from '../../software/software'
+import SoftwareList from '../../software/software-list'
 
 export default class Edit extends Base {
   static async editConfiguration({ inputs }: { inputs?: Inputs }): Promise<void> {

@@ -1,6 +1,6 @@
 import E2eAddUtil from './helpers/e2e-add-util'
 import interactiveExecute from './helpers/interactive-execute'
-import Software from '../../src/software'
+import Software from '../../src/software/software'
 import Website from '../helpers/website'
 
 describe('Add Silent', () => {

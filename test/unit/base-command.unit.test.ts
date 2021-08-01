@@ -1,6 +1,6 @@
-import BaseCommand, { OptionsSet } from '../../src/base/base-command'
-import { CommandType } from '../../src/executable'
-import { Option } from '../../src/base/base-options'
+import BaseCommand, { OptionsSet } from '../../src/actions/base/base-command'
+import { CommandType } from '../../src/software/executable'
+import { Option } from '../../src/actions/base/base-options'
 import os from 'os'
 
 describe('Base Command Unit Tests', () => {

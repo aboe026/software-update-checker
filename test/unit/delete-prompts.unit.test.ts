@@ -1,7 +1,7 @@
 import inquirer from 'inquirer'
 
-import DeletePrompts from '../../src/delete/delete-prompts'
-import Software from '../../src/software'
+import DeletePrompts from '../../src/actions/delete/delete-prompts'
+import Software from '../../src/software/software'
 import TestUtil from '../helpers/test-util'
 
 describe('Delete Prompts Unit Tests', () => {

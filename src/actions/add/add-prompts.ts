@@ -1,8 +1,8 @@
 import inquirer from 'inquirer'
 
 import { AddOptions, DynamicOptions, StaticOptions } from './add-options'
-import { CommandType } from '../executable'
-import Validators from '../validators'
+import { CommandType } from '../../software/executable'
+import Validators from '../../util/validators'
 
 export default class AddPrompts {
   static async getName(existingName?: string): Promise<string> {

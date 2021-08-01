@@ -1,7 +1,7 @@
 import yargs, { Arguments, Argv } from 'yargs'
 
-import Delete from '../../src/delete/delete'
-import DeleteCommand from '../../src/delete/delete-command'
+import Delete from '../../src/actions/delete/delete'
+import DeleteCommand from '../../src/actions/delete/delete-command'
 
 describe('Delete Command Unit Tests', () => {
   describe('getCommand', () => {

@@ -1,8 +1,8 @@
 import yargs, { Arguments, Argv } from 'yargs'
 
-import Add from '../../src/add/add'
-import AddCommand from '../../src/add/add-command'
-import { Option } from '../../src/base/base-options'
+import Add from '../../src/actions/add/add'
+import AddCommand from '../../src/actions/add/add-command'
+import { Option } from '../../src/actions/base/base-options'
 
 describe('Add Command Unit Tests', () => {
   describe('getCommand', () => {

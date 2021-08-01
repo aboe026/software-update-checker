@@ -1,9 +1,9 @@
-import Add from '../../src/add/add'
-import Delete from '../../src/delete/delete'
-import Edit from '../../src/edit/edit'
-import Home from '../../src/home/home'
-import HomePrompts from '../../src/home/home-prompts'
-import View from '../../src/view/view'
+import Add from '../../src/actions/add/add'
+import Delete from '../../src/actions/delete/delete'
+import Edit from '../../src/actions/edit/edit'
+import Home from '../../src/actions/home/home'
+import HomePrompts from '../../src/actions/home/home-prompts'
+import View from '../../src/actions/view/view'
 
 describe('Home Unit Tests', () => {
   describe('mainMenu', () => {

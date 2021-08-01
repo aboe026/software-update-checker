@@ -2,7 +2,7 @@ import { Argv, CommandModule } from 'yargs'
 
 import { addNewlineForExample } from '../base/base-options'
 import BaseCommand from '../base/base-command'
-import { version } from '../../package.json'
+import { version } from '../../../package.json'
 import { VersionCommands } from './version-options'
 
 export default class VersionCommand extends BaseCommand {

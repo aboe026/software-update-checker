@@ -1,6 +1,6 @@
-import * as executable from '../../src/executable'
-import Software, { getExecutable, getFromRegex, getFromExecutable } from '../../src/software'
-import * as execute from '../../src/execute-async'
+import * as executable from '../../src/software/executable'
+import Software, { getExecutable, getFromRegex, getFromExecutable } from '../../src/software/software'
+import * as execute from '../../src/util/execute-async'
 
 describe('Software Unit Tests', () => {
   describe('constructor', () => {

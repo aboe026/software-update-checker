@@ -1,5 +1,5 @@
-import colors from '../colors'
-import Software from '../software'
+import colors from '../../util/colors'
+import Software from '../../software/software'
 
 export default class Base {
   static async getExistingSoftware({

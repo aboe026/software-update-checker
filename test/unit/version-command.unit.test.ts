@@ -1,6 +1,6 @@
 import yargs, { Arguments, Argv } from 'yargs'
 
-import VersionCommand from '../../src/version/version-command'
+import VersionCommand from '../../src/actions/version/version-command'
 import { version } from '../../package.json'
 
 describe('Version Command Unit Tests', () => {

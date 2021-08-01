@@ -2,7 +2,7 @@ import { Arguments, Argv, CommandModule } from 'yargs'
 
 import { addNewlineForExample, BaseOptions, convertToGenericOptions } from '../base/base-options'
 import BaseCommand from '../base/base-command'
-import { CommandType, Dynamic, Static } from '../executable'
+import { CommandType, Dynamic, Static } from '../../software/executable'
 import Edit from './edit'
 import { EditCommands, EditOptions } from './edit-options'
 

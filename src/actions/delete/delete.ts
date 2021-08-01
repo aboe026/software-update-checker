@@ -1,8 +1,8 @@
 import Base from '../base/base'
-import colors from '../colors'
+import colors from '../../util/colors'
 import DeletePrompts from './delete-prompts'
-import Software from '../software'
-import SoftwareList from '../software-list'
+import Software from '../../software/software'
+import SoftwareList from '../../software/software-list'
 
 export default class Delete extends Base {
   static async removeConfiguration({ inputs }: { inputs?: Inputs }): Promise<void> {

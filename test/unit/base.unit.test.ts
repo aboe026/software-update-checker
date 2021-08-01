@@ -1,6 +1,6 @@
-import Base from '../../src/base/base'
-import colors from '../../src/colors'
-import Software from '../../src/software'
+import Base from '../../src/actions/base/base'
+import colors from '../../src/util/colors'
+import Software from '../../src/software/software'
 
 describe('Base Unit Tests', () => {
   describe('getMissingRequiredOptionErrorMessage', () => {

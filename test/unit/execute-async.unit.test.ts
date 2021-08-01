@@ -2,7 +2,7 @@ import child_process, { ExecOptions, ExecException } from 'child_process'
 import { ObjectEncodingOptions } from 'fs-extra'
 import path from 'path'
 
-import execute from '../../src/execute-async'
+import execute from '../../src/util/execute-async'
 
 jest.mock('child_process')
 

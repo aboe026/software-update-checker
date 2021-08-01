@@ -1,8 +1,8 @@
-import colors from '../../src/colors'
-import Software from '../../src/software'
-import SoftwareList from '../../src/software-list'
+import colors from '../../src/util/colors'
+import Software from '../../src/software/software'
+import SoftwareList from '../../src/software/software-list'
 import TestUtil, { ExpectedCalls, Response } from '../helpers/test-util'
-import View from '../../src/view/view'
+import View from '../../src/actions/view/view'
 
 describe('View Unit Tests', () => {
   describe('showVersions', () => {

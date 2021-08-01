@@ -1,6 +1,6 @@
 import path from 'path'
 
-import { getDynamicExecutable } from '../../src/executable'
+import { getDynamicExecutable } from '../../src/software/executable'
 
 describe('Executable Func Tests', () => {
   describe('getDynamicExecutable', () => {

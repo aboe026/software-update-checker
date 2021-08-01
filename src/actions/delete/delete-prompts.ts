@@ -1,7 +1,7 @@
 import inquirer from 'inquirer'
 
 import { DeleteCommands } from './delete-options'
-import Software from '../software'
+import Software from '../../software/software'
 
 export default class EditPrompts {
   static async getExisting(softwares: Software[]): Promise<string> {

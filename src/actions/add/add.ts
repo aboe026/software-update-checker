@@ -1,10 +1,10 @@
 import { AddCommands, AddOptions } from './add-options'
 import AddPrompts from './add-prompts'
 import Base from '../base/base'
-import colors from '../colors'
-import { CommandType, Dynamic, getDynamicExecutable, isStatic, Static } from '../executable'
-import Software from '../software'
-import SoftwareList from '../software-list'
+import colors from '../../util/colors'
+import { CommandType, Dynamic, getDynamicExecutable, isStatic, Static } from '../../software/executable'
+import Software from '../../software/software'
+import SoftwareList from '../../software/software-list'
 
 export default class Add extends Base {
   static async configure({

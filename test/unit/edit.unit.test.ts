@@ -1,9 +1,9 @@
-import Add from '../../src/add/add'
-import colors from '../../src/colors'
-import { CommandType } from '../../src/executable'
-import Edit, { Inputs as EditInputs } from '../../src/edit/edit'
-import Software from '../../src/software'
-import SoftwareList from '../../src/software-list'
+import Add from '../../src/actions/add/add'
+import colors from '../../src/util/colors'
+import { CommandType } from '../../src/software/executable'
+import Edit, { Inputs as EditInputs } from '../../src/actions/edit/edit'
+import Software from '../../src/software/software'
+import SoftwareList from '../../src/software/software-list'
 import TestUtil, { ExpectedCalls, Response } from '../helpers/test-util'
 
 describe('Edit Unit Tests', () => {

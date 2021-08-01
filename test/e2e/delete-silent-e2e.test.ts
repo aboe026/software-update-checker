@@ -1,6 +1,6 @@
 import E2eDeleteUtil from './helpers/e2e-delete-util'
 import interactiveExecute from './helpers/interactive-execute'
-import Software from '../../src/software'
+import Software from '../../src/software/software'
 import Website from '../helpers/website'
 
 describe('Delete Silent', () => {

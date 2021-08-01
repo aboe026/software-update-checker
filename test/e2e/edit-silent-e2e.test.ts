@@ -1,8 +1,8 @@
-import { CommandType, isStatic } from '../../src/executable'
+import { CommandType, isStatic } from '../../src/software/executable'
 import E2eAddUtil from './helpers/e2e-add-util'
 import E2eEditUtil from './helpers/e2e-edit-util'
 import interactiveExecute from './helpers/interactive-execute'
-import Software from '../../src/software'
+import Software from '../../src/software/software'
 import Website from '../helpers/website'
 
 describe('Edit Silent', () => {

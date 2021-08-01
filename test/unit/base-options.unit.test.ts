@@ -1,4 +1,4 @@
-import { addNewlineForExample } from '../../src/base/base-options'
+import { addNewlineForExample } from '../../src/actions/base/base-options'
 
 describe('Base Options Unit Tests', () => {
   describe('addNewlineForExample', () => {

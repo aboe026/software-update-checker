@@ -1,7 +1,7 @@
-import { CommandType } from '../../../src/executable'
+import { CommandType } from '../../../src/software/executable'
 import E2eAddUtil, { InstalledReconfiguration, LatestReconfiguration } from './e2e-add-util'
 import E2eBaseUtil, { BooleanPrompt, ChoicePrompt, StringPrompt, Option } from './e2e-base-util'
-import Software from '../../../src/software'
+import Software from '../../../src/software/software'
 
 export default class E2eEditUtil extends E2eBaseUtil {
   static readonly CHOICES = {
