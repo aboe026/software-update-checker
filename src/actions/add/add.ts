@@ -175,7 +175,7 @@ export default class Add extends Base {
           existingShell: shell,
           existingInstalledRegex: installedRegex,
         })
-      } catch (err) {
+      } catch (err: any) {
         const message = err.message || err
         if (inputs && !inputs.interactive) {
           throw new Error(`Could not determine installed version: ${message}`)
@@ -321,7 +321,7 @@ export default class Add extends Base {
           existingRegex: regex,
         })
       }
-    } catch (err) {
+    } catch (err: any) {
       const message = err.message || err
       if (inputs && !inputs.interactive) {
         throw new Error(`Could not determine dynamic executable: ${message}`)
@@ -398,7 +398,7 @@ export default class Add extends Base {
         existingUrl: url,
         existingLatestRegex: latestRegex,
       })
-    } catch (err) {
+    } catch (err: any) {
       const message = err.message || err
       if (inputs && !inputs.interactive) {
         throw new Error(`Could not determine latest version: ${message}`)

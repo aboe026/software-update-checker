@@ -82,14 +82,14 @@ export default class TestUtil {
       for (let i = 0; i < getExistingSoftwareCalls.length; i++) {
         const getExistingSoftwareCall = getExistingSoftwareCalls[i]
         expect(getExistingSoftwareSpy.mock.calls[i]).toHaveLength(1) // 1 input param
-        expect(getExistingSoftwareSpy.mock.calls[i][0]).toHaveProperty('name', (getExistingSoftwareCall[0] as any).name) // eslint-disable-line @typescript-eslint/no-explicit-any
+        expect(getExistingSoftwareSpy.mock.calls[i][0]).toHaveProperty('name', (getExistingSoftwareCall[0] as any).name)
         expect(getExistingSoftwareSpy.mock.calls[i][0]).toHaveProperty(
           'softwares',
-          (getExistingSoftwareCall[0] as any).softwares // eslint-disable-line @typescript-eslint/no-explicit-any
+          (getExistingSoftwareCall[0] as any).softwares
         )
         expect(getExistingSoftwareSpy.mock.calls[i][0]).toHaveProperty(
           'interactive',
-          (getExistingSoftwareCall[0] as any).interactive // eslint-disable-line @typescript-eslint/no-explicit-any
+          (getExistingSoftwareCall[0] as any).interactive
         )
         expect(getExistingSoftwareSpy.mock.calls[i][0]).toHaveProperty('prompt', expect.any(Function))
       }

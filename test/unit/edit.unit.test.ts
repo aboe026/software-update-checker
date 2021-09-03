@@ -731,7 +731,7 @@ async function testEditConfiguration({
   input: TestRemoveConfigurationInput
   output: TestRemoveConfigurationOutput
 }): Promise<void> {
-  const methodParams: any = {} // eslint-disable-line @typescript-eslint/no-explicit-any
+  const methodParams: any = {}
   if (input.inputs) {
     methodParams.inputs = input.inputs
   }

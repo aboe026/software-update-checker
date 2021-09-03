@@ -26,7 +26,7 @@ import ViewCommand from './actions/view/view-command'
       .options(convertToGenericOptions(BaseOptions))
       .group(['help'], GROUP.Globals)
       .wrap(Math.min(120, yargs.terminalWidth())).argv
-  } catch (err) {
+  } catch (err: any) {
     console.error(colors.red(err))
     process.exit(1)
   }

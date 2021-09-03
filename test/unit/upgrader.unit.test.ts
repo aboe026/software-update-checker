@@ -19,7 +19,6 @@ describe('Upgrader Unit Tests', () => {
             objects: [],
             currentVersion: 0,
             upgrades: [
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               async (): Promise<any[]> => {
                 throw Error(error)
               },
@@ -34,7 +33,6 @@ describe('Upgrader Unit Tests', () => {
             objects: [],
             currentVersion: 0,
             upgrades: [
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               async (): Promise<any[]> => {
                 throw error
               },
@@ -103,7 +101,6 @@ describe('Upgrader Unit Tests', () => {
             objects,
             currentVersion: 0,
             upgrades: [
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               async (objects: any[]): Promise<any[]> => {
                 for (const object of objects) {
                   object.foo = 'bizz'
@@ -132,21 +129,21 @@ describe('Upgrader Unit Tests', () => {
             hello: 'friendo',
           },
         ]
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         const first = jest.fn().mockImplementation(async (objects: any[]): Promise<any[]> => {
           for (const object of objects) {
             object.key = 'lock'
           }
           return objects
         })
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         const middle = jest.fn().mockImplementation(async (objects: any[]): Promise<any[]> => {
           for (const object of objects) {
             object.salt = 'pepper'
           }
           return objects
         })
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         const last = jest.fn().mockImplementation(async (objects: any[]): Promise<any[]> => {
           for (const object of objects) {
             if (object.hello === 'world') {
@@ -194,21 +191,21 @@ describe('Upgrader Unit Tests', () => {
             hello: 'friendo',
           },
         ]
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         const first = jest.fn().mockImplementation(async (objects: any[]): Promise<any[]> => {
           for (const object of objects) {
             object.key = 'lock'
           }
           return objects
         })
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         const middle = jest.fn().mockImplementation(async (objects: any[]): Promise<any[]> => {
           for (const object of objects) {
             object.salt = 'pepper'
           }
           return objects
         })
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         const last = jest.fn().mockImplementation(async (objects: any[]): Promise<any[]> => {
           for (const object of objects) {
             if (object.hello === 'world') {
@@ -254,21 +251,21 @@ describe('Upgrader Unit Tests', () => {
             hello: 'friendo',
           },
         ]
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         const first = jest.fn().mockImplementation(async (objects: any[]): Promise<any[]> => {
           for (const object of objects) {
             object.key = 'lock'
           }
           return objects
         })
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         const middle = jest.fn().mockImplementation(async (objects: any[]): Promise<any[]> => {
           for (const object of objects) {
             object.salt = 'pepper'
           }
           return objects
         })
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         const last = jest.fn().mockImplementation(async (objects: any[]): Promise<any[]> => {
           for (const object of objects) {
             if (object.hello === 'world') {
@@ -312,21 +309,21 @@ describe('Upgrader Unit Tests', () => {
             hello: 'friendo',
           },
         ]
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         const first = jest.fn().mockImplementation(async (objects: any[]): Promise<any[]> => {
           for (const object of objects) {
             object.key = 'lock'
           }
           return objects
         })
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         const middle = jest.fn().mockImplementation(async (objects: any[]): Promise<any[]> => {
           for (const object of objects) {
             object.salt = 'pepper'
           }
           return objects
         })
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         const last = jest.fn().mockImplementation(async (objects: any[]): Promise<any[]> => {
           for (const object of objects) {
             if (object.hello === 'world') {

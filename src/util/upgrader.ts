@@ -4,10 +4,9 @@ export default class Upgrader {
     upgrades,
     currentVersion,
   }: {
-    objects: any[] // eslint-disable-line @typescript-eslint/no-explicit-any
-    upgrades: ((objects: any[]) => Promise<any[]>)[] // eslint-disable-line @typescript-eslint/no-explicit-any
+    objects: any[]
+    upgrades: ((objects: any[]) => Promise<any[]>)[]
     currentVersion: number
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   }): Promise<any[]> {
     if (currentVersion > upgrades.length) {
       throw Error(`Invalid start of upgrades "${currentVersion}", only "${upgrades.length}" upgrades available.`)
@@ -16,7 +15,7 @@ export default class Upgrader {
     for (let i = currentVersion; i < upgrades.length; i++) {
       try {
         upgradedObjects = await upgrades[i](upgradedObjects)
-      } catch (err) {
+      } catch (err: any) {
         throw Error(`Upgrade "${i + 1}" failed with error "${err.message || err}"`)
       }
     }
