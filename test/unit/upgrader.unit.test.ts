@@ -129,21 +129,18 @@ describe('Upgrader Unit Tests', () => {
             hello: 'friendo',
           },
         ]
-
         const first = jest.fn().mockImplementation(async (objects: any[]): Promise<any[]> => {
           for (const object of objects) {
             object.key = 'lock'
           }
           return objects
         })
-
         const middle = jest.fn().mockImplementation(async (objects: any[]): Promise<any[]> => {
           for (const object of objects) {
             object.salt = 'pepper'
           }
           return objects
         })
-
         const last = jest.fn().mockImplementation(async (objects: any[]): Promise<any[]> => {
           for (const object of objects) {
             if (object.hello === 'world') {
@@ -191,21 +188,18 @@ describe('Upgrader Unit Tests', () => {
             hello: 'friendo',
           },
         ]
-
         const first = jest.fn().mockImplementation(async (objects: any[]): Promise<any[]> => {
           for (const object of objects) {
             object.key = 'lock'
           }
           return objects
         })
-
         const middle = jest.fn().mockImplementation(async (objects: any[]): Promise<any[]> => {
           for (const object of objects) {
             object.salt = 'pepper'
           }
           return objects
         })
-
         const last = jest.fn().mockImplementation(async (objects: any[]): Promise<any[]> => {
           for (const object of objects) {
             if (object.hello === 'world') {
@@ -251,21 +245,18 @@ describe('Upgrader Unit Tests', () => {
             hello: 'friendo',
           },
         ]
-
         const first = jest.fn().mockImplementation(async (objects: any[]): Promise<any[]> => {
           for (const object of objects) {
             object.key = 'lock'
           }
           return objects
         })
-
         const middle = jest.fn().mockImplementation(async (objects: any[]): Promise<any[]> => {
           for (const object of objects) {
             object.salt = 'pepper'
           }
           return objects
         })
-
         const last = jest.fn().mockImplementation(async (objects: any[]): Promise<any[]> => {
           for (const object of objects) {
             if (object.hello === 'world') {
@@ -309,21 +300,18 @@ describe('Upgrader Unit Tests', () => {
             hello: 'friendo',
           },
         ]
-
         const first = jest.fn().mockImplementation(async (objects: any[]): Promise<any[]> => {
           for (const object of objects) {
             object.key = 'lock'
           }
           return objects
         })
-
         const middle = jest.fn().mockImplementation(async (objects: any[]): Promise<any[]> => {
           for (const object of objects) {
             object.salt = 'pepper'
           }
           return objects
         })
-
         const last = jest.fn().mockImplementation(async (objects: any[]): Promise<any[]> => {
           for (const object of objects) {
             if (object.hello === 'world') {

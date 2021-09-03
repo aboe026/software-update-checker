@@ -190,7 +190,6 @@ async function testGetFromExecutable({
     stdout,
     stderr,
   })
-
   const options: any = {
     command,
     directory,
@@ -200,7 +199,6 @@ async function testGetFromExecutable({
     options.shell = shell
   }
   await expect(getFromExecutable(options)).resolves.toBe(expectedReturn)
-
   const executeOptions: any = {
     cwd: directory,
   }
