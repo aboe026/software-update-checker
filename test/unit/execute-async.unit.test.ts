@@ -223,7 +223,6 @@ function mockExec({
     callback?: (error: ExecException | null, stdout: string | Buffer, stderr: string | Buffer) => void
   ]
 > {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return jest.spyOn(child_process, 'exec').mockImplementation((command, options, callback): any => {
     if (callback) {
       return callback(error, stdout, stderr)

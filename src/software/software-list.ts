@@ -95,7 +95,7 @@ export default class SoftwareList {
       let contents
       try {
         contents = await fs.readFile(file)
-      } catch (err) {
+      } catch (err: any) {
         throw Error(`Cannot read contents of file "${file}": "${err.message || err}"`)
       }
       if (contents.toString() === '') {
@@ -105,7 +105,7 @@ export default class SoftwareList {
       let json
       try {
         json = JSON.parse(contents.toString())
-      } catch (err) {
+      } catch (err: any) {
         throw Error(`Cannot parse saved file "${file}" as JSON: ${err.message}`)
       }
 

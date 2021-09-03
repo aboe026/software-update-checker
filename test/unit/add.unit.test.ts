@@ -2147,7 +2147,7 @@ async function testConfigure({
   input: TestConfigureInput
   output: TestConfigureOutput
 }): Promise<void> {
-  const methodParams: any = {} // eslint-disable-line @typescript-eslint/no-explicit-any
+  const methodParams: any = {}
   if (input.inputs) {
     methodParams.inputs = input.inputs
   }
@@ -2199,7 +2199,7 @@ interface TestGetNameOutput {
 }
 
 async function testGetName({ input, output }: { input: TestGetNameInput; output: TestGetNameOutput }): Promise<void> {
-  const methodParams: any = {} // eslint-disable-line @typescript-eslint/no-explicit-any
+  const methodParams: any = {}
   if (input.inputs) {
     methodParams.inputs = input.inputs
   }
@@ -2269,7 +2269,7 @@ async function testConfigureInstalledVersion({
   input: TestConfigureInstalledVersionInput
   output: TestConfigureInstalledVersionOutput
 }): Promise<void> {
-  const methodParams: any = {} // eslint-disable-line @typescript-eslint/no-explicit-any
+  const methodParams: any = {}
   if (input.inputs) {
     methodParams.inputs = input.inputs
   }
@@ -2356,7 +2356,7 @@ async function testConfigureExecutable({
   input: TestConfigureExecutableInput
   output: TestConfigureExecutableOutput
 }): Promise<void> {
-  const methodParams: any = {} // eslint-disable-line @typescript-eslint/no-explicit-any
+  const methodParams: any = {}
   if (input.inputs) {
     methodParams.inputs = input.inputs
   }
@@ -2402,7 +2402,7 @@ async function testConfigureStatic({
   input: TestConfigureStaticInput
   output: TestConfigureStaticOutput
 }): Promise<void> {
-  const methodParams: any = {} // eslint-disable-line @typescript-eslint/no-explicit-any
+  const methodParams: any = {}
   if (input.inputs) {
     methodParams.inputs = input.inputs
   }
@@ -2454,7 +2454,7 @@ async function testConfigureDynamic({
   input: TestConfigureDynamicInput
   output: TestConfigureDynamicOutput
 }): Promise<void> {
-  const methodParams: any = {} // eslint-disable-line @typescript-eslint/no-explicit-any
+  const methodParams: any = {}
   if (input.inputs) {
     methodParams.inputs = input.inputs
   }
@@ -2531,7 +2531,7 @@ async function testConfigureLatestVersion({
   input: TestConfigureLatestVersionInput
   output: TestConfigureLatestVersionOutput
 }): Promise<void> {
-  const methodParams: any = {} // eslint-disable-line @typescript-eslint/no-explicit-any
+  const methodParams: any = {}
   if (input.inputs) {
     methodParams.inputs = input.inputs
   }

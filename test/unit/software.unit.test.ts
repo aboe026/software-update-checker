@@ -190,7 +190,6 @@ async function testGetFromExecutable({
     stdout,
     stderr,
   })
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const options: any = {
     command,
     directory,
@@ -200,7 +199,6 @@ async function testGetFromExecutable({
     options.shell = shell
   }
   await expect(getFromExecutable(options)).resolves.toBe(expectedReturn)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const executeOptions: any = {
     cwd: directory,
   }

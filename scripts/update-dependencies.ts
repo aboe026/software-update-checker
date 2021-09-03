@@ -4,7 +4,7 @@ import { replaceInFile } from 'replace-in-file'
 import util from 'util'
 
 const execa = util.promisify(exec)
-const DENY_LIST: string[] = []
+const DENY_LIST: string[] = ['inquirer', 'node-fetch']
 ;(async () => {
   const outdated = await getOutdatedDependencies()
   for (const key in outdated) {

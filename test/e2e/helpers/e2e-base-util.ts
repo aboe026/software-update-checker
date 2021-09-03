@@ -47,10 +47,8 @@ export default class E2eBaseUtil {
     return inputs
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static async setOldSoftwares(softwares: any[], version?: number | boolean): Promise<void> {
     await fs.ensureDir(E2eConfig.DIRECTORY.UserConfig)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const contents: any = {
       softwares,
     }
@@ -83,7 +81,6 @@ export default class E2eBaseUtil {
     await expect(fs.access(E2eConfig.FILE.Softwares)).rejects.toThrow('no such file or directory')
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static async verifyOldSoftwares(softwares: any[], version: number | boolean): Promise<void> {
     await expect(fs.access(E2eConfig.FILE.Softwares)).resolves.toBe(undefined)
     const contents = (await fs.readFile(E2eConfig.FILE.Softwares)).toString()
@@ -93,7 +90,6 @@ export default class E2eBaseUtil {
     } catch (err) {
       expect(err).toBe(undefined)
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const expectedContents: any = {
       softwares,
     }
