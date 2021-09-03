@@ -1,7 +1,7 @@
-import { CommandType, isStatic } from '../../src/software/executable'
+import { CommandType } from '../../src/software/executable'
 import E2eAddUtil from './helpers/e2e-add-util'
 import E2eEditUtil from './helpers/e2e-edit-util'
-import interactiveExecute from './helpers/interactive-execute'
+import E2eTestUtil from './helpers/e2e-test-util'
 import Software from '../../src/software/software'
 import Website from '../helpers/website'
 
@@ -14,9 +14,9 @@ describe('Edit Silent', () => {
   })
   describe('invalid', () => {
     it('edit silent with non-existent softwares file says no softwares to edit', async () => {
-      await E2eEditUtil.verifySoftwares(undefined, false)
+      await E2eEditUtil.verifySoftwaresFileDoesNotExist()
       const existingName = 'Chinook'
-      await E2eEditUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eEditUtil.getSilentCommand({
           existingName,
           newSoftware: {
@@ -38,7 +38,7 @@ describe('Edit Silent', () => {
       await E2eEditUtil.setSoftwares(undefined)
       await E2eEditUtil.verifySoftwares(undefined)
       const existingName = 'Douglas Fir'
-      await E2eEditUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eEditUtil.getSilentCommand({
           existingName,
           newSoftware: {
@@ -60,7 +60,7 @@ describe('Edit Silent', () => {
       await E2eEditUtil.setSoftwares([])
       await E2eEditUtil.verifySoftwares([])
       const existingName = 'VGA'
-      await E2eEditUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eEditUtil.getSilentCommand({
           existingName,
           newSoftware: {
@@ -94,7 +94,7 @@ describe('Edit Silent', () => {
       await E2eEditUtil.setSoftwares([software])
       await E2eEditUtil.verifySoftwares([software])
       const existingName = `${name} non existent`
-      await E2eEditUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eEditUtil.getSilentCommand({
           existingName,
           newSoftware: {
@@ -127,7 +127,7 @@ describe('Edit Silent', () => {
       const secondSoftware = new Software({
         name: 'e2e edit silent to name that already exists second',
         executable: {
-          command: 'ruler',
+          command: 'emperor',
         },
         args: 'rome',
         shell: 'person',
@@ -137,7 +137,7 @@ describe('Edit Silent', () => {
       })
       await E2eEditUtil.setSoftwares([firstSoftware, secondSoftware])
       await E2eEditUtil.verifySoftwares([firstSoftware, secondSoftware])
-      await E2eEditUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eEditUtil.getSilentCommand({
           existingName: firstSoftware.name,
           newSoftware: {
@@ -164,7 +164,7 @@ describe('Edit Silent', () => {
       })
       await E2eEditUtil.setSoftwares([software])
       await E2eEditUtil.verifySoftwares([software])
-      await E2eEditUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eEditUtil.getSilentCommand({
           existingName: software.name,
           newSoftware: {
@@ -198,7 +198,7 @@ describe('Edit Silent', () => {
         await Website.stop()
         await E2eEditUtil.setSoftwares([software])
         await E2eEditUtil.verifySoftwares([software])
-        await E2eEditUtil.testSilentError({
+        await E2eTestUtil.silentError({
           args: E2eEditUtil.getSilentCommand({
             existingName: software.name,
             newSoftware: {
@@ -223,7 +223,7 @@ describe('Edit Silent', () => {
     it('edit silent errors without options', async () => {
       await E2eEditUtil.setSoftwares([])
       await E2eEditUtil.verifySoftwares([])
-      await E2eEditUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eEditUtil.getSilentCommand({
           existingName: 'toast',
           newSoftware: {},
@@ -246,7 +246,7 @@ describe('Edit Silent', () => {
       })
       await E2eEditUtil.setSoftwares([software])
       await E2eEditUtil.verifySoftwares([software])
-      await E2eEditUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eEditUtil.getSilentCommand({
           existingName: undefined,
           newSoftware: {
@@ -271,7 +271,7 @@ describe('Edit Silent', () => {
       })
       await E2eEditUtil.setSoftwares([software])
       await E2eEditUtil.verifySoftwares([software])
-      await E2eEditUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eEditUtil.getSilentCommand({
           existingName: software.name,
           newSoftware: {
@@ -298,7 +298,7 @@ describe('Edit Silent', () => {
       })
       await E2eEditUtil.setSoftwares([software])
       await E2eEditUtil.verifySoftwares([software])
-      await E2eEditUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eEditUtil.getSilentCommand({
           existingName: software.name,
           newSoftware: {
@@ -325,7 +325,7 @@ describe('Edit Silent', () => {
       })
       await E2eEditUtil.setSoftwares([software])
       await E2eEditUtil.verifySoftwares([software])
-      await E2eEditUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eEditUtil.getSilentCommand({
           existingName: software.name,
           newSoftware: {
@@ -352,7 +352,7 @@ describe('Edit Silent', () => {
       })
       await E2eEditUtil.setSoftwares([software])
       await E2eEditUtil.verifySoftwares([software])
-      await E2eEditUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eEditUtil.getSilentCommand({
           existingName: software.name,
           newSoftware: {
@@ -379,7 +379,7 @@ describe('Edit Silent', () => {
       })
       await E2eEditUtil.setSoftwares([software])
       await E2eEditUtil.verifySoftwares([software])
-      await E2eEditUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eEditUtil.getSilentCommand({
           existingName: software.name,
           newSoftware: {
@@ -407,7 +407,7 @@ describe('Edit Silent', () => {
       })
       await E2eEditUtil.setSoftwares([software])
       await E2eEditUtil.verifySoftwares([software])
-      await E2eEditUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eEditUtil.getSilentCommand({
           existingName: software.name,
           newSoftware: {
@@ -433,7 +433,7 @@ describe('Edit Silent', () => {
       })
       await E2eEditUtil.setSoftwares([software])
       await E2eEditUtil.verifySoftwares([software])
-      await E2eEditUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eEditUtil.getSilentCommand({
           existingName: software.name,
           newSoftware: {
@@ -459,7 +459,7 @@ describe('Edit Silent', () => {
       })
       await E2eEditUtil.setSoftwares([software])
       await E2eEditUtil.verifySoftwares([software])
-      await E2eEditUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eEditUtil.getSilentCommand({
           existingName: software.name,
           newSoftware: {
@@ -485,7 +485,7 @@ describe('Edit Silent', () => {
       })
       await E2eEditUtil.setSoftwares([software])
       await E2eEditUtil.verifySoftwares([software])
-      await E2eEditUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eEditUtil.getSilentCommand({
           existingName: software.name,
           newSoftware: {
@@ -512,7 +512,7 @@ describe('Edit Silent', () => {
       })
       await E2eEditUtil.setSoftwares([software])
       await E2eEditUtil.verifySoftwares([software])
-      await E2eEditUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eEditUtil.getSilentCommand({
           existingName: software.name,
           newSoftware: {
@@ -540,7 +540,7 @@ describe('Edit Silent', () => {
       })
       await E2eEditUtil.setSoftwares([software])
       await E2eEditUtil.verifySoftwares([software])
-      await E2eEditUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eEditUtil.getSilentCommand({
           existingName: software.name,
           newSoftware: {
@@ -581,7 +581,7 @@ describe('Edit Silent', () => {
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
       })
-      await testDefaultEdit({
+      await E2eTestUtil.editSilent({
         existingName: oldSoftware.name,
         newSoftware: editedSoftware,
         newInstalledVersion: installedVersion,
@@ -627,7 +627,7 @@ describe('Edit Silent', () => {
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
       })
-      await testDefaultEdit({
+      await E2eTestUtil.editSilent({
         existingName: firstSoftware.name,
         newSoftware: editedSoftware,
         newInstalledVersion: installedVersion,
@@ -673,7 +673,7 @@ describe('Edit Silent', () => {
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
       })
-      await testDefaultEdit({
+      await E2eTestUtil.editSilent({
         existingName: lastSoftware.name,
         newSoftware: editedSoftware,
         newInstalledVersion: installedVersion,
@@ -683,37 +683,3 @@ describe('Edit Silent', () => {
     })
   })
 })
-
-async function testDefaultEdit({
-  existingName,
-  newSoftware,
-  newInstalledVersion,
-  newLatestVersion,
-}: {
-  existingName: string
-  newSoftware: Software
-  newInstalledVersion: string
-  newLatestVersion: string
-}) {
-  const response = await interactiveExecute({
-    args: E2eEditUtil.getSilentCommand({
-      existingName,
-      newSoftware: {
-        name: newSoftware.name,
-        type: CommandType.Static,
-        command: isStatic(newSoftware.executable) ? newSoftware.executable.command : '',
-        args: newSoftware.args,
-        shell: newSoftware.shell,
-        installedRegex: newSoftware.installedRegex,
-        url: newSoftware.url,
-        latestRegex: newSoftware.latestRegex,
-      },
-    }),
-  })
-  await E2eEditUtil.validateChunks(response.chunks, [
-    ...E2eEditUtil.getChunksSilent({
-      installedVersion: newInstalledVersion,
-      latestVersion: newLatestVersion,
-    }),
-  ])
-}

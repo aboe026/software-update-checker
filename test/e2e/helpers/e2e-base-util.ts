@@ -5,6 +5,7 @@ import E2eConfig from './e2e-config'
 import interactiveExecute, { ANSI_CHAR_REPLACEMENT, KEYS } from './interactive-execute'
 import Software from '../../../src/software/software'
 import testUtil from '../../helpers/test-util'
+import allUpgrades from '../../../src/software/upgrades/all-upgrades'
 
 export default class E2eBaseUtil {
   static readonly COMMAND = {
@@ -46,32 +47,82 @@ export default class E2eBaseUtil {
     return inputs
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static async setOldSoftwares(softwares: any[], version?: number | boolean): Promise<void> {
+    await fs.ensureDir(E2eConfig.DIRECTORY.UserConfig)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const contents: any = {
+      softwares,
+    }
+    if (version !== false) {
+      contents.version = version === undefined ? allUpgrades().length : version
+    }
+    await fs.writeFile(E2eConfig.FILE.Softwares, JSON.stringify(contents, null, 2))
+  }
+
   static async setSoftwares(softwares: Software[] | undefined): Promise<void> {
     if (softwares !== undefined) {
       await fs.ensureDir(E2eConfig.DIRECTORY.UserConfig)
-      await fs.writeFile(E2eConfig.FILE.Softwares, JSON.stringify(softwares, null, 2))
+      await fs.writeFile(
+        E2eConfig.FILE.Softwares,
+        JSON.stringify(
+          {
+            version: allUpgrades().length,
+            softwares,
+          },
+          null,
+          2
+        )
+      )
     } else {
       await fs.createFile(E2eConfig.FILE.Softwares)
     }
   }
 
-  static async verifySoftwares(softwares: Software[] | undefined, fileExists = true): Promise<void> {
-    if (!fileExists) {
-      await expect(fs.access(E2eConfig.FILE.Softwares)).rejects.toThrow('no such file or directory')
+  static async verifySoftwaresFileDoesNotExist(): Promise<void> {
+    await expect(fs.access(E2eConfig.FILE.Softwares)).rejects.toThrow('no such file or directory')
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static async verifyOldSoftwares(softwares: any[], version: number | boolean): Promise<void> {
+    await expect(fs.access(E2eConfig.FILE.Softwares)).resolves.toBe(undefined)
+    const contents = (await fs.readFile(E2eConfig.FILE.Softwares)).toString()
+    let json
+    try {
+      json = JSON.parse(contents)
+    } catch (err) {
+      expect(err).toBe(undefined)
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const expectedContents: any = {
+      softwares,
+    }
+    if (version !== false) {
+      expectedContents.version = version
+    }
+    expect(json).toEqual(JSON.parse(JSON.stringify(expectedContents)))
+  }
+
+  static async verifySoftwares(softwares: Software[] | undefined): Promise<void> {
+    await expect(fs.access(E2eConfig.FILE.Softwares)).resolves.toBe(undefined)
+    const contents = (await fs.readFile(E2eConfig.FILE.Softwares)).toString()
+    if (softwares === undefined) {
+      expect(contents).toBe('')
     } else {
-      await expect(fs.access(E2eConfig.FILE.Softwares)).resolves.toBe(undefined)
-      const contents = (await fs.readFile(E2eConfig.FILE.Softwares)).toString()
-      if (softwares === undefined) {
-        expect(contents).toBe('')
-      } else {
-        let json
-        try {
-          json = JSON.parse(contents)
-        } catch (err) {
-          expect(err).toBe(undefined)
-        }
-        expect(json).toStrictEqual(JSON.parse(JSON.stringify(softwares)))
+      let json
+      try {
+        json = JSON.parse(contents)
+      } catch (err) {
+        expect(err).toBe(undefined)
       }
+      expect(json).toStrictEqual(
+        JSON.parse(
+          JSON.stringify({
+            softwares,
+            version: allUpgrades().length,
+          })
+        )
+      )
     }
   }
 
@@ -80,6 +131,14 @@ export default class E2eBaseUtil {
       args,
     })
     expect(response.chunks.join('\n')).toContain(error)
+  }
+
+  static splitChunksOnNewline(chunks: string[]): string[] {
+    const splitChunks: string[] = []
+    for (const chunk of chunks) {
+      chunk.split(/\\+n/).forEach((splitChunk) => splitChunks.push(splitChunk.replace(/\\+/g, '\\')))
+    }
+    return splitChunks
   }
 
   static async validateChunks(
@@ -115,7 +174,7 @@ export default class E2eBaseUtil {
           actualIndex++
         } else if (isBoolean(expected)) {
           const question = `? ${expected.question}?`
-          expect(actual).toBe(`${question} (Y/n) `)
+          expect(actual).toBe(`${question} (Y/n)`)
           while (
             condenseBackslashes(stripNewlines(actualChunks[actualIndex])).startsWith(question) &&
             actualIndex < actualChunks.length
@@ -128,9 +187,9 @@ export default class E2eBaseUtil {
           this.validateTableChunk(expected, condenseBackslashes(actual))
           actualIndex++
         } else {
-          const question = `? ${expected.question}: `
+          const question = `? ${expected.question}:`
           expect(condenseBackslashes(stripNewlines(actual))).toBe(
-            `${question}${expected.default !== undefined ? `(${expected.default}) ` : ''}`
+            `${question}${expected.default !== undefined ? ` (${expected.default})` : ''}`
           )
           while (
             condenseBackslashes(stripNewlines(actualChunks[actualIndex])).startsWith(question) &&
@@ -139,7 +198,7 @@ export default class E2eBaseUtil {
             actualIndex++
           }
           actual = condenseBackslashes(stripNewlines(actualChunks[actualIndex - 1]))
-          expect(actual).toBe(`${question}${expected.answer || ''}`)
+          expect(actual).toBe(`${question}${expected.answer ? ` ${expected.answer}` : ''}`)
         }
       }
     }
@@ -167,7 +226,7 @@ export default class E2eBaseUtil {
       chunk += `\\n${index === counter ? '>' : ' '} ${option} `
       counter++
     }
-    return chunk
+    return chunk.trim()
   }
 
   static validateTableChunk(expected: TableOutput, actual: string): void {

@@ -1,5 +1,5 @@
 import E2eAddUtil from './helpers/e2e-add-util'
-import interactiveExecute from './helpers/interactive-execute'
+import E2eTestUtil from './helpers/e2e-test-util'
 import Software from '../../src/software/software'
 import Website from '../helpers/website'
 
@@ -25,7 +25,7 @@ describe('Add Silent', () => {
       })
       await E2eAddUtil.setSoftwares([existing])
       await E2eAddUtil.verifySoftwares([existing])
-      await E2eAddUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eAddUtil.getSilentCommand({
           software: new Software({
             name: existing.name,
@@ -48,7 +48,7 @@ describe('Add Silent', () => {
       await E2eAddUtil.setSoftwares([])
       await E2eAddUtil.verifySoftwares([])
       const installedError = 'mercy file not found'
-      await E2eAddUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eAddUtil.getSilentCommand({
           software: new Software({
             name: 'e2e add silent installed error',
@@ -74,7 +74,7 @@ describe('Add Silent', () => {
         const url = Website.getErrorUrl('how the turn tables')
         const port = Website.getPort()
         await Website.stop()
-        await E2eAddUtil.testSilentError({
+        await E2eTestUtil.silentError({
           args: E2eAddUtil.getSilentCommand({
             software: new Software({
               name: 'e2e add silent latest error',
@@ -100,7 +100,7 @@ describe('Add Silent', () => {
     it('add silent fails type subcommand', async () => {
       await E2eAddUtil.setSoftwares([])
       await E2eAddUtil.verifySoftwares([])
-      await E2eAddUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eAddUtil.getSilentCommand({
           software: new Software({
             name: 'e2e add silent invalid without type subcommand',
@@ -121,7 +121,7 @@ describe('Add Silent', () => {
     it('add silent fails without name flag', async () => {
       await E2eAddUtil.setSoftwares([])
       await E2eAddUtil.verifySoftwares([])
-      await E2eAddUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eAddUtil.getSilentCommand({
           software: new Software({
             name: 'e2e add silent invalid without name flag',
@@ -142,7 +142,7 @@ describe('Add Silent', () => {
     it('add silent fails without installedRegex flag', async () => {
       await E2eAddUtil.setSoftwares([])
       await E2eAddUtil.verifySoftwares([])
-      await E2eAddUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eAddUtil.getSilentCommand({
           software: new Software({
             name: 'e2e add silent invalid without installedRegex flag',
@@ -163,7 +163,7 @@ describe('Add Silent', () => {
     it('add silent fails without url flag', async () => {
       await E2eAddUtil.setSoftwares([])
       await E2eAddUtil.verifySoftwares([])
-      await E2eAddUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eAddUtil.getSilentCommand({
           software: new Software({
             name: 'e2e add silent invalid without url flag',
@@ -184,7 +184,7 @@ describe('Add Silent', () => {
     it('add silent fails without latestRegex flag', async () => {
       await E2eAddUtil.setSoftwares([])
       await E2eAddUtil.verifySoftwares([])
-      await E2eAddUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eAddUtil.getSilentCommand({
           software: new Software({
             name: 'e2e add silent invalid without latestRegex flag',
@@ -205,7 +205,7 @@ describe('Add Silent', () => {
   })
   describe('valid', () => {
     it('add silent valid software with non-existent softwares file', async () => {
-      await E2eAddUtil.verifySoftwares(undefined, false)
+      await E2eAddUtil.verifySoftwaresFileDoesNotExist()
       const installedVersion = '2.0.0'
       const latestVersion = '2.0.1'
       const software = new Software({
@@ -219,7 +219,7 @@ describe('Add Silent', () => {
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
       })
-      await testDefaultAdd({
+      await E2eTestUtil.addSilent({
         software,
         installedVersion,
         latestVersion,
@@ -242,7 +242,7 @@ describe('Add Silent', () => {
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
       })
-      await testDefaultAdd({
+      await E2eTestUtil.addSilent({
         software,
         installedVersion,
         latestVersion,
@@ -265,7 +265,7 @@ describe('Add Silent', () => {
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
       })
-      await testDefaultAdd({
+      await E2eTestUtil.addSilent({
         software,
         installedVersion,
         latestVersion,
@@ -299,7 +299,7 @@ describe('Add Silent', () => {
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
       })
-      await testDefaultAdd({
+      await E2eTestUtil.addSilent({
         software,
         installedVersion,
         latestVersion,
@@ -333,7 +333,7 @@ describe('Add Silent', () => {
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
       })
-      await testDefaultAdd({
+      await E2eTestUtil.addSilent({
         software,
         installedVersion,
         latestVersion,
@@ -378,7 +378,7 @@ describe('Add Silent', () => {
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
       })
-      await testDefaultAdd({
+      await E2eTestUtil.addSilent({
         software,
         installedVersion,
         latestVersion,
@@ -390,23 +390,3 @@ describe('Add Silent', () => {
      */
   })
 })
-
-async function testDefaultAdd({
-  software,
-  installedVersion,
-  latestVersion,
-}: {
-  software: Software
-  installedVersion: string
-  latestVersion: string
-}) {
-  const response = await interactiveExecute({
-    args: E2eAddUtil.getSilentCommand({ software }),
-  })
-  await E2eAddUtil.validateChunks(response.chunks, [
-    ...E2eAddUtil.getChunksSilent({
-      installedVersion,
-      latestVersion,
-    }),
-  ])
-}

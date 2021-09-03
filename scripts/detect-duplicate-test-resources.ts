@@ -26,13 +26,13 @@ import path from 'path'
     .filter((x, i, a) => a.indexOf(x) === i)
   for (const type of duplicateTypes) {
     const duplicatesForType: TestResource[] = duplicates.filter((resource) => resource.type === type)
-    console.log(colors.red(`Duplicates for field '${type}' (${duplicatesForType.length}):`))
+    console.log(colors.red(`Duplicates for field "${type}" (${duplicatesForType.length}):`))
     const duplicateValues: string[] = duplicatesForType
       .map((resource) => resource.value)
       .filter((x, i, a) => a.indexOf(x) === i)
     for (const value of duplicateValues) {
       const duplicatesForValue: TestResource[] = duplicatesForType.filter((resource) => resource.value === value)
-      console.log(`    '${value}' (${duplicatesForValue.length}):`)
+      console.log(`    "${value}" (${duplicatesForValue.length}):`)
       for (const resource of duplicatesForValue) {
         console.log(`        ${resource.filePath}:${resource.line}`)
       }

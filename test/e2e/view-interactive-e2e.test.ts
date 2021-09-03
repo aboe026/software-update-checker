@@ -1,7 +1,6 @@
-import E2eHomeUtil, { HomeChoiceOption } from './helpers/e2e-home-util'
+import E2eTestUtil from './helpers/e2e-test-util'
 import E2eViewUtil from './helpers/e2e-view-util'
-import interactiveExecute from './helpers/interactive-execute'
-import { RowDecoration, TableRow } from './helpers/e2e-base-util'
+import { RowDecoration } from './helpers/e2e-base-util'
 import Software from '../../src/software/software'
 import Website from '../helpers/website'
 
@@ -14,20 +13,20 @@ describe('View Interactive', () => {
   })
   describe('valid', () => {
     it('view interactive with non-existent softwares file says nothing to view', async () => {
-      await E2eViewUtil.verifySoftwares(undefined, false)
-      await testNoSoftwaresView()
+      await E2eViewUtil.verifySoftwaresFileDoesNotExist()
+      await E2eTestUtil.viewInteractiveNoSoftwares()
       await E2eViewUtil.verifySoftwares([])
     })
     it('view interactive with no content softwares file says nothing to view', async () => {
       await E2eViewUtil.setSoftwares(undefined)
       await E2eViewUtil.verifySoftwares(undefined)
-      await testNoSoftwaresView()
+      await E2eTestUtil.viewInteractiveNoSoftwares()
       await E2eViewUtil.verifySoftwares([])
     })
     it('view interactive with empty array softwares file says nothing to view', async () => {
       await E2eViewUtil.setSoftwares([])
       await E2eViewUtil.verifySoftwares([])
-      await testNoSoftwaresView()
+      await E2eTestUtil.viewInteractiveNoSoftwares()
       await E2eViewUtil.verifySoftwares([])
     })
     it('view interactive single software without error or update', async () => {
@@ -46,7 +45,7 @@ describe('View Interactive', () => {
       })
       await E2eViewUtil.setSoftwares([software])
       await E2eViewUtil.verifySoftwares([software])
-      await testDefaultView({
+      await E2eTestUtil.viewInteractive({
         rows: [
           {
             name: software.name,
@@ -73,7 +72,7 @@ describe('View Interactive', () => {
       })
       await E2eViewUtil.setSoftwares([software])
       await E2eViewUtil.verifySoftwares([software])
-      await testDefaultView({
+      await E2eTestUtil.viewInteractive({
         rows: [
           {
             name: software.name,
@@ -103,7 +102,7 @@ describe('View Interactive', () => {
         await E2eViewUtil.setSoftwares([software])
         await E2eViewUtil.verifySoftwares([software])
         await Website.stop()
-        await testDefaultView({
+        await E2eTestUtil.viewInteractive({
           rows: [
             {
               name: software.name,
@@ -134,7 +133,7 @@ describe('View Interactive', () => {
       })
       await E2eViewUtil.setSoftwares([software])
       await E2eViewUtil.verifySoftwares([software])
-      await testDefaultView({
+      await E2eTestUtil.viewInteractive({
         rows: [
           {
             name: software.name,
@@ -175,7 +174,7 @@ describe('View Interactive', () => {
       })
       await E2eViewUtil.setSoftwares([firstSoftware, lastSoftware])
       await E2eViewUtil.verifySoftwares([firstSoftware, lastSoftware])
-      await testDefaultView({
+      await E2eTestUtil.viewInteractive({
         rows: [
           {
             name: firstSoftware.name,
@@ -220,7 +219,7 @@ describe('View Interactive', () => {
       })
       await E2eViewUtil.setSoftwares([firstSoftware, lastSoftware])
       await E2eViewUtil.verifySoftwares([firstSoftware, lastSoftware])
-      await testDefaultView({
+      await E2eTestUtil.viewInteractive({
         rows: [
           {
             name: firstSoftware.name,
@@ -266,7 +265,7 @@ describe('View Interactive', () => {
       })
       await E2eViewUtil.setSoftwares([firstSoftware, lastSoftware])
       await E2eViewUtil.verifySoftwares([firstSoftware, lastSoftware])
-      await testDefaultView({
+      await E2eTestUtil.viewInteractive({
         rows: [
           {
             name: firstSoftware.name,
@@ -286,27 +285,3 @@ describe('View Interactive', () => {
     })
   })
 })
-
-async function testNoSoftwaresView() {
-  const response = await interactiveExecute({
-    inputs: [...E2eHomeUtil.getInputs(HomeChoiceOption.View), ...E2eHomeUtil.getInputs(HomeChoiceOption.Exit)],
-  })
-  await E2eViewUtil.validateChunks(response.chunks, [
-    ...E2eHomeUtil.getChunks(HomeChoiceOption.View),
-    E2eViewUtil.MESSAGES.NoSoftwares,
-    ...E2eHomeUtil.getChunks(HomeChoiceOption.Exit),
-  ])
-}
-
-async function testDefaultView({ rows }: { rows: TableRow[] }) {
-  const response = await interactiveExecute({
-    inputs: [...E2eHomeUtil.getInputs(HomeChoiceOption.View), ...E2eHomeUtil.getInputs(HomeChoiceOption.Exit)],
-  })
-  await E2eViewUtil.validateChunks(response.chunks, [
-    ...E2eHomeUtil.getChunks(HomeChoiceOption.View),
-    ...E2eViewUtil.getChunks({
-      rows,
-    }),
-    ...E2eHomeUtil.getChunks(HomeChoiceOption.Exit),
-  ])
-}

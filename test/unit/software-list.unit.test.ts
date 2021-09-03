@@ -2,6 +2,8 @@ import fs from 'fs-extra'
 
 import Software from '../../src/software/software'
 import SoftwareList from '../../src/software/software-list'
+import Upgrader from '../../src/util/upgrader'
+import * as allUpgrades from '../../src/software/upgrades/all-upgrades'
 
 jest.mock('fs-extra')
 
@@ -9,6 +11,149 @@ describe('Software List Unit Tests', () => {
   beforeEach(() => {
     fs.ensureDir = jest.fn().mockResolvedValue(true)
     fs.writeFile = jest.fn().mockResolvedValue(true)
+  })
+  describe('sortByName', () => {
+    it('returns empty array for empty array', () => {
+      expect(SoftwareList.sortByName([])).toEqual([])
+    })
+    it('returns single software for single software array', () => {
+      const software = new Software({
+        name: 'sortByName single software',
+        executable: {
+          command: 'ruler',
+        },
+        args: 'lothlorien',
+        shell: 'elf',
+        installedRegex: 'Lady of Light',
+        url: 'https://lovemeanddespair.com',
+        latestRegex: 'Galadriel',
+      })
+      expect(SoftwareList.sortByName([software])).toEqual([software])
+    })
+    it('ignores case sensitivity', () => {
+      const first = new Software({
+        name: 'sortByName ignore case B',
+        executable: {
+          command: 'butte',
+        },
+        args: 'black hills',
+        shell: 'geomorphology',
+        installedRegex: 'bear lodge butte',
+        url: 'https://closeencounters.com',
+        latestRegex: 'devils tower',
+      })
+      const last = new Software({
+        name: 'sortByName ignore case a',
+        executable: {
+          command: 'neoclassical',
+        },
+        args: 'copper',
+        shell: 'sculpture',
+        installedRegex: 'new york harbor',
+        url: 'https://thenewcolossus.com',
+        latestRegex: 'statue of liberty',
+      })
+      expect(SoftwareList.sortByName([first, last])).toEqual([last, first])
+    })
+    it('does not modify original array', () => {
+      const first = new Software({
+        name: 'sortByName does not modify original b first',
+        executable: {
+          command: 'hooved',
+        },
+        args: 'american',
+        shell: 'mammal',
+        installedRegex: 'heaviest',
+        url: 'https://thunderontheplain.com',
+        latestRegex: 'bison bison bison',
+      })
+      const last = new Software({
+        name: 'sortByName does not modify original a last',
+        executable: {
+          command: 'region',
+        },
+        args: 'atlantic',
+        shell: 'paranormal',
+        installedRegex: 'devils triangle',
+        url: 'https://herebedragons.com',
+        latestRegex: 'bermuda triangle',
+      })
+      const original = [first, last]
+      expect(SoftwareList.sortByName(original)).toEqual([last, first])
+      expect(original).toEqual([first, last])
+    })
+    it('preserves alphabetical order of multiple softwares', () => {
+      const first = new Software({
+        name: 'sortByName multiple alphabetical first',
+        executable: {
+          command: 'unsc',
+        },
+        args: 'ai',
+        shell: 'construct',
+        installedRegex: 'pillar of autumn',
+        url: 'https://thiscaveisnotanaturalformation.com',
+        latestRegex: 'cortana',
+      })
+      const middle = new Software({
+        name: 'sortByName multiple alphabetical middle',
+        executable: {
+          command: 'vessel',
+        },
+        args: 'embryotic',
+        shell: 'organic',
+        installedRegex: 'zygote',
+        url: 'https://whatcamefirst.com',
+        latestRegex: 'egg',
+      })
+      const last = new Software({
+        name: 'sortByName multiple alphabetical zlast',
+        executable: {
+          command: 'antagonist',
+        },
+        args: 'nurse',
+        shell: 'stephen king',
+        installedRegex: 'misery',
+        url: 'https://imyournumberonefan.com',
+        latestRegex: 'Annie Wilkes',
+      })
+      expect(SoftwareList.sortByName([first, middle, last])).toEqual([first, middle, last])
+    })
+    it('reverses anti-alphabetical order of multiple softwares', () => {
+      const first = new Software({
+        name: 'sortByName multiple anti-alphabetical c first',
+        executable: {
+          command: 'rocket',
+        },
+        args: 'super-heavy',
+        shell: 'space',
+        installedRegex: 'apollo',
+        url: 'https://gobigorgohome.com',
+        latestRegex: 'saturn v',
+      })
+      const middle = new Software({
+        name: 'sortByName multiple anti-alphabetical b middle',
+        executable: {
+          command: 'tycoon',
+        },
+        args: 'publishing',
+        shell: 'cinema',
+        installedRegex: 'New York Daily Inquirer',
+        url: 'https://rosebud.com',
+        latestRegex: 'Charles Foster Kane',
+      })
+      const last = new Software({
+        name: 'sortByName multiple anti-alphabetical a last',
+        executable: {
+          command: 'cowboy',
+        },
+        args: 'Van der Linde gang',
+        shell: 'video game',
+        installedRegex: 'tuberculosis',
+        url: 'https://igaveyouallihad.com',
+        latestRegex: 'arthur morgan',
+      })
+      expect(SoftwareList.sortByName([first, middle, last])).toEqual([last, middle, first])
+    })
   })
   describe('add', () => {
     it('throws error if software with name already exists', async () => {
@@ -52,7 +197,7 @@ describe('Software List Unit Tests', () => {
         url: '',
         latestRegex: 'latest: v(.*)',
       })
-      await expect(SoftwareList.add(software)).resolves.toStrictEqual([software])
+      await expect(SoftwareList.add(software)).resolves.toEqual([software])
     })
     it('returns list with software added alphabetically at beginning on list with single software already', async () => {
       const existingSoftware = new Software({
@@ -76,7 +221,7 @@ describe('Software List Unit Tests', () => {
         url: 'https://hawaiia.com',
         latestRegex: 'mahalo',
       })
-      await expect(SoftwareList.add(software)).resolves.toStrictEqual([software, existingSoftware])
+      await expect(SoftwareList.add(software)).resolves.toEqual([software, existingSoftware])
     })
     it('returns list with software added alphabetically to end on list with single software already', async () => {
       const existingSoftware = new Software({
@@ -100,7 +245,7 @@ describe('Software List Unit Tests', () => {
         url: 'https://ampere.com',
         latestRegex: 'nvidia',
       })
-      await expect(SoftwareList.add(software)).resolves.toStrictEqual([existingSoftware, software])
+      await expect(SoftwareList.add(software)).resolves.toEqual([existingSoftware, software])
     })
     it('returns list with software added alphabetically to middle on list with two softwares already', async () => {
       const existingSoftwareOne = new Software({
@@ -135,11 +280,7 @@ describe('Software List Unit Tests', () => {
         url: 'https://coldshouldered.com',
         latestRegex: '134340',
       })
-      await expect(SoftwareList.add(software)).resolves.toStrictEqual([
-        existingSoftwareOne,
-        software,
-        existingSoftwareTwo,
-      ])
+      await expect(SoftwareList.add(software)).resolves.toEqual([existingSoftwareOne, software, existingSoftwareTwo])
     })
   })
   describe('edit', () => {
@@ -228,7 +369,7 @@ describe('Software List Unit Tests', () => {
         url: 'https://phones.com',
         latestRegex: 'samsung galaxy',
       })
-      await expect(SoftwareList.edit(oldSoftware, newSoftware)).resolves.toStrictEqual([newSoftware])
+      await expect(SoftwareList.edit(oldSoftware, newSoftware)).resolves.toEqual([newSoftware])
     })
     it('edit first software in list', async () => {
       const oldSoftware = new Software({
@@ -262,7 +403,7 @@ describe('Software List Unit Tests', () => {
         url: 'https://planes.com',
         latestRegex: 'boeing 747',
       })
-      await expect(SoftwareList.edit(oldSoftware, newSoftware)).resolves.toStrictEqual([existingSoftware, newSoftware])
+      await expect(SoftwareList.edit(oldSoftware, newSoftware)).resolves.toEqual([existingSoftware, newSoftware])
     })
     it('edit last software in list', async () => {
       const oldSoftware = new Software({
@@ -296,7 +437,7 @@ describe('Software List Unit Tests', () => {
         url: 'https://goat.com',
         latestRegex: 'Oreamnos americanus',
       })
-      await expect(SoftwareList.edit(oldSoftware, newSoftware)).resolves.toStrictEqual([existingSoftware, newSoftware])
+      await expect(SoftwareList.edit(oldSoftware, newSoftware)).resolves.toEqual([existingSoftware, newSoftware])
     })
   })
   describe('delete', () => {
@@ -337,7 +478,7 @@ describe('Software List Unit Tests', () => {
           latestRegex: 'mithrandir',
         }),
       ])
-      await expect(SoftwareList.delete(name)).resolves.toStrictEqual([])
+      await expect(SoftwareList.delete(name)).resolves.toEqual([])
     })
     it('removes first software in list', async () => {
       const name = 'test-delete-first-in-list'
@@ -364,7 +505,7 @@ describe('Software List Unit Tests', () => {
         }),
         lastSoftware,
       ])
-      await expect(SoftwareList.delete(name)).resolves.toStrictEqual([lastSoftware])
+      await expect(SoftwareList.delete(name)).resolves.toEqual([lastSoftware])
     })
     it('removes last software in list', async () => {
       const name = 'test-delete-last-in-list'
@@ -391,7 +532,7 @@ describe('Software List Unit Tests', () => {
           latestRegex: 'Parmigiano-Reggiano',
         }),
       ])
-      await expect(SoftwareList.delete(name)).resolves.toStrictEqual([firstSoftware])
+      await expect(SoftwareList.delete(name)).resolves.toEqual([firstSoftware])
     })
   })
   describe('load', () => {
@@ -400,40 +541,73 @@ describe('Software List Unit Tests', () => {
       fs.pathExists = jest.fn().mockResolvedValue(true)
       jest.spyOn(SoftwareList, 'getSavedFilePath').mockImplementation(() => file)
     })
+    it('loads empty list if save file does not exist', async () => {
+      fs.pathExists = jest.fn().mockResolvedValue(false)
+      await expect(SoftwareList.load()).resolves.toEqual([])
+    })
+    it('loads empty list if save file is empty', async () => {
+      fs.readFile = jest.fn().mockResolvedValue('')
+      await expect(SoftwareList.load()).resolves.toEqual([])
+    })
+    it('throws error if file contents cannot be read', async () => {
+      const error = 'permission denied'
+      fs.readFile = jest.fn().mockRejectedValue(error)
+      await expect(SoftwareList.load()).rejects.toThrow(`Cannot read contents of file "${file}": "${error}"`)
+    })
     it('throws error if save file does not contain valid json', async () => {
       fs.readFile = jest.fn().mockResolvedValue('i am not valid JSON')
       await expect(SoftwareList.load()).rejects.toThrow(
         `Cannot parse saved file "${file}" as JSON: Unexpected token i in JSON at position 0`
       )
     })
-    it('throws error if save file does not contain JSON array', async () => {
+    it('throws error if save file does not contain json object', async () => {
+      fs.readFile = jest.fn().mockResolvedValue(10)
+      await expect(SoftwareList.load()).rejects.toThrow(
+        `Saved file "${file}" JSON must be of type "object", received type "number"`
+      )
+    })
+    it('throws error if save file does not contain softwares property', async () => {
       fs.readFile = jest.fn().mockResolvedValue(
         JSON.stringify({
-          name: 'i am not a json array',
-          executable: {
-            command: 'shells',
-          },
-          args: 'conch',
-          installedRegex: 'queen',
-          url: 'https://shells.com',
-          latestRegex: 'lobatus gigas',
+          hello: 'world',
         })
       )
-      await expect(SoftwareList.load()).rejects.toThrow(`Saved file "${file}" does not contain a valid JSON array`)
+      await expect(SoftwareList.load()).rejects.toThrow(
+        `Saved file "${file}" does not contain required "softwares" property`
+      )
+    })
+    it('throws error if software property is not an array', async () => {
+      fs.readFile = jest.fn().mockResolvedValue(
+        JSON.stringify({
+          softwares: {
+            name: 'i am not a json array',
+            executable: {
+              command: 'shells',
+            },
+            args: 'conch',
+            installedRegex: 'queen',
+            url: 'https://shells.com',
+            latestRegex: 'lobatus gigas',
+          },
+        })
+      )
+      await expect(SoftwareList.load()).rejects.toThrow(`Saved file "${file}" property "softwares" is not an array`)
     })
     it('throws error if save file has software without a name', async () => {
       fs.readFile = jest.fn().mockResolvedValue(
-        JSON.stringify([
-          {
-            executable: {
-              command: 'name',
+        JSON.stringify({
+          softwares: [
+            {
+              executable: {
+                command: 'name',
+              },
+              args: 'given',
+              installedRegex: 'nemo',
+              url: 'https://firstnames.com',
+              latestRegex: 'forename',
             },
-            args: 'given',
-            installedRegex: 'nemo',
-            url: 'https://firstnames.com',
-            latestRegex: 'forename',
-          },
-        ])
+          ],
+        })
       )
       await expect(SoftwareList.load()).rejects.toThrow(
         `Saved file "${file}" contains an invalid software entry that does not have a name`
@@ -442,15 +616,17 @@ describe('Software List Unit Tests', () => {
     it('throws error if save file has software without an executable', async () => {
       const name = 'no executable'
       fs.readFile = jest.fn().mockResolvedValue(
-        JSON.stringify([
-          {
-            name,
-            args: 'nada',
-            installedRegex: 'niltch',
-            url: 'https://nothing.com',
-            latestRegex: 'nix',
-          },
-        ])
+        JSON.stringify({
+          softwares: [
+            {
+              name,
+              args: 'nada',
+              installedRegex: 'niltch',
+              url: 'https://nothing.com',
+              latestRegex: 'nix',
+            },
+          ],
+        })
       )
       await expect(SoftwareList.load()).rejects.toThrow(
         `Saved file "${file}" contains an invalid software entry "${name}" that does not have an executable`
@@ -459,18 +635,20 @@ describe('Software List Unit Tests', () => {
     it('throws error if save file has dynamic software without a directory', async () => {
       const name = 'dynamic no directory'
       fs.readFile = jest.fn().mockResolvedValue(
-        JSON.stringify([
-          {
-            name,
-            executable: {
-              regex: 'candy',
+        JSON.stringify({
+          softwares: [
+            {
+              name,
+              executable: {
+                regex: 'candy',
+              },
+              args: 'nougat',
+              installedRegex: 'snickers',
+              url: 'https://candy.com',
+              latestRegex: 'marathon',
             },
-            args: 'nougat',
-            installedRegex: 'snickers',
-            url: 'https://candy.com',
-            latestRegex: 'marathon',
-          },
-        ])
+          ],
+        })
       )
       await expect(SoftwareList.load()).rejects.toThrow(
         `Saved file "${file}" contains an invalid software entry "${name}" that is dynamic but does not have an executable directory`
@@ -479,18 +657,20 @@ describe('Software List Unit Tests', () => {
     it('throws error if save file has dynamic software without a regex', async () => {
       const name = 'dynamic no regex'
       fs.readFile = jest.fn().mockResolvedValue(
-        JSON.stringify([
-          {
-            name,
-            executable: {
-              directory: 'tree',
+        JSON.stringify({
+          softwares: [
+            {
+              name,
+              executable: {
+                directory: 'tree',
+              },
+              args: 'deciduous',
+              installedRegex: 'willow',
+              url: 'https://trees.com',
+              latestRegex: 'salix babylonica',
             },
-            args: 'deciduous',
-            installedRegex: 'willow',
-            url: 'https://trees.com',
-            latestRegex: 'salix babylonica',
-          },
-        ])
+          ],
+        })
       )
       await expect(SoftwareList.load()).rejects.toThrow(
         `Saved file "${file}" contains an invalid software entry "${name}" that is dynamic but does not have an executable regex`
@@ -499,17 +679,19 @@ describe('Software List Unit Tests', () => {
     it('throws error if save file has software without an installed regex', async () => {
       const name = 'no installed regex'
       fs.readFile = jest.fn().mockResolvedValue(
-        JSON.stringify([
-          {
-            name,
-            executable: {
-              command: 'colors',
+        JSON.stringify({
+          softwares: [
+            {
+              name,
+              executable: {
+                command: 'colors',
+              },
+              args: 'white',
+              url: 'https://paintbynumbers.com',
+              latestRegex: 'eggshell',
             },
-            args: 'white',
-            url: 'https://paintbynumbers.com',
-            latestRegex: 'eggshell',
-          },
-        ])
+          ],
+        })
       )
       await expect(SoftwareList.load()).rejects.toThrow(
         `Saved file "${file}" contains an invalid software entry "${name}" that does not have an installedRegex`
@@ -518,17 +700,19 @@ describe('Software List Unit Tests', () => {
     it('throws error if save file has software without a url', async () => {
       const name = 'no url'
       fs.readFile = jest.fn().mockResolvedValue(
-        JSON.stringify([
-          {
-            name,
-            executable: {
-              command: 'pre',
+        JSON.stringify({
+          softwares: [
+            {
+              name,
+              executable: {
+                command: 'pre',
+              },
+              args: 'internet',
+              installedRegex: 'coding',
+              latestRegex: 'how',
             },
-            args: 'internet',
-            installedRegex: 'coding',
-            latestRegex: 'how',
-          },
-        ])
+          ],
+        })
       )
       await expect(SoftwareList.load()).rejects.toThrow(
         `Saved file "${file}" contains an invalid software entry "${name}" that does not have a url`
@@ -537,58 +721,65 @@ describe('Software List Unit Tests', () => {
     it('throws error if save file has software without a latest regex', async () => {
       const name = 'no latest regex'
       fs.readFile = jest.fn().mockResolvedValue(
-        JSON.stringify([
-          {
-            name,
-            executable: {
-              command: 'time',
+        JSON.stringify({
+          softwares: [
+            {
+              name,
+              executable: {
+                command: 'relatively',
+              },
+              args: 'after',
+              installedRegex: 'late',
+              url: 'https://latest.com',
             },
-            args: 'after',
-            installedRegex: 'late',
-            url: 'https://latest.com',
-          },
-        ])
+          ],
+        })
       )
       await expect(SoftwareList.load()).rejects.toThrow(
         `Saved file "${file}" contains an invalid software entry "${name}" that does not have a latestRegex`
       )
     })
-    it('loads empty list if save file does not exist', async () => {
-      fs.pathExists = jest.fn().mockResolvedValue(false)
-      await expect(SoftwareList.load()).resolves.toStrictEqual([])
+    it('passes current version as zero if no version property', async () => {
+      fs.readFile = jest.fn().mockResolvedValue(
+        JSON.stringify({
+          softwares: [],
+        })
+      )
+      jest.spyOn(allUpgrades, 'default').mockReturnValue([])
+      const upgraderSpy = jest.spyOn(Upgrader, 'run')
+      await expect(SoftwareList.load()).resolves.toEqual([])
+      expect(upgraderSpy.mock.calls).toEqual([
+        [
+          {
+            objects: [],
+            currentVersion: 0,
+            upgrades: [],
+          },
+        ],
+      ])
     })
-    it('loads empty list if save file is empty', async () => {
-      fs.readFile = jest.fn().mockResolvedValue('')
-      await expect(SoftwareList.load()).resolves.toStrictEqual([])
+    it('passes current version as version if explicit version property', async () => {
+      fs.readFile = jest.fn().mockResolvedValue(
+        JSON.stringify({
+          version: 1,
+          softwares: [],
+        })
+      )
+      const upgrades = [jest.fn().mockResolvedValue([]), jest.fn().mockResolvedValue([])]
+      jest.spyOn(allUpgrades, 'default').mockReturnValue(upgrades)
+      const upgraderSpy = jest.spyOn(Upgrader, 'run')
+      await expect(SoftwareList.load()).resolves.toEqual([])
+      expect(upgraderSpy.mock.calls).toEqual([
+        [
+          {
+            objects: [],
+            currentVersion: 1,
+            upgrades,
+          },
+        ],
+      ])
     })
-    it('loads software if software list is single valid entry', async () => {
-      const software = new Software({
-        name: 'valid single',
-        executable: {
-          command: 'boats',
-        },
-        args: 'small',
-        installedRegex: 'tender',
-        url: 'https://ahoy.com',
-        latestRegex: 'dinghy',
-      })
-      fs.readFile = jest.fn().mockResolvedValue(JSON.stringify([software]))
-      await expect(SoftwareList.load()).resolves.toStrictEqual([software])
-    })
-    it('loads software if software list is single valid entry without args', async () => {
-      const software = new Software({
-        name: 'valid single without args',
-        executable: {
-          command: 'handlebars',
-        },
-        installedRegex: 'no',
-        url: 'https://flobots.com',
-        latestRegex: 'fight with tools',
-      })
-      fs.readFile = jest.fn().mockResolvedValue(JSON.stringify([software]))
-      await expect(SoftwareList.load()).resolves.toStrictEqual([software])
-    })
-    it('loads software if software list is single valid entry with shell', async () => {
+    it('loads software if software list is single valid entry with all properties', async () => {
       const software = new Software({
         name: 'valid single with shell',
         executable: {
@@ -600,10 +791,52 @@ describe('Software List Unit Tests', () => {
         url: 'https://itsame.com',
         latestRegex: 'spiny shell',
       })
-      fs.readFile = jest.fn().mockResolvedValue(JSON.stringify([software]))
-      await expect(SoftwareList.load()).resolves.toStrictEqual([software])
+      fs.readFile = jest.fn().mockResolvedValue(
+        JSON.stringify({
+          softwares: [software],
+        })
+      )
+      jest.spyOn(allUpgrades, 'default').mockReturnValue([])
+      await expect(SoftwareList.load()).resolves.toEqual([software])
     })
-    it('loads software if software list is single valid entry without args and with shell', async () => {
+    it('loads software if software list is single valid entry without args', async () => {
+      const software = new Software({
+        name: 'valid single without args',
+        executable: {
+          command: 'handlebars',
+        },
+        installedRegex: 'no',
+        url: 'https://flobots.com',
+        latestRegex: 'fight with tools',
+      })
+      fs.readFile = jest.fn().mockResolvedValue(
+        JSON.stringify({
+          softwares: [software],
+        })
+      )
+      jest.spyOn(allUpgrades, 'default').mockReturnValue([])
+      await expect(SoftwareList.load()).resolves.toEqual([software])
+    })
+    it('loads software if software list is single valid entry without shell', async () => {
+      const software = new Software({
+        name: 'valid single',
+        executable: {
+          command: 'boats',
+        },
+        args: 'small',
+        installedRegex: 'tender',
+        url: 'https://ahoy.com',
+        latestRegex: 'dinghy',
+      })
+      fs.readFile = jest.fn().mockResolvedValue(
+        JSON.stringify({
+          softwares: [software],
+        })
+      )
+      jest.spyOn(allUpgrades, 'default').mockReturnValue([])
+      await expect(SoftwareList.load()).resolves.toEqual([software])
+    })
+    it('loads software if software list is single valid entry without either args or shell', async () => {
       const software = new Software({
         name: 'valid single without args and with shell',
         executable: {
@@ -614,8 +847,13 @@ describe('Software List Unit Tests', () => {
         url: 'https:mywayorthehighway//.com',
         latestRegex: 'obey',
       })
-      fs.readFile = jest.fn().mockResolvedValue(JSON.stringify([software]))
-      await expect(SoftwareList.load()).resolves.toStrictEqual([software])
+      fs.readFile = jest.fn().mockResolvedValue(
+        JSON.stringify({
+          softwares: [software],
+        })
+      )
+      jest.spyOn(allUpgrades, 'default').mockReturnValue([])
+      await expect(SoftwareList.load()).resolves.toEqual([software])
     })
     it('loads software if software list multiple valid entries', async () => {
       const firstSoftware = new Software({
@@ -638,8 +876,13 @@ describe('Software List Unit Tests', () => {
         url: 'https://seamyshanty.com',
         latestRegex: 'south australia',
       })
-      fs.readFile = jest.fn().mockResolvedValue(JSON.stringify([firstSoftware, lastSoftware]))
-      await expect(SoftwareList.load()).resolves.toStrictEqual([firstSoftware, lastSoftware])
+      fs.readFile = jest.fn().mockResolvedValue(
+        JSON.stringify({
+          softwares: [firstSoftware, lastSoftware],
+        })
+      )
+      jest.spyOn(allUpgrades, 'default').mockReturnValue([])
+      await expect(SoftwareList.load()).resolves.toEqual([firstSoftware, lastSoftware])
     })
     it('loads and alphabetizes software if software list multiple valid entries not in order', async () => {
       const firstSoftware = new Software({
@@ -662,8 +905,13 @@ describe('Software List Unit Tests', () => {
         url: 'https://automimmunes.com',
         latestRegex: 'diabetes mellitus',
       })
-      fs.readFile = jest.fn().mockResolvedValue(JSON.stringify([lastSoftware, firstSoftware]))
-      await expect(SoftwareList.load()).resolves.toStrictEqual([firstSoftware, lastSoftware])
+      fs.readFile = jest.fn().mockResolvedValue(
+        JSON.stringify({
+          softwares: [lastSoftware, firstSoftware],
+        })
+      )
+      jest.spyOn(allUpgrades, 'default').mockReturnValue([])
+      await expect(SoftwareList.load()).resolves.toEqual([firstSoftware, lastSoftware])
     })
     it('loads and alphabetizes software ignoring capitalization if software list multiple valid entries of different capitalization', async () => {
       const firstSoftware = new Software({
@@ -686,8 +934,13 @@ describe('Software List Unit Tests', () => {
         url: 'https://capitaloftheworld.com',
         latestRegex: 'new york city',
       })
-      fs.readFile = jest.fn().mockResolvedValue(JSON.stringify([lastSoftware, firstSoftware]))
-      await expect(SoftwareList.load()).resolves.toStrictEqual([firstSoftware, lastSoftware])
+      fs.readFile = jest.fn().mockResolvedValue(
+        JSON.stringify({
+          softwares: [lastSoftware, firstSoftware],
+        })
+      )
+      jest.spyOn(allUpgrades, 'default').mockReturnValue([])
+      await expect(SoftwareList.load()).resolves.toEqual([firstSoftware, lastSoftware])
     })
   })
 })
