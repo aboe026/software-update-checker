@@ -1,5 +1,5 @@
 import E2eDeleteUtil from './helpers/e2e-delete-util'
-import interactiveExecute from './helpers/interactive-execute'
+import E2eTestUtil from './helpers/e2e-test-util'
 import Software from '../../src/software/software'
 import Website from '../helpers/website'
 
@@ -12,8 +12,8 @@ describe('Delete Silent', () => {
   })
   describe('invalid', () => {
     it('delete silent with non-existent softwares file says nothing to delete', async () => {
-      await E2eDeleteUtil.verifySoftwares(undefined, false)
-      await E2eDeleteUtil.testSilentError({
+      await E2eDeleteUtil.verifySoftwaresFileDoesNotExist()
+      await E2eTestUtil.silentError({
         args: E2eDeleteUtil.getSilentCommand({
           existingName: 'pumpernickle',
         }),
@@ -24,7 +24,7 @@ describe('Delete Silent', () => {
     it('delete silent with no content softwares file says nothing to delete', async () => {
       await E2eDeleteUtil.setSoftwares(undefined)
       await E2eDeleteUtil.verifySoftwares(undefined)
-      await E2eDeleteUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eDeleteUtil.getSilentCommand({
           existingName: 'snickerdoodle',
         }),
@@ -35,7 +35,7 @@ describe('Delete Silent', () => {
     it('delete silent with empty array softwares file says nothing to delete', async () => {
       await E2eDeleteUtil.setSoftwares([])
       await E2eDeleteUtil.verifySoftwares([])
-      await E2eDeleteUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eDeleteUtil.getSilentCommand({
           existingName: 'paprikash',
         }),
@@ -57,7 +57,7 @@ describe('Delete Silent', () => {
       })
       await E2eDeleteUtil.setSoftwares([software])
       await E2eDeleteUtil.verifySoftwares([software])
-      await E2eDeleteUtil.testSilentError({
+      await E2eTestUtil.silentError({
         args: E2eDeleteUtil.getSilentCommand({
           existingName: undefined,
         }),
@@ -81,7 +81,7 @@ describe('Delete Silent', () => {
       })
       await E2eDeleteUtil.setSoftwares([software])
       await E2eDeleteUtil.verifySoftwares([software])
-      await testDefaultDelete({
+      await E2eTestUtil.deleteSilent({
         existingName: software.name,
       })
       await E2eDeleteUtil.verifySoftwares([])
@@ -111,7 +111,7 @@ describe('Delete Silent', () => {
       })
       await E2eDeleteUtil.setSoftwares([firstSoftware, lastSoftware])
       await E2eDeleteUtil.verifySoftwares([firstSoftware, lastSoftware])
-      await testDefaultDelete({
+      await E2eTestUtil.deleteSilent({
         existingName: firstSoftware.name,
       })
       await E2eDeleteUtil.verifySoftwares([lastSoftware])
@@ -125,7 +125,7 @@ describe('Delete Silent', () => {
         args: 'ionization',
         shell: 'high-latitude',
         installedRegex: 'northern lights',
-        url: 'https://.com',
+        url: 'https://nightlightshow.com',
         latestRegex: 'aurora borealis',
       })
       const lastSoftware = new Software({
@@ -141,19 +141,10 @@ describe('Delete Silent', () => {
       })
       await E2eDeleteUtil.setSoftwares([firstSoftware, lastSoftware])
       await E2eDeleteUtil.verifySoftwares([firstSoftware, lastSoftware])
-      await testDefaultDelete({
+      await E2eTestUtil.deleteSilent({
         existingName: lastSoftware.name,
       })
       await E2eDeleteUtil.verifySoftwares([firstSoftware])
     })
   })
 })
-
-async function testDefaultDelete({ existingName }: { existingName: string }) {
-  const response = await interactiveExecute({
-    args: E2eDeleteUtil.getSilentCommand({
-      existingName,
-    }),
-  })
-  await E2eDeleteUtil.validateChunks(response.chunks, [...E2eDeleteUtil.getChunksSilent()])
-}

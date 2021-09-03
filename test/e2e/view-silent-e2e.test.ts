@@ -1,6 +1,6 @@
+import E2eTestUtil from './helpers/e2e-test-util'
 import E2eViewUtil from './helpers/e2e-view-util'
-import interactiveExecute from './helpers/interactive-execute'
-import { RowDecoration, TableRow } from './helpers/e2e-base-util'
+import { RowDecoration } from './helpers/e2e-base-util'
 import Software from '../../src/software/software'
 import Website from '../helpers/website'
 
@@ -13,20 +13,20 @@ describe('View Silent', () => {
   })
   describe('valid', () => {
     it('view silent with non-existent softwares file says nothing to view', async () => {
-      await E2eViewUtil.verifySoftwares(undefined, false)
-      await testNoSoftwaresView()
+      await E2eViewUtil.verifySoftwaresFileDoesNotExist()
+      await E2eTestUtil.viewSilentNoSoftwares()
       await E2eViewUtil.verifySoftwares([])
     })
     it('view silent with no content softwares file says nothing to view', async () => {
       await E2eViewUtil.setSoftwares(undefined)
       await E2eViewUtil.verifySoftwares(undefined)
-      await testNoSoftwaresView()
+      await E2eTestUtil.viewSilentNoSoftwares()
       await E2eViewUtil.verifySoftwares([])
     })
     it('view silent with empty array softwares file says nothing to view', async () => {
       await E2eViewUtil.setSoftwares([])
       await E2eViewUtil.verifySoftwares([])
-      await testNoSoftwaresView()
+      await E2eTestUtil.viewSilentNoSoftwares()
       await E2eViewUtil.verifySoftwares([])
     })
     it('view silent single software without error or update', async () => {
@@ -45,7 +45,7 @@ describe('View Silent', () => {
       })
       await E2eViewUtil.setSoftwares([software])
       await E2eViewUtil.verifySoftwares([software])
-      await testDefaultView({
+      await E2eTestUtil.viewSilent({
         rows: [
           {
             name: software.name,
@@ -72,7 +72,7 @@ describe('View Silent', () => {
       })
       await E2eViewUtil.setSoftwares([software])
       await E2eViewUtil.verifySoftwares([software])
-      await testDefaultView({
+      await E2eTestUtil.viewSilent({
         rows: [
           {
             name: software.name,
@@ -102,7 +102,7 @@ describe('View Silent', () => {
         await E2eViewUtil.setSoftwares([software])
         await E2eViewUtil.verifySoftwares([software])
         await Website.stop()
-        await testDefaultView({
+        await E2eTestUtil.viewSilent({
           rows: [
             {
               name: software.name,
@@ -133,7 +133,7 @@ describe('View Silent', () => {
       })
       await E2eViewUtil.setSoftwares([software])
       await E2eViewUtil.verifySoftwares([software])
-      await testDefaultView({
+      await E2eTestUtil.viewSilent({
         rows: [
           {
             name: software.name,
@@ -174,7 +174,7 @@ describe('View Silent', () => {
       })
       await E2eViewUtil.setSoftwares([firstSoftware, lastSoftware])
       await E2eViewUtil.verifySoftwares([firstSoftware, lastSoftware])
-      await testDefaultView({
+      await E2eTestUtil.viewSilent({
         rows: [
           {
             name: firstSoftware.name,
@@ -219,7 +219,7 @@ describe('View Silent', () => {
       })
       await E2eViewUtil.setSoftwares([firstSoftware, lastSoftware])
       await E2eViewUtil.verifySoftwares([firstSoftware, lastSoftware])
-      await testDefaultView({
+      await E2eTestUtil.viewSilent({
         rows: [
           {
             name: firstSoftware.name,
@@ -265,7 +265,7 @@ describe('View Silent', () => {
       })
       await E2eViewUtil.setSoftwares([firstSoftware, lastSoftware])
       await E2eViewUtil.verifySoftwares([firstSoftware, lastSoftware])
-      await testDefaultView({
+      await E2eTestUtil.viewSilent({
         rows: [
           {
             name: firstSoftware.name,
@@ -285,21 +285,3 @@ describe('View Silent', () => {
     })
   })
 })
-
-async function testNoSoftwaresView() {
-  const response = await interactiveExecute({
-    args: E2eViewUtil.getSilentCommand(),
-  })
-  await E2eViewUtil.validateChunks(response.chunks, [E2eViewUtil.MESSAGES.NoSoftwares])
-}
-
-async function testDefaultView({ rows }: { rows: TableRow[] }) {
-  const response = await interactiveExecute({
-    args: E2eViewUtil.getSilentCommand(),
-  })
-  await E2eViewUtil.validateChunks(response.chunks, [
-    ...E2eViewUtil.getChunks({
-      rows,
-    }),
-  ])
-}

@@ -1,6 +1,5 @@
-import E2eHomeUtil, { HomeChoiceOption } from './helpers/e2e-home-util'
 import E2eDeleteUtil from './helpers/e2e-delete-util'
-import interactiveExecute from './helpers/interactive-execute'
+import E2eTestUtil from './helpers/e2e-test-util'
 import Software from '../../src/software/software'
 import Website from '../helpers/website'
 
@@ -13,20 +12,20 @@ describe('Delete Interactive', () => {
   })
   describe('invalid', () => {
     it('delete interactive with non-existent softwares file says nothing to delete', async () => {
-      await E2eDeleteUtil.verifySoftwares(undefined, false)
-      await testNoSoftwaresDelete()
+      await E2eDeleteUtil.verifySoftwaresFileDoesNotExist()
+      await E2eTestUtil.deleteInteractiveNoSoftwares()
       await E2eDeleteUtil.verifySoftwares([])
     })
     it('delete interactive with no content softwares file says nothing to delete', async () => {
       await E2eDeleteUtil.setSoftwares(undefined)
       await E2eDeleteUtil.verifySoftwares(undefined)
-      await testNoSoftwaresDelete()
+      await E2eTestUtil.deleteInteractiveNoSoftwares()
       await E2eDeleteUtil.verifySoftwares([])
     })
     it('delete interactive with empty array softwares file says nothing to delete', async () => {
       await E2eDeleteUtil.setSoftwares([])
       await E2eDeleteUtil.verifySoftwares([])
-      await testNoSoftwaresDelete()
+      await E2eTestUtil.deleteInteractiveNoSoftwares()
       await E2eDeleteUtil.verifySoftwares([])
     })
     it('delete interactive without confirm does not remove', async () => {
@@ -44,7 +43,7 @@ describe('Delete Interactive', () => {
       })
       await E2eDeleteUtil.setSoftwares([software])
       await E2eDeleteUtil.verifySoftwares([software])
-      await testDefaultDelete({
+      await E2eTestUtil.deleteInteractive({
         existingSoftwares: [software],
         positionToDelete: 0,
         confirm: false,
@@ -67,7 +66,7 @@ describe('Delete Interactive', () => {
       })
       await E2eDeleteUtil.setSoftwares([software])
       await E2eDeleteUtil.verifySoftwares([software])
-      await testDefaultDelete({
+      await E2eTestUtil.deleteInteractive({
         existingSoftwares: [software],
         positionToDelete: 0,
       })
@@ -98,7 +97,7 @@ describe('Delete Interactive', () => {
       })
       await E2eDeleteUtil.setSoftwares([firstSoftware, lastSoftware])
       await E2eDeleteUtil.verifySoftwares([firstSoftware, lastSoftware])
-      await testDefaultDelete({
+      await E2eTestUtil.deleteInteractive({
         existingSoftwares: [firstSoftware, lastSoftware],
         positionToDelete: 0,
       })
@@ -129,7 +128,7 @@ describe('Delete Interactive', () => {
       })
       await E2eDeleteUtil.setSoftwares([firstSoftware, lastSoftware])
       await E2eDeleteUtil.verifySoftwares([firstSoftware, lastSoftware])
-      await testDefaultDelete({
+      await E2eTestUtil.deleteInteractive({
         existingSoftwares: [firstSoftware, lastSoftware],
         positionToDelete: 1,
       })
@@ -137,44 +136,3 @@ describe('Delete Interactive', () => {
     })
   })
 })
-
-async function testNoSoftwaresDelete() {
-  const response = await interactiveExecute({
-    inputs: [...E2eHomeUtil.getInputs(HomeChoiceOption.Delete), ...E2eHomeUtil.getInputs(HomeChoiceOption.Exit)],
-  })
-  await E2eDeleteUtil.validateChunks(response.chunks, [
-    ...E2eHomeUtil.getChunks(HomeChoiceOption.Delete),
-    E2eDeleteUtil.MESSAGES.NoSoftwares,
-    ...E2eHomeUtil.getChunks(HomeChoiceOption.Exit),
-  ])
-}
-
-async function testDefaultDelete({
-  existingSoftwares,
-  positionToDelete,
-  confirm = true,
-}: {
-  existingSoftwares: Software[]
-  positionToDelete: number
-  confirm?: boolean
-}) {
-  const response = await interactiveExecute({
-    inputs: [
-      ...E2eHomeUtil.getInputs(HomeChoiceOption.Delete),
-      ...E2eDeleteUtil.getInputs({
-        position: positionToDelete,
-        confirm,
-      }),
-      ...E2eHomeUtil.getInputs(HomeChoiceOption.Exit),
-    ],
-  })
-  await E2eDeleteUtil.validateChunks(response.chunks, [
-    ...E2eHomeUtil.getChunks(HomeChoiceOption.Delete),
-    ...E2eDeleteUtil.getChunks({
-      existingSoftwares,
-      softwareToDelete: existingSoftwares[positionToDelete],
-      confirm,
-    }),
-    ...E2eHomeUtil.getChunks(HomeChoiceOption.Exit),
-  ])
-}

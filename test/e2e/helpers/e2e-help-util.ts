@@ -14,14 +14,6 @@ export default class E2eHelpUtil extends E2eBaseUtil {
     return subCommands.concat(['-h'])
   }
 
-  static splitChunksOnNewline(chunks: string[]): string[] {
-    const splitChunks: string[] = []
-    for (const chunk of chunks) {
-      chunk.split(/\\+n/).forEach((splitChunk) => splitChunks.push(splitChunk.replace(/\\+/g, '\\')))
-    }
-    return splitChunks
-  }
-
   static async getHelpExecutableName(): Promise<string> {
     let executableName = await getExecutableName()
     const nonWindowsStart = './'

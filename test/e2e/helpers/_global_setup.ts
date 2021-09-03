@@ -30,5 +30,5 @@ export default async (): Promise<void> => {
     // debug file does not exist, no need to delete
   }
   await fs.createFile(E2eConfig.FILE.Debug)
-  await E2eConfig.appendToDebugLog(`getExecutableName(): '${getExecutableName()}'`)
+  await E2eConfig.appendToDebugLog(`getExecutableName(): "${getExecutableName()}"`)
 }

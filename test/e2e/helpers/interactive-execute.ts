@@ -64,12 +64,12 @@ export default async function ({
 
   if (debugRecordAndReplyChunk) {
     recordAndReply(`"${debugRecordAndReplyChunk}"`, '')
-    console.log(`chunks: '${JSON.stringify(chunks, null, 2)}'`)
+    console.log(`chunks: "${JSON.stringify(chunks, null, 2)}"`)
   }
 
   function printOutDebug(key: string, value: string | boolean | number) {
     if (debugRecordAndReplyChunk) {
-      console.log(`${key}: '${value}'`)
+      console.log(`${key}: "${value}"`)
     }
   }
 
@@ -80,59 +80,61 @@ export default async function ({
     const line = escapeChunk(chunk.toString(), !debugRecordAndReplyChunk)
     printOutDebug('line', line)
     if (line !== '' && line !== '\n') {
-      const nlCommandTypes = line.split(/(Command types:\\n)/) // sometimes the "Command types:" does not get output to its own line
+      const nlCommandTypes = line.split(/(Command types:\\n)|(\\nCommand types:)/) // sometimes the "Command types:" does not get output to its own line
       printOutDebug('nlCommandTypes', JSON.stringify(nlCommandTypes, null, 2))
       for (let i = 0; i < nlCommandTypes.length; i++) {
         const nlCommandType = nlCommandTypes[i]
         printOutDebug('nlCommandType', nlCommandType)
-        const nlPeriods = nlCommandType.split(/\.\\n/) // sometimes multiple string outputs get added to same line
-        printOutDebug('nlPeriods', JSON.stringify(nlPeriods, null, 2))
-        for (let j = 0; j < nlPeriods.length; j++) {
-          let nlPeriod = nlPeriods[j]
-          printOutDebug('nlPeriod', nlPeriod)
-          if (nlPeriods.length > 1 && !nlPeriod.endsWith('.') && !nlPeriod.startsWith('?')) {
-            printOutDebug('adding period to nlPeriod', true)
-            nlPeriod += '.'
-          }
-          let k: number = j + 1
-          let nonDigitMet = false // sometimes digits split across mulitple lines when they should not be
-          while (k < nlPeriods.length && !nonDigitMet) {
-            printOutDebug('k', k)
-            printOutDebug('nlPeriods[j]', nlPeriods[k])
-            if (new RegExp(/\d+/).test(nlPeriods[k])) {
-              printOutDebug('new RegExp(/\\d+/).test(nlPeriods[j])', true)
-              nlPeriod += `${nlPeriod.endsWith('.') ? '' : '.'}${nlPeriods[k]}`
-              j++
-            } else {
-              printOutDebug('nonDigitMet', true)
-              nonDigitMet = true
+        if (nlCommandType) {
+          const nlPeriods = nlCommandType.split(/\.\\n/) // sometimes multiple string outputs get added to same line
+          printOutDebug('nlPeriods', JSON.stringify(nlPeriods, null, 2))
+          for (let j = 0; j < nlPeriods.length; j++) {
+            let nlPeriod = nlPeriods[j]
+            printOutDebug('nlPeriod', nlPeriod)
+            if (nlPeriods.length > 1 && !nlPeriod.endsWith('.') && !nlPeriod.startsWith('?')) {
+              printOutDebug('adding period to nlPeriod', true)
+              nlPeriod += '.'
             }
-            k++
-          }
-          const nlColons = nlPeriod.split(/:\\n/) // sometimes multiple string outputs get added to same line
-          printOutDebug('nlColons', JSON.stringify(nlColons, null, 2))
-          for (let nlColon of nlColons) {
-            printOutDebug('nlColon', nlColon)
-            if (nlColon) {
-              if (nlColons.length > 1 && !(nlColon.endsWith(':') || nlColon.endsWith('.') || nlColon.endsWith(']'))) {
-                printOutDebug('adding colon to nlColon', true)
-                nlColon += ':'
+            let k: number = j + 1
+            let nonDigitMet = false // sometimes digits split across mulitple lines when they should not be
+            while (k < nlPeriods.length && !nonDigitMet) {
+              printOutDebug('k', k)
+              printOutDebug('nlPeriods[j]', nlPeriods[k])
+              if (new RegExp(/\d+/).test(nlPeriods[k])) {
+                printOutDebug('new RegExp(/\\d+/).test(nlPeriods[j])', true)
+                nlPeriod += `${nlPeriod.endsWith('.') ? '' : '.'}${nlPeriods[k]}`
+                j++
+              } else {
+                printOutDebug('nonDigitMet', true)
+                nonDigitMet = true
               }
-              const questionChunks = nlColon.split(/(?<!^)(\? (?!\(|Yes|No))/) // sometimes multiple lines come in a single chunk. Split on those (but not boolean questions or choices)
-              printOutDebug('questionChunks', JSON.stringify(questionChunks, null, 2))
-              chunks.push(escapeChunk(questionChunks[0]))
-              if (questionChunks.length > 1) {
-                for (let m = 2; m < questionChunks.length; m = m + 2) {
-                  chunks.push(escapeChunk(`${questionChunks[m - 1]}${questionChunks[m]}`))
+              k++
+            }
+            const nlColons = nlPeriod.split(/:\\n/) // sometimes multiple string outputs get added to same line
+            printOutDebug('nlColons', JSON.stringify(nlColons, null, 2))
+            for (let nlColon of nlColons) {
+              printOutDebug('nlColon', nlColon)
+              if (nlColon) {
+                if (nlColons.length > 1 && !(nlColon.endsWith(':') || nlColon.endsWith('.') || nlColon.endsWith(']'))) {
+                  printOutDebug('adding colon to nlColon', true)
+                  nlColon += ':'
                 }
-              }
-              if (proc) {
-                if (inputIndex < inputs.length) {
-                  delayReply(inputs[inputIndex])
-                } else {
-                  setTimeout(() => {
-                    proc?.stdin?.end()
-                  }, maxQuietPeriodMs)
+                const questionChunks = nlColon.split(/(?<!^)(\? (?!\(|Yes|No))/) // sometimes multiple lines come in a single chunk. Split on those (but not boolean questions or choices)
+                printOutDebug('questionChunks', JSON.stringify(questionChunks, null, 2))
+                chunks.push(escapeChunk(questionChunks[0]))
+                if (questionChunks.length > 1) {
+                  for (let m = 2; m < questionChunks.length; m = m + 2) {
+                    chunks.push(escapeChunk(`${questionChunks[m - 1]}${questionChunks[m]}`))
+                  }
+                }
+                if (proc) {
+                  if (inputIndex < inputs.length) {
+                    delayReply(inputs[inputIndex])
+                  } else {
+                    setTimeout(() => {
+                      proc?.stdin?.end()
+                    }, maxQuietPeriodMs)
+                  }
                 }
               }
             }
@@ -193,10 +195,13 @@ export function getExecutableName(): string {
 function escapeChunk(chunk: string, stringify = true): string {
   let escapedChunk = `${stripAnsiChars(stringify ? JSON.stringify(chunk) : chunk)}`
   escapedChunk = escapedChunk.substring(1, escapedChunk.length - 1) // remove enclosing double quotes from stringify
+  escapedChunk = escapedChunk.replace(/\\n\\n/g, '\\n \\n') // separate out consecutive newlines so subsequent newline removal does not effect them
+  escapedChunk = escapedChunk.replace(/([a-zA-Z])\\n([a-zA-Z])/, '$1$2') // remove newlines that are next to letters
+  escapedChunk = escapedChunk.replace(/\\n \\n/g, '\\n\\n') // re-join consecutive newlines to undo separation from above
   escapedChunk = escapedChunk.replace(/\\+n$/, '') // if ends in newline, remove newline
   escapedChunk = escapedChunk.replace(/❯/g, '>') // some shells print out strange symbol, convert it to standard
   escapedChunk = escapedChunk.replace(/\\+"/g, '"') // remove escape chars in front of double quotes
-  return escapedChunk
+  return escapedChunk.trimEnd()
 }
 
 function stripAnsiChars(words: string): string {

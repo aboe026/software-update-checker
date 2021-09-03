@@ -1,7 +1,6 @@
 import E2eEditUtil from './helpers/e2e-edit-util'
-import E2eHomeUtil, { HomeChoiceOption } from './helpers/e2e-home-util'
-import { InstalledReconfiguration, LatestReconfiguration } from './helpers/e2e-add-util'
-import interactiveExecute, { KEYS } from './helpers/interactive-execute'
+import E2eTestUtil from './helpers/e2e-test-util'
+import { KEYS } from './helpers/interactive-execute'
 import Software from '../../src/software/software'
 import Website from '../helpers/website'
 
@@ -14,20 +13,20 @@ describe('Edit Interactive', () => {
   })
   describe('invalid', () => {
     it('edit interactive with non-existent softwares file says nothing to edit', async () => {
-      await E2eEditUtil.verifySoftwares(undefined, false)
-      await testNoSoftwaresEdit()
+      await E2eEditUtil.verifySoftwaresFileDoesNotExist()
+      await E2eTestUtil.editInteractiveNoSoftwares()
       await E2eEditUtil.verifySoftwares([])
     })
     it('edit interactive with no content softwares file says nothing to edit', async () => {
       await E2eEditUtil.setSoftwares(undefined)
       await E2eEditUtil.verifySoftwares(undefined)
-      await testNoSoftwaresEdit()
+      await E2eTestUtil.editInteractiveNoSoftwares()
       await E2eEditUtil.verifySoftwares([])
     })
     it('edit interactive with empty array softwares file says nothing to edit', async () => {
       await E2eEditUtil.setSoftwares([])
       await E2eEditUtil.verifySoftwares([])
-      await testNoSoftwaresEdit()
+      await E2eTestUtil.editInteractiveNoSoftwares()
       await E2eEditUtil.verifySoftwares([])
     })
     it('edit interactive prevents using an existing name', async () => {
@@ -55,7 +54,7 @@ describe('Edit Interactive', () => {
       })
       await E2eEditUtil.setSoftwares([firstSoftware, secondSoftware])
       await E2eEditUtil.verifySoftwares([firstSoftware, secondSoftware])
-      await testEditNameAlreadyExists({
+      await E2eTestUtil.editInteractiveDuplicate({
         existingSoftwares: [firstSoftware, secondSoftware],
         positionToEdit: 0,
         name: secondSoftware.name,
@@ -78,7 +77,7 @@ describe('Edit Interactive', () => {
       })
       await E2eEditUtil.setSoftwares([software])
       await E2eEditUtil.verifySoftwares([software])
-      await testReconfigureEdit({
+      await E2eTestUtil.editInteractiveReconfigure({
         existingSoftwares: [software],
         positionToEdit: 0,
         name: `${software.name} edited`,
@@ -114,7 +113,7 @@ describe('Edit Interactive', () => {
         await Website.stop()
         await E2eEditUtil.setSoftwares([software])
         await E2eEditUtil.verifySoftwares([software])
-        await testReconfigureEdit({
+        await E2eTestUtil.editInteractiveReconfigure({
           existingSoftwares: [software],
           positionToEdit: 0,
           name: `${software.name} edited`,
@@ -171,7 +170,7 @@ describe('Edit Interactive', () => {
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
       })
-      await testDefaultEdit({
+      await E2eTestUtil.editInteractive({
         existingSoftwares: [oldSoftware],
         positionToEdit: 0,
         newSoftware: editedSoftware,
@@ -218,7 +217,7 @@ describe('Edit Interactive', () => {
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
       })
-      await testDefaultEdit({
+      await E2eTestUtil.editInteractive({
         existingSoftwares: [firstSoftware, lastSoftware],
         positionToEdit: 0,
         newSoftware: editedSoftware,
@@ -265,7 +264,7 @@ describe('Edit Interactive', () => {
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
       })
-      await testDefaultEdit({
+      await E2eTestUtil.editInteractive({
         existingSoftwares: [firstSoftware, lastSoftware],
         positionToEdit: 1,
         newSoftware: editedSoftware,
@@ -303,7 +302,7 @@ describe('Edit Interactive', () => {
       })
       await E2eEditUtil.setSoftwares([oldSoftware])
       await E2eEditUtil.verifySoftwares([oldSoftware])
-      await testReconfigureEdit({
+      await E2eTestUtil.editInteractiveReconfigure({
         existingSoftwares: [oldSoftware],
         positionToEdit: 0,
         name: newSoftware.name,
@@ -365,7 +364,7 @@ describe('Edit Interactive', () => {
       })
       await E2eEditUtil.setSoftwares([oldSoftware])
       await E2eEditUtil.verifySoftwares([oldSoftware])
-      await testReconfigureEdit({
+      await E2eTestUtil.editInteractiveReconfigure({
         existingSoftwares: [oldSoftware],
         positionToEdit: 0,
         name: newSoftware.name,
@@ -398,124 +397,3 @@ describe('Edit Interactive', () => {
     })
   })
 })
-
-async function testNoSoftwaresEdit() {
-  const response = await interactiveExecute({
-    inputs: [...E2eHomeUtil.getInputs(HomeChoiceOption.Edit), ...E2eHomeUtil.getInputs(HomeChoiceOption.Exit)],
-  })
-  await E2eEditUtil.validateChunks(response.chunks, [
-    ...E2eHomeUtil.getChunks(HomeChoiceOption.Edit),
-    E2eEditUtil.MESSAGES.NoSoftwares,
-    ...E2eHomeUtil.getChunks(HomeChoiceOption.Exit),
-  ])
-}
-
-async function testEditNameAlreadyExists({
-  existingSoftwares,
-  positionToEdit,
-  name,
-}: {
-  existingSoftwares: Software[]
-  positionToEdit: number
-  name: string
-}) {
-  const existingName = existingSoftwares[positionToEdit].name
-  const response = await interactiveExecute({
-    inputs: [
-      ...E2eHomeUtil.getInputs(HomeChoiceOption.Edit),
-      ...E2eEditUtil.getInputsNavigate(positionToEdit),
-      name,
-      KEYS.Enter,
-    ],
-  })
-  await E2eEditUtil.validateChunks(response.chunks, [
-    ...E2eHomeUtil.getChunks(HomeChoiceOption.Edit),
-    ...E2eEditUtil.getChunksNavigate({
-      existingSoftwares,
-      nameToEdit: existingName,
-    }),
-    {
-      question: 'Name to identify software configuration',
-      answer: name,
-      default: existingName,
-    },
-    E2eEditUtil.getNameInUseMessage(name),
-    `? Name to identify software configuration: (${existingName}) `,
-  ])
-}
-
-async function testReconfigureEdit({
-  existingSoftwares,
-  positionToEdit,
-  name,
-  installed,
-  latest = [],
-}: {
-  existingSoftwares: Software[]
-  positionToEdit: number
-  name: string
-  installed: InstalledReconfiguration[]
-  latest?: LatestReconfiguration[]
-}) {
-  const response = await interactiveExecute({
-    inputs: [
-      ...E2eHomeUtil.getInputs(HomeChoiceOption.Edit),
-      ...E2eEditUtil.getInputsReconfigure({
-        position: positionToEdit,
-        name,
-        installed,
-        latest,
-        oldSoftware: existingSoftwares[positionToEdit],
-      }),
-      ...E2eHomeUtil.getInputs(HomeChoiceOption.Exit),
-    ],
-  })
-  await E2eEditUtil.validateChunks(response.chunks, [
-    ...E2eHomeUtil.getChunks(HomeChoiceOption.Edit),
-    ...E2eEditUtil.getChunksReconfigure({
-      existingSoftwares,
-      oldSoftware: existingSoftwares[positionToEdit],
-      name,
-      installed,
-      latest,
-    }),
-    ...E2eHomeUtil.getChunks(HomeChoiceOption.Exit),
-  ])
-}
-
-async function testDefaultEdit({
-  existingSoftwares,
-  positionToEdit,
-  newSoftware,
-  newInstalledVersion,
-  newLatestVersion,
-}: {
-  existingSoftwares: Software[]
-  positionToEdit: number
-  newSoftware: Software
-  newInstalledVersion: string
-  newLatestVersion: string
-}) {
-  const response = await interactiveExecute({
-    inputs: [
-      ...E2eHomeUtil.getInputs(HomeChoiceOption.Edit),
-      ...E2eEditUtil.getInputs({
-        position: positionToEdit,
-        newSoftware,
-        oldSoftware: existingSoftwares[positionToEdit],
-      }),
-      ...E2eHomeUtil.getInputs(HomeChoiceOption.Exit),
-    ],
-  })
-  await E2eEditUtil.validateChunks(response.chunks, [
-    ...E2eHomeUtil.getChunks(HomeChoiceOption.Edit),
-    ...E2eEditUtil.getChunks({
-      existingSoftwares,
-      oldSoftware: existingSoftwares[positionToEdit],
-      newSoftware,
-      installedVersion: newInstalledVersion,
-      latestVersion: newLatestVersion,
-    }),
-    ...E2eHomeUtil.getChunks(HomeChoiceOption.Exit),
-  ])
-}

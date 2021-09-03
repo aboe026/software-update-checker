@@ -1,6 +1,5 @@
-import E2eAddUtil, { InstalledReconfiguration, LatestReconfiguration } from './helpers/e2e-add-util'
-import E2eHomeUtil, { HomeChoiceOption } from './helpers/e2e-home-util'
-import interactiveExecute, { KEYS } from './helpers/interactive-execute'
+import E2eAddUtil from './helpers/e2e-add-util'
+import E2eTestUtil from './helpers/e2e-test-util'
 import Software from '../../src/software/software'
 import Website from '../helpers/website'
 
@@ -26,7 +25,7 @@ describe('Add Interactive', () => {
       })
       await E2eAddUtil.setSoftwares([existing])
       await E2eAddUtil.verifySoftwares([existing])
-      await testAddNameAlreadyExists({
+      await E2eTestUtil.addInteractiveDuplicate({
         name: existing.name,
       })
       await E2eAddUtil.setSoftwares([existing])
@@ -36,7 +35,7 @@ describe('Add Interactive', () => {
       await E2eAddUtil.setSoftwares([])
       await E2eAddUtil.verifySoftwares([])
       const installedError = 'does not compute'
-      await testReconfigureAdd({
+      await E2eTestUtil.addInteractiveReconfigure({
         name: 'e2e add interactive installed error no reconfigure',
         installed: [
           {
@@ -59,7 +58,7 @@ describe('Add Interactive', () => {
         const url = Website.getErrorUrl('could not connect')
         const port = Website.getPort()
         await Website.stop()
-        await testReconfigureAdd({
+        await E2eTestUtil.addInteractiveReconfigure({
           name: 'e2e add interactive latest error no reconfigure',
           installed: [
             {
@@ -88,7 +87,7 @@ describe('Add Interactive', () => {
   })
   describe('valid', () => {
     it('add interactive valid software with non-existent softwares file', async () => {
-      await E2eAddUtil.verifySoftwares(undefined, false)
+      await E2eAddUtil.verifySoftwaresFileDoesNotExist()
       const installedVersion = '1.0.0'
       const latestVersion = '1.0.1'
       const software = new Software({
@@ -102,7 +101,7 @@ describe('Add Interactive', () => {
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
       })
-      await testDefaultAdd({
+      await E2eTestUtil.addInteractive({
         software,
         installedVersion,
         latestVersion,
@@ -125,7 +124,7 @@ describe('Add Interactive', () => {
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
       })
-      await testDefaultAdd({
+      await E2eTestUtil.addInteractive({
         software,
         installedVersion,
         latestVersion,
@@ -148,7 +147,7 @@ describe('Add Interactive', () => {
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
       })
-      await testDefaultAdd({
+      await E2eTestUtil.addInteractive({
         software,
         installedVersion,
         latestVersion,
@@ -182,7 +181,7 @@ describe('Add Interactive', () => {
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
       })
-      await testDefaultAdd({
+      await E2eTestUtil.addInteractive({
         software,
         installedVersion,
         latestVersion,
@@ -216,7 +215,7 @@ describe('Add Interactive', () => {
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
       })
-      await testDefaultAdd({
+      await E2eTestUtil.addInteractive({
         software,
         installedVersion,
         latestVersion,
@@ -261,7 +260,7 @@ describe('Add Interactive', () => {
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
       })
-      await testDefaultAdd({
+      await E2eTestUtil.addInteractive({
         software,
         installedVersion,
         latestVersion,
@@ -286,7 +285,7 @@ describe('Add Interactive', () => {
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
       })
-      await testReconfigureAdd({
+      await E2eTestUtil.addInteractiveReconfigure({
         name: software.name,
         installed: [
           {
@@ -334,7 +333,7 @@ describe('Add Interactive', () => {
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
       })
-      await testReconfigureAdd({
+      await E2eTestUtil.addInteractiveReconfigure({
         name: software.name,
         installed: [
           {
@@ -365,78 +364,3 @@ describe('Add Interactive', () => {
     })
   })
 })
-
-async function testAddNameAlreadyExists({ name }: { name: string }) {
-  const response = await interactiveExecute({
-    inputs: [...E2eHomeUtil.getInputs(HomeChoiceOption.Add), name, KEYS.Enter],
-  })
-  await E2eAddUtil.validateChunks(response.chunks, [
-    ...E2eHomeUtil.getChunks(HomeChoiceOption.Add),
-    {
-      question: 'Name to identify software configuration',
-      answer: name,
-    },
-    E2eAddUtil.getNameInUseMessage(name),
-    '? Name to identify software configuration: ',
-  ])
-}
-
-async function testReconfigureAdd({
-  name,
-  installed,
-  latest = [],
-}: {
-  name: string
-  installed: InstalledReconfiguration[]
-  latest?: LatestReconfiguration[]
-}) {
-  const response = await interactiveExecute({
-    inputs: [
-      ...E2eHomeUtil.getInputs(HomeChoiceOption.Add),
-      ...E2eAddUtil.getInputsReconfigure({
-        name,
-        installed,
-        latest,
-      }),
-      ...E2eHomeUtil.getInputs(HomeChoiceOption.Exit),
-    ],
-  })
-  await E2eAddUtil.validateChunks(response.chunks, [
-    ...E2eHomeUtil.getChunks(HomeChoiceOption.Add),
-    ...E2eAddUtil.getChunksReconfigure({
-      name,
-      installed,
-      latest,
-    }),
-    ...E2eHomeUtil.getChunks(HomeChoiceOption.Exit),
-  ])
-}
-
-async function testDefaultAdd({
-  software,
-  installedVersion,
-  latestVersion,
-}: {
-  software: Software
-  installedVersion: string
-  latestVersion: string
-}) {
-  const response = await interactiveExecute({
-    inputs: [
-      ...E2eHomeUtil.getInputs(HomeChoiceOption.Add),
-      ...E2eAddUtil.getInputs({
-        software,
-      }),
-      ...E2eHomeUtil.getInputs(HomeChoiceOption.Exit),
-    ],
-  })
-  await E2eAddUtil.validateChunks(response.chunks, [
-    ...E2eHomeUtil.getChunks(HomeChoiceOption.Add),
-    ...E2eAddUtil.getChunks({
-      software,
-      installedVersion,
-      latestVersion,
-    }),
-    ...E2eHomeUtil.getChunks(HomeChoiceOption.Exit),
-  ])
-}
