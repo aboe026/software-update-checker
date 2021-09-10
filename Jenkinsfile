@@ -36,6 +36,7 @@ node {
               file: buildJsonFile,
               pretty: 2
             )
+            sh 'cat build.json'
           }
 
           parallel (
