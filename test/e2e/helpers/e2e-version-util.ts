@@ -18,6 +18,7 @@ export default class E2eVersionUtil extends E2eBaseUtil {
 
   static async getChunks(): Promise<string[]> {
     const packageJson = await fs.readJSON(path.join(__dirname, '../../../package.json'))
-    return [packageJson.version]
+    const buildJson = await fs.readJSON(path.join(__dirname, '../../../build.json'))
+    return [`${packageJson.version}+${buildJson.number}`]
   }
 }

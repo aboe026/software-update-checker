@@ -1,6 +1,6 @@
 {
   "name": "software-update-checker-cli",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "author": "Adam Boe",
   "description": "A command line interface to check if local software installs have updates",
   "private": false,
@@ -30,8 +30,9 @@
     "detect:duplicate-test-resources": "ts-node scripts/detect-duplicate-test-resources.ts",
     "debug:record-and-replay": "ts-node scripts/debug-record-and-replay.ts",
     "dist": "npm run build && npm run pack",
-    "lint": "eslint . && prettier --check . && npm run detect:duplicate-test-resources",
+    "lint": "eslint . && prettier --check . && npm run detect:duplicate-test-resources && npm run lint:releases-json",
     "lint:fix": "eslint --fix . && prettier --write .",
+    "lint:releases-json": "ts-node scripts/lint-releases-json.ts",
     "pack": "pkg --targets=node14-linux-x64,node14-macos-x64,node14-win-x64 --out-path=dist --config=.pkg.config.json build/src/index.js",
     "run-mock-server": "ts-node scripts/run-mock-server.ts",
     "start": "ts-node src/index.ts",

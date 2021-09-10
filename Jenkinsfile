@@ -27,6 +27,17 @@ node {
             sh 'npm ci'
           }
 
+          stage('Set Build Number') {
+            def buildJsonFile = 'build.json'
+            def buildJson = readJSON file: buildJsonFile
+            buildJson.number = env.BUILD_ID
+            writeJSON (
+              json: buildJson,
+              file: buildJsonFile,
+              pretty: 2
+            )
+          }
+
           parallel (
             'test': {
 
