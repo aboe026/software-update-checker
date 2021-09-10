@@ -14,17 +14,33 @@ node {
 
         docker.image(nodeImage).inside() {
 
-          stage('Prep') {
-            checkout scm
-            packageJson = readJSON file: 'package.json'
-            version = "${packageJson.version}+${env.BUILD_ID}"
-            currentBuild.displayName = version
+          stage('Runtime Versions') {
             sh 'node --version'
             sh 'npm --version'
           }
 
+          stage('Checkout') {
+            checkout scm
+          }
+
           stage('Install') {
             sh 'npm ci'
+          }
+
+          stage('Set Build Number') {
+            packageJson = readJSON file: 'package.json'
+            version = "${packageJson.version}+${env.BUILD_ID}"
+            currentBuild.displayName = version
+
+            def buildJsonFile = 'build.json'
+            def buildJson = readJSON file: buildJsonFile
+            buildJson.number = env.BUILD_ID
+            writeJSON (
+              json: buildJson,
+              file: buildJsonFile,
+              pretty: 2 // doesn't seem to work if single element in JSON object :(
+            )
+            sh 'npx prettier --write build.json' // TO prevent error from prettier during lint
           }
 
           parallel (
