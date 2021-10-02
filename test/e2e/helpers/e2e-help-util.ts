@@ -14,15 +14,6 @@ export default class E2eHelpUtil extends E2eBaseUtil {
     return subCommands.concat(['-h'])
   }
 
-  static getHelpExecutableName(): string {
-    let executableName = getExecutableName()
-    const nonWindowsStart = './'
-    if (executableName.startsWith(nonWindowsStart)) {
-      executableName = executableName.substring(nonWindowsStart.length)
-    }
-    return executableName
-  }
-
   static getSpacesForExecutableName(executableName: string): string {
     let spaces = ''
     for (let i = 0; i < executableName.length; i++) {
@@ -41,7 +32,7 @@ export default class E2eHelpUtil extends E2eBaseUtil {
   }
 
   static getRootChunks(): string[] {
-    const executableName = E2eHelpUtil.getHelpExecutableName()
+    const executableName = getExecutableName()
     return [
       `${executableName} [add|view|edit|remove]`,
       '',
@@ -61,7 +52,7 @@ export default class E2eHelpUtil extends E2eBaseUtil {
   }
 
   static getAddChunks(): string[] {
-    const executableName = E2eHelpUtil.getHelpExecutableName()
+    const executableName = getExecutableName()
     const spaces = E2eHelpUtil.getSpacesForExecutableName(executableName)
     return [
       `${executableName} add <static|dynamic>`,
@@ -80,7 +71,7 @@ export default class E2eHelpUtil extends E2eBaseUtil {
 
   static getStaticChunks(): string[] {
     return [
-      `${E2eHelpUtil.getHelpExecutableName()} add static`,
+      `${getExecutableName()} add static`,
       '',
       E2eHelpUtil.MESSAGES.Static,
       E2eHelpUtil.MESSAGES.StaticExample,
@@ -107,7 +98,7 @@ export default class E2eHelpUtil extends E2eBaseUtil {
 
   static getDynamicChunks(): string[] {
     return [
-      `${E2eHelpUtil.getHelpExecutableName()} add dynamic`,
+      `${getExecutableName()} add dynamic`,
       '',
       E2eHelpUtil.MESSAGES.Dynamic,
       E2eHelpUtil.MESSAGES.DynamicExample,
@@ -135,18 +126,12 @@ export default class E2eHelpUtil extends E2eBaseUtil {
   }
 
   static getViewChunks(): string[] {
-    return [
-      `${E2eHelpUtil.getHelpExecutableName()} view`,
-      '',
-      E2eHelpUtil.MESSAGES.View,
-      '',
-      ...this.getGlobalsChunks(),
-    ]
+    return [`${getExecutableName()} view`, '', E2eHelpUtil.MESSAGES.View, '', ...this.getGlobalsChunks()]
   }
 
   static getEditChunks(): string[] {
     return [
-      `${E2eHelpUtil.getHelpExecutableName()} edit <existing>`,
+      `${getExecutableName()} edit <existing>`,
       '',
       E2eHelpUtil.MESSAGES.Edit,
       '',
@@ -180,7 +165,7 @@ export default class E2eHelpUtil extends E2eBaseUtil {
 
   static getRemoveChunks(): string[] {
     return [
-      `${E2eHelpUtil.getHelpExecutableName()} remove <existing>`,
+      `${getExecutableName()} remove <existing>`,
       '',
       E2eHelpUtil.MESSAGES.Delete,
       '',

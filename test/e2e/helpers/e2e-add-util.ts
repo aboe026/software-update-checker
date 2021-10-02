@@ -263,11 +263,15 @@ export default class E2eAddUtil extends E2eBaseUtil {
     defaults,
     installed,
     latest,
+    executableDirectory,
+    executableFile,
   }: {
     name: string
     defaults?: Software
     installed: InstalledReconfiguration[]
     latest: LatestReconfiguration[]
+    executableDirectory?: string
+    executableFile?: string
   }): (string | StringPrompt | BooleanPrompt | ChoicePrompt)[] {
     const chunks: (string | StringPrompt | BooleanPrompt | ChoicePrompt)[] = [
       {
@@ -288,8 +292,8 @@ export default class E2eAddUtil extends E2eBaseUtil {
           },
           {
             question: `${E2eAddUtil.MESSAGES.Command} ${E2eAddUtil.getCommandExampleMessage({
-              executableName: getExecutableName(),
-              directory: E2eConfig.DIRECTORY.Executables,
+              executableName: executableFile || getExecutableName(),
+              directory: executableDirectory || E2eConfig.DIRECTORY.Executables,
             })}`,
             answer: currentConfig.command,
             default: isSoftware(previousConfig)
