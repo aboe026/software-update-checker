@@ -82,10 +82,15 @@ export async function getFromExecutable({
   args?: string
   shell?: string
 }): Promise<string> {
-  if (command === SelfReference.getName() && (directory === '.' || directory === SelfReference.getDirectory())) {
+  const defaultEntrypoint = (process as any)?.pkg?.defaultEntrypoint
+  if (
+    command === SelfReference.getName() &&
+    (directory === '.' || directory === SelfReference.getDirectory()) &&
+    defaultEntrypoint
+  ) {
     // TODO: the "./" should be part of the example command in the future (when the working directory is a separate question)
     // rather than being added in here manually
-    command = `./${command} ${(process as any)?.pkg?.defaultEntrypoint}` // To get around self-reference/recursion: https://github.com/vercel/pkg/issues/376
+    command = `./${command} ${defaultEntrypoint}` // To get around self-reference/recursion: https://github.com/vercel/pkg/issues/376
   }
   const options: ExecOptions = {
     cwd: directory,

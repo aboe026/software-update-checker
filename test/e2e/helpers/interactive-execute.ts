@@ -24,11 +24,10 @@ export default async function ({
   debugRecordAndReplyChunk?: string
 }): Promise<ExecutableResponse> {
   const workingDirectory = directory || E2eConfig.DIRECTORY.Executables
-  let defaultExecutable = getExecutableName()
-  if (os.platform() !== 'win32') {
-    defaultExecutable = `./${defaultExecutable}`
+  let executable = file || getExecutableName()
+  if (!executable.startsWith('./') && os.platform() !== 'win32') {
+    executable = `./${executable}`
   }
-  const executable = file || defaultExecutable
   if (!debugRecordAndReplyChunk) {
     await E2eConfig.appendToDebugLog(`Directory: ${directory}`)
     await E2eConfig.appendToDebugLog(`File: ${executable}`)
