@@ -1,6 +1,12 @@
+import fs from 'fs-extra'
+import path from 'path'
+
 import E2eAddUtil from './helpers/e2e-add-util'
+import E2eConfig from './helpers/e2e-config'
 import E2eTestUtil from './helpers/e2e-test-util'
+import { getExecutableName } from './helpers/interactive-execute'
 import Software from '../../src/software/software'
+import { version } from '../../package.json'
 import Website from '../helpers/website'
 
 describe('Add Interactive', () => {
@@ -361,6 +367,63 @@ describe('Add Interactive', () => {
         ],
       })
       await E2eAddUtil.verifySoftwares([software])
+    })
+    it('add interactive valid if using defaults', async () => {
+      await E2eAddUtil.verifySoftwaresFileDoesNotExist()
+      const installedVersion = version
+      const latestVersion = '1.2.1.0'
+      const software = new Software({
+        name: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.NameExample),
+        executable: {
+          command: E2eAddUtil.getExampleFromMessage(E2eAddUtil.getCommandExampleMessage({})),
+        },
+        args: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ArgumentsExample),
+        shell: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ShellExample),
+        installedRegex: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.InstalledRegexExample),
+        url: Website.getFileUrl('latest-release.html'),
+        latestRegex: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.LatestRegexExample),
+      })
+      await E2eTestUtil.addInteractive({
+        software,
+        installedVersion,
+        latestVersion,
+      })
+      await E2eAddUtil.verifySoftwares([software])
+    })
+    it('add interactive valid if renamed executable using defaults', async () => {
+      const renamedExecutableDir = path.join(E2eConfig.DIRECTORY.Temp, 'renamed-executable')
+      const renamedExecutableFile = `renamed-${getExecutableName()}`
+      const renamedExecutable = path.join(renamedExecutableDir, renamedExecutableFile)
+      try {
+        await fs.ensureDir(renamedExecutableDir)
+        await fs.copyFile(path.join(E2eConfig.DIRECTORY.Executables, getExecutableName()), renamedExecutable)
+        await E2eAddUtil.verifySoftwaresFileDoesNotExist()
+        const installedVersion = version
+        const latestVersion = '1.2.1.0'
+        const software = new Software({
+          name: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.NameExample),
+          executable: {
+            command: renamedExecutable,
+          },
+          args: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ArgumentsExample),
+          shell: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ShellExample),
+          installedRegex: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.InstalledRegexExample),
+          url: Website.getFileUrl('latest-release.html'),
+          latestRegex: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.LatestRegexExample),
+        })
+        await E2eTestUtil.addInteractive({
+          software,
+          installedVersion,
+          latestVersion,
+          executableDirectory: renamedExecutableDir,
+          executableFile: renamedExecutableFile,
+        })
+        await E2eAddUtil.verifySoftwares([software])
+      } finally {
+        if (await fs.pathExists(renamedExecutableDir)) {
+          await fs.remove(renamedExecutableDir)
+        }
+      }
     })
   })
 })

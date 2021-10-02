@@ -67,7 +67,7 @@ describe('Lifecycle Interactive', () => {
     })
     await E2eBaseUtil.validateChunks(response.chunks, [
       ...E2eHomeUtil.getChunks(HomeChoiceOption.View),
-      E2eViewUtil.MESSAGES.NoSoftwares,
+      E2eViewUtil.MESSAGES.NoSoftwaresToView,
       ...E2eHomeUtil.getChunks(HomeChoiceOption.Add),
       ...E2eAddUtil.getChunks({
         software,
@@ -109,7 +109,7 @@ describe('Lifecycle Interactive', () => {
         softwareToDelete: updatedSoftware,
       }),
       ...E2eHomeUtil.getChunks(HomeChoiceOption.View),
-      E2eViewUtil.MESSAGES.NoSoftwares,
+      E2eViewUtil.MESSAGES.NoSoftwaresToView,
       ...E2eHomeUtil.getChunks(HomeChoiceOption.Exit),
     ])
   })

@@ -1,4 +1,6 @@
 import express from 'express'
+import fs from 'fs-extra'
+import path from 'path'
 import { Server } from 'http'
 
 const app = express()
@@ -7,6 +9,9 @@ app.get('/', function (req, res) {
 })
 app.get('/error', function (req, res) {
   res.status(500).send(req.query.message)
+})
+app.get('/file', async function (req, res) {
+  res.send(await fs.readFile(path.join(__dirname, '../mocks', (req?.query?.name || '').toString())))
 })
 
 export default class Website {
@@ -72,6 +77,10 @@ export default class Website {
 
   static getResponseUrl(response: string): string {
     return `${Website.getBaseUrl()}?text=${encodeURIComponent(response)}`
+  }
+
+  static getFileUrl(mockFileName: string): string {
+    return `${Website.getBaseUrl()}/file?name=${encodeURIComponent(mockFileName)}`
   }
 
   static getErrorUrl(message: string): string {

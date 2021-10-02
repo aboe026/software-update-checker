@@ -1,7 +1,6 @@
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process'
 import concat from 'concat-stream'
 import os from 'os'
-import path from 'path'
 
 import E2eConfig from './e2e-config'
 
@@ -11,6 +10,8 @@ export default async function ({
   timeoutMs = 12000,
   minQuietPeriodMs = 200,
   maxQuietPeriodMs = 1000,
+  directory,
+  file,
   debugRecordAndReplyChunk,
 }: {
   args?: string[]
@@ -18,9 +19,18 @@ export default async function ({
   timeoutMs?: number
   minQuietPeriodMs?: number
   maxQuietPeriodMs?: number
+  directory?: string
+  file?: string
   debugRecordAndReplyChunk?: string
 }): Promise<ExecutableResponse> {
+  const workingDirectory = directory || E2eConfig.DIRECTORY.Executables
+  let executable = file || getExecutableName()
+  if (!executable.startsWith('./') && os.platform() !== 'win32') {
+    executable = `./${executable}`
+  }
   if (!debugRecordAndReplyChunk) {
+    await E2eConfig.appendToDebugLog(`Directory: ${directory}`)
+    await E2eConfig.appendToDebugLog(`File: ${executable}`)
     await E2eConfig.appendToDebugLog(`Arguments: ${JSON.stringify(args, null, 2)}`)
     await E2eConfig.appendToDebugLog(`Inputs: ${JSON.stringify(inputs, null, 2)}`)
     await E2eConfig.appendToDebugLog('Output:')
@@ -30,9 +40,9 @@ export default async function ({
 
   let proc: ChildProcessWithoutNullStreams | undefined = undefined
   if (!debugRecordAndReplyChunk) {
-    proc = spawn(getExecutableName(), args, {
+    proc = spawn(executable, args, {
       stdio: [null, null, null],
-      cwd: path.join(__dirname, '../../../dist'),
+      cwd: workingDirectory,
     })
     proc.stdin.setDefaultEncoding('utf-8')
   }
@@ -86,7 +96,7 @@ export default async function ({
         const nlCommandType = nlCommandTypes[i]
         printOutDebug('nlCommandType', nlCommandType)
         if (nlCommandType) {
-          const nlPeriods = nlCommandType.split(/\.\\n/) // sometimes multiple string outputs get added to same line
+          const nlPeriods = nlCommandType.split(/\.\\n(?=[^a-z])/) // sometimes multiple string outputs get added to same line. Don't split if next character on newline is lowercase letter (most likely an accidental newline)
           printOutDebug('nlPeriods', JSON.stringify(nlPeriods, null, 2))
           for (let j = 0; j < nlPeriods.length; j++) {
             let nlPeriod = nlPeriods[j]
@@ -185,9 +195,9 @@ export function getExecutableName(): string {
   if (os.platform() === 'win32') {
     name = `${name}win.exe`
   } else if (os.platform() === 'darwin') {
-    name = `./${name}macos`
+    name = `${name}macos`
   } else {
-    name = `./${name}linux`
+    name = `${name}linux`
   }
   return name
 }

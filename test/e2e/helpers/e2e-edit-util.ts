@@ -9,21 +9,6 @@ export default class E2eEditUtil extends E2eBaseUtil {
       question: 'Name of existing software configuration to edit',
     },
   }
-  static readonly MESSAGES = {
-    NoSoftwares: 'No softwares to edit. Please add a software to have something to edit.',
-    NoOptions: 'Must provide something to change as an option/flag',
-    NoCommandForStatic: 'The "static" executable type requires a "--command" option to be specified',
-    NoDirectoryForDynamic: 'The "dynamic" executable type requires a "--directory" option to be specified',
-    NoDirectoryForRegex: 'The "dynamic" executable type requires a "--regex" option to be specified',
-    IncompatibleDirectoryWithStaticType: 'The "--directory" option is not compatible with "--type=static"',
-    IncompatibleRegexWithStaticType: 'The "--regex" option is not compatible with "--type=static"',
-    IncompatibleCommandWithDynamicType: 'The "--command" option is not compatible with "--type=dynamic"',
-    IncompatibleCommandWithDirectory: 'Arguments command and directory are mutually exclusive',
-    IncompatibleCommandWithRegex: 'Arguments command and regex are mutually exclusive',
-    IncompatibleDirectoryWithStaticExecutable: 'The "--directory" option is not compatible with a "static" executable',
-    IncompatibleRegexWithStaticExecutable: 'The "--regex" option is not compatible with a "static" executable',
-    IncompatibleCommandWithDynamicExecutable: 'The "--command" option is not compatible with a "dynamic" executable',
-  }
 
   static getNonExistingSoftwareMessage(name: string): string {
     return `Invalid existing software "${name}", does not exist.`

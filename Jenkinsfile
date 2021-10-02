@@ -14,18 +14,36 @@ node {
 
         docker.image(nodeImage).inside() {
 
-          stage('Runtime Versions') {
-            sh 'node --version'
-            sh 'npm --version'
-          }
+          parallel (
+            'env': {
+              stage('Runtime Versions') {
+                sh 'node --version'
+                sh 'npm --version'
+              }
 
-          stage('Checkout') {
-            checkout scm
-          }
+              stage('Install PowerShell') {
+                // Download the Microsoft repository GPG keys
+                sh 'wget https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb'
+                // Register the Microsoft repository GPG keys
+                sh 'dpkg -i packages-microsoft-prod.deb'
+                // Update the list of products
+                sh 'apt-get update'
+                // Install PowerShell
+                sh 'apt-get install -y powershell'
+              }
+            },
+            'proj': {
+              stage('Checkout') {
+                checkout scm
+              }
 
-          stage('Install') {
-            sh 'npm ci'
-          }
+              stage('Install') {
+                sh 'npm ci'
+              }
+            }
+          )
+
+
 
           stage('Set Build Number') {
             packageJson = readJSON file: 'package.json'

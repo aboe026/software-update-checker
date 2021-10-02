@@ -4,3 +4,4 @@ dist
 node_modules
 test-results
 test/e2e/.temp-work-dir
+test/mocks

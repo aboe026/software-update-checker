@@ -4,6 +4,7 @@ import path from 'path'
 
 import { Dynamic, Static, isStatic, getDynamicExecutable } from './executable'
 import execute from '../util/execute-async'
+import SelfReference from '../util/self-reference'
 
 export default class Software {
   readonly name: string
@@ -81,6 +82,16 @@ export async function getFromExecutable({
   args?: string
   shell?: string
 }): Promise<string> {
+  const defaultEntrypoint = (process as any)?.pkg?.defaultEntrypoint
+  if (
+    command === SelfReference.getName() &&
+    (directory === '.' || directory === SelfReference.getDirectory()) &&
+    defaultEntrypoint
+  ) {
+    // TODO: the "./" should be part of the example command in the future (when the working directory is a separate question)
+    // rather than being added in here manually
+    command = `./${command} ${defaultEntrypoint}` // To get around self-reference/recursion: https://github.com/vercel/pkg/issues/376
+  }
   const options: ExecOptions = {
     cwd: directory,
   }

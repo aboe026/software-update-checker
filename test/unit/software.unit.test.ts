@@ -1,4 +1,5 @@
 import * as executable from '../../src/software/executable'
+import SelfReference from '../../src/util/self-reference'
 import Software, { getExecutable, getFromRegex, getFromExecutable } from '../../src/software/software'
 import * as execute from '../../src/util/execute-async'
 
@@ -162,6 +163,95 @@ describe('Software Unit Tests', () => {
         expectedReturn: '',
       })
     })
+    describe('self-reference', () => {
+      const defaultEntrypoint = '/build/src/index.js'
+      beforeEach(() => {
+        ;(process as any).pkg = { defaultEntrypoint }
+      })
+      it('appends default entrypoint if referencing self from current relative directory', async () => {
+        const command = 'appends-default-current-dir'
+        const args = '--version'
+        const stdout = 'cowbell'
+        const stderr = 'triangle'
+        jest.spyOn(SelfReference, 'getName').mockReturnValue(command)
+        await testGetFromExecutable({
+          command,
+          directory: '.', // ignore-duplicate-test-resource
+          args,
+          stdout,
+          stderr,
+          expectedReturn: `${stdout}${stderr}`,
+          expectedExecCall: `./${command} ${defaultEntrypoint} ${args}`, // TODO: remove "./" in the future (when the working directory is a separate question)
+        })
+      })
+      it('appends default entrypoint if referencing self from absolute directory', async () => {
+        const command = 'appends-default-absolute-dir'
+        const directory = '/path/to/self'
+        const args = 'version'
+        const stdout = 'bramble'
+        const stderr = 'jam'
+        jest.spyOn(SelfReference, 'getName').mockReturnValue(command)
+        jest.spyOn(SelfReference, 'getDirectory').mockReturnValue(directory)
+        await testGetFromExecutable({
+          command,
+          directory,
+          args,
+          stdout,
+          stderr,
+          expectedReturn: `${stdout}${stderr}`,
+          expectedExecCall: `./${command} ${defaultEntrypoint} ${args}`, // TODO: remove "./" in the future (when the working directory is a separate question)
+        })
+      })
+      it('does not append default entrypoint if command is not self from current relative directory', async () => {
+        const command = 'no-append-relative-dir'
+        const args = '-v'
+        const stdout = 'ebb'
+        const stderr = 'flow'
+        jest.spyOn(SelfReference, 'getName').mockReturnValue(command)
+        await testGetFromExecutable({
+          command: 'does not match',
+          directory: '.', // ignore-duplicate-test-resource
+          args,
+          stdout,
+          stderr,
+          expectedReturn: `${stdout}${stderr}`,
+        })
+      })
+      it('does not append default entrypoint if command is not self from absolute directory', async () => {
+        const command = 'no-append-absolute-dir'
+        const directory = '/path/to/where/executed/at'
+        const args = 'v'
+        const stdout = 'flotsam'
+        const stderr = 'jetsam'
+        jest.spyOn(SelfReference, 'getName').mockReturnValue(command)
+        jest.spyOn(SelfReference, 'getDirectory').mockReturnValue(directory)
+        await testGetFromExecutable({
+          command: 'different',
+          directory,
+          args,
+          stdout,
+          stderr,
+          expectedReturn: `${stdout}${stderr}`,
+        })
+      })
+      it('does not append default entrypoint if referencing self but not self directory', async () => {
+        const command = 'no-append-not-self-dir'
+        const directory = '/path/to/where/executable/resides'
+        const args = 'ver'
+        const stdout = 'give'
+        const stderr = 'take'
+        jest.spyOn(SelfReference, 'getName').mockReturnValue(command)
+        jest.spyOn(SelfReference, 'getDirectory').mockReturnValue(directory)
+        await testGetFromExecutable({
+          command,
+          directory: '/path/to/another/dir',
+          args,
+          stdout,
+          stderr,
+          expectedReturn: `${stdout}${stderr}`,
+        })
+      })
+    })
   })
 })
 
@@ -175,6 +265,7 @@ async function testGetFromExecutable({
   stdout,
   stderr,
   expectedReturn,
+  expectedExecCall,
 }: {
   command: string
   directory: string
@@ -185,6 +276,7 @@ async function testGetFromExecutable({
   stdout: string
   stderr: string
   expectedReturn: string
+  expectedExecCall?: string
 }) {
   const executeSpy = jest.spyOn(execute, 'default').mockResolvedValue({
     stdout,
@@ -206,6 +298,6 @@ async function testGetFromExecutable({
     executeOptions.shell = shell
   }
   expect(JSON.stringify(executeSpy.mock.calls, null, 2)).toBe(
-    JSON.stringify([[`${command} ${args}`, executeOptions]], null, 2)
+    JSON.stringify([[expectedExecCall || `${command} ${args}`, executeOptions]], null, 2)
   )
 }
