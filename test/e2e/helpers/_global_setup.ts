@@ -2,7 +2,6 @@ import fs from 'fs-extra'
 import path from 'path'
 
 import E2eConfig from './e2e-config'
-import { getExecutableName } from './interactive-execute'
 
 /**
  * Run once before all tests execute
@@ -30,5 +29,4 @@ export default async (): Promise<void> => {
     // debug file does not exist, no need to delete
   }
   await fs.createFile(E2eConfig.FILE.Debug)
-  await E2eConfig.appendToDebugLog(`getExecutableName(): "${getExecutableName()}"`)
 }

@@ -21,10 +21,14 @@ export default class E2eTestUtil {
     software,
     installedVersion,
     latestVersion,
+    executableDirectory,
+    executableFile,
   }: {
     software: Software
     installedVersion: string
     latestVersion: string
+    executableDirectory?: string
+    executableFile?: string
   }): Promise<void> {
     const response = await interactiveExecute({
       inputs: [
@@ -34,6 +38,8 @@ export default class E2eTestUtil {
         }),
         ...E2eHomeUtil.getInputs(HomeChoiceOption.Exit),
       ],
+      directory: executableDirectory,
+      file: executableFile,
     })
     await E2eAddUtil.validateChunks(response.chunks, [
       ...E2eHomeUtil.getChunks(HomeChoiceOption.Add),
@@ -41,6 +47,8 @@ export default class E2eTestUtil {
         software,
         installedVersion,
         latestVersion,
+        executableDirectory,
+        executableFile,
       }),
       ...E2eHomeUtil.getChunks(HomeChoiceOption.Exit),
     ])
@@ -84,11 +92,11 @@ export default class E2eTestUtil {
     await E2eAddUtil.validateChunks(response.chunks, [
       ...E2eHomeUtil.getChunks(HomeChoiceOption.Add),
       {
-        question: 'Name to identify software configuration',
+        question: `${E2eBaseUtil.MESSAGES.Name} ${E2eBaseUtil.MESSAGES.NameExample}`,
         answer: name,
       },
       E2eAddUtil.getNameInUseMessage(name),
-      '? Name to identify software configuration:',
+      `? ${E2eBaseUtil.MESSAGES.Name} ${E2eBaseUtil.MESSAGES.NameExample}:`,
     ])
   }
 
@@ -96,13 +104,19 @@ export default class E2eTestUtil {
     software,
     installedVersion,
     latestVersion,
+    executableDirectory,
+    executableFile,
   }: {
     software: Software
     installedVersion: string
     latestVersion: string
+    executableDirectory?: string
+    executableFile?: string
   }): Promise<void> {
     const response = await interactiveExecute({
       args: E2eAddUtil.getSilentCommand({ software }),
+      directory: executableDirectory,
+      file: executableFile,
     })
     await E2eAddUtil.validateChunks(response.chunks, [
       ...E2eAddUtil.getChunksSilent({
@@ -131,7 +145,7 @@ export default class E2eTestUtil {
     })
     await E2eViewUtil.validateChunks(response.chunks, [
       ...E2eHomeUtil.getChunks(HomeChoiceOption.View),
-      E2eViewUtil.MESSAGES.NoSoftwares,
+      E2eBaseUtil.MESSAGES.NoSoftwaresToView,
       ...E2eHomeUtil.getChunks(HomeChoiceOption.Exit),
     ])
   }
@@ -151,7 +165,7 @@ export default class E2eTestUtil {
     const response = await interactiveExecute({
       args: E2eViewUtil.getSilentCommand(),
     })
-    await E2eViewUtil.validateChunks(response.chunks, [E2eViewUtil.MESSAGES.NoSoftwares])
+    await E2eViewUtil.validateChunks(response.chunks, [E2eBaseUtil.MESSAGES.NoSoftwaresToView])
   }
 
   static async editInteractive({
@@ -255,12 +269,12 @@ export default class E2eTestUtil {
         nameToEdit: existingName,
       }),
       {
-        question: 'Name to identify software configuration',
+        question: `${E2eBaseUtil.MESSAGES.Name} ${E2eBaseUtil.MESSAGES.NameExample}`,
         answer: name,
         default: existingName,
       },
       E2eEditUtil.getNameInUseMessage(name),
-      `? Name to identify software configuration: (${existingName})`,
+      `? ${E2eBaseUtil.MESSAGES.Name} ${E2eBaseUtil.MESSAGES.NameExample}: (${existingName})`,
     ])
   }
 
@@ -270,7 +284,7 @@ export default class E2eTestUtil {
     })
     await E2eEditUtil.validateChunks(response.chunks, [
       ...E2eHomeUtil.getChunks(HomeChoiceOption.Edit),
-      E2eEditUtil.MESSAGES.NoSoftwares,
+      E2eBaseUtil.MESSAGES.NoSoftwaresToEdit,
       ...E2eHomeUtil.getChunks(HomeChoiceOption.Exit),
     ])
   }
@@ -345,7 +359,7 @@ export default class E2eTestUtil {
     })
     await E2eDeleteUtil.validateChunks(response.chunks, [
       ...E2eHomeUtil.getChunks(HomeChoiceOption.Delete),
-      E2eDeleteUtil.MESSAGES.NoSoftwares,
+      E2eBaseUtil.MESSAGES.NoSoftwaresToDelete,
       ...E2eHomeUtil.getChunks(HomeChoiceOption.Exit),
     ])
   }

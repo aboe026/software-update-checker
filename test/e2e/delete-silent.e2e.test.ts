@@ -17,7 +17,7 @@ describe('Delete Silent', () => {
         args: E2eDeleteUtil.getSilentCommand({
           existingName: 'pumpernickle',
         }),
-        error: E2eDeleteUtil.MESSAGES.NoSoftwares,
+        error: E2eDeleteUtil.MESSAGES.NoSoftwaresToDelete,
       })
       await E2eDeleteUtil.verifySoftwares([])
     })
@@ -28,7 +28,7 @@ describe('Delete Silent', () => {
         args: E2eDeleteUtil.getSilentCommand({
           existingName: 'snickerdoodle',
         }),
-        error: E2eDeleteUtil.MESSAGES.NoSoftwares,
+        error: E2eDeleteUtil.MESSAGES.NoSoftwaresToDelete,
       })
       await E2eDeleteUtil.verifySoftwares([])
     })
@@ -39,7 +39,7 @@ describe('Delete Silent', () => {
         args: E2eDeleteUtil.getSilentCommand({
           existingName: 'paprikash',
         }),
-        error: E2eDeleteUtil.MESSAGES.NoSoftwares,
+        error: E2eDeleteUtil.MESSAGES.NoSoftwaresToDelete,
       })
       await E2eDeleteUtil.verifySoftwares([])
     })

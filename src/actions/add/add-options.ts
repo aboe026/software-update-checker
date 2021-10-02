@@ -1,4 +1,7 @@
+import path from 'path'
+
 import { Command, Option } from '../base/base-options'
+import SelfReference from '../../util/self-reference'
 
 export const AddCommands = {
   Add: new Command({
@@ -29,7 +32,7 @@ export const AddOptions = {
     key: 'name',
     value: {
       alias: 'n',
-      description: 'Name to identify software configuration',
+      description: 'Name to identify software configuration (eg "Software Update Checker")',
       type: 'string',
       demandOption: true,
       requiresArg: true,
@@ -51,7 +54,7 @@ export const AddOptions = {
     key: 'shell',
     value: {
       alias: ['s'],
-      description: 'Shell to use instead of system default shell (eg "powershell")',
+      description: 'Shell to use instead of system default shell (eg "pwsh")',
       type: 'string',
       demandOption: false,
       requiresArg: true,
@@ -63,7 +66,7 @@ export const AddOptions = {
     value: {
       alias: ['i'],
       description:
-        'Regex pattern applied to executable command output for singling out installed version (eg "version (.*)")',
+        'Regex pattern applied to executable command output for singling out installed version (eg "(.*)\\+")',
       type: 'string',
       demandOption: true,
       requiresArg: true,
@@ -74,7 +77,8 @@ export const AddOptions = {
     key: 'url',
     value: {
       alias: ['u'],
-      description: 'URL to call for latest version',
+      description:
+        'URL to call for latest version (eg "https://github.com/aboe026/software-update-checker-cli/releases/latest")',
       type: 'string',
       demandOption: true,
       requiresArg: true,
@@ -86,7 +90,7 @@ export const AddOptions = {
     value: {
       alias: ['l'],
       description:
-        'Regex pattern applied to URL contents for singling out latest version (eg "Version (\\d+\\.\\d+(\\.\\d+)?)")',
+        'Regex pattern applied to URL contents for singling out latest version (eg "releases\\/tag\\/v(.*?)&quot;")',
       type: 'string',
       demandOption: true,
       requiresArg: true,
@@ -101,7 +105,10 @@ export const StaticOptions = {
     key: 'command',
     value: {
       alias: 'c',
-      description: 'Command or path to executable (eg "git" or "C:\\Program Files\\Git\\bin\\git.exe")',
+      description: `Command or path to executable (eg "${SelfReference.getName()}" or "${path.join(
+        SelfReference.getDirectory(),
+        SelfReference.getName()
+      )}")`,
       type: 'string',
       demandOption: true,
       requiresArg: true,
@@ -116,7 +123,7 @@ export const DynamicOptions = {
     key: 'directory',
     value: {
       alias: 'd',
-      description: 'Path to directory containing executable file (eg "C:\\Program Files\\GIMP 2\\bin")',
+      description: `Path to directory containing executable file (eg "${SelfReference.getDirectory()}")`,
       type: 'string',
       demandOption: true,
       requiresArg: true,
@@ -127,8 +134,9 @@ export const DynamicOptions = {
     key: 'regex',
     value: {
       alias: 'r',
-      description:
-        'Regex pattern applied to files in directory for singling out executable file to use (eg "gimp-\\d+\\.\\d+\\.exe")',
+      description: `Regex pattern applied to files in directory for singling out executable file to use (eg "${SelfReference.getNameRegex(
+        SelfReference.getName()
+      )}")`,
       type: 'string',
       demandOption: true,
       requiresArg: true,

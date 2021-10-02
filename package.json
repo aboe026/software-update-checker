@@ -1,6 +1,6 @@
 {
   "name": "software-update-checker-cli",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "author": "Adam Boe",
   "description": "A command line interface to check if local software installs have updates",
   "private": false,
@@ -28,7 +28,7 @@
     "coverage:view:func": "ts-node scripts/view-coverage.ts coverage/func/lcov-report/index.html",
     "coverage:view": "ts-node scripts/view-coverage.ts coverage/merged/index.html",
     "detect:duplicate-test-resources": "ts-node scripts/detect-duplicate-test-resources.ts",
-    "debug:record-and-replay": "ts-node scripts/debug-record-and-replay.ts",
+    "debug:record-and-reply": "ts-node scripts/debug-record-and-reply.ts",
     "dist": "npm run build && npm run pack",
     "lint": "eslint . && prettier --check . && npm run detect:duplicate-test-resources && npm run lint:releases-json",
     "lint:fix": "eslint --fix . && prettier --write .",

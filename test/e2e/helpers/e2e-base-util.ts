@@ -2,7 +2,8 @@ import fs from 'fs-extra'
 import path from 'path'
 
 import E2eConfig from './e2e-config'
-import interactiveExecute, { ANSI_CHAR_REPLACEMENT, KEYS } from './interactive-execute'
+import interactiveExecute, { ANSI_CHAR_REPLACEMENT, getExecutableName, KEYS } from './interactive-execute'
+import SelfReference from '../../../src/util/self-reference'
 import Software from '../../../src/software/software'
 import testUtil from '../../helpers/test-util'
 import allUpgrades from '../../../src/software/upgrades/all-upgrades'
@@ -11,6 +12,80 @@ export default class E2eBaseUtil {
   static readonly COMMAND = {
     Good: path.join(__dirname, '../../helpers/test-commands/good-command.js'),
     Bad: path.join(__dirname, '../../helpers/test-commands/bad-command.js'),
+  }
+
+  static readonly MESSAGES = {
+    ShowVersion: 'Show version number',
+    ShowHelp: 'Show help',
+    CheckUpdates: 'Check if installed software has updates available',
+    Add: 'Add software configuration',
+    View: 'View configured software versions',
+    Edit: 'Edit software configuration',
+    Delete: 'Remove software configuration',
+    CommandTypes: [
+      'Command types:',
+      'Static - Software executable defined by a fixed, non-changing path (eg executable on $PATH or absolute path to executable file).',
+      'Dynamic - Software executable has changing, evolving name requiring regex patterns to determine (eg executable name includes version, which changes between releases).',
+    ],
+    Static: 'Software executable defined by a fixed, non-changing path',
+    StaticExample: '(eg executable on $PATH or absolute path to executable file)',
+    Dynamic: 'Software executable has changing, evolving name requiring regex patterns to determine',
+    DynamicExample: '(eg executable name includes version, which changes between releases)',
+    Name: 'Name to identify software configuration',
+    NameExample: '(eg "Software Update Checker")',
+    Command: 'Command or path to executable',
+    Directory: 'Path to directory containing executable file',
+    Arguments: 'Arguments to apply to executable to produce version',
+    ArgumentsExample: '(eg "--version")',
+    InstalledRegex: 'Regex pattern applied to executable command output for singling out installed version',
+    InstalledRegexExample: '(eg "(.*)\\+")',
+    LatestRegex: 'Regex pattern applied to URL contents for singling out latest version',
+    LatestRegexExample: '(eg "releases\\/tag\\/v(.*?)&quot;")',
+    Regex: 'Regex pattern applied to files in directory for singling out executable file to use',
+    Shell: 'Shell to use instead of system default shell',
+    ShellExample: '(eg "pwsh")',
+    Url: 'URL to call for latest version',
+    UrlExample: '(eg "https://github.com/aboe026/software-update-checker-cli/releases/latest")',
+    NoSoftwaresToDelete: 'No softwares to delete. Please add a software to have something to delete.',
+    NoSoftwaresToEdit: 'No softwares to edit. Please add a software to have something to edit.',
+    NoSoftwaresToView: 'No softwares to view. Please add a software to have something to view.',
+    NoOptionsProvided: 'Must provide something to change as an option/flag',
+    NoCommandForStatic: 'The "static" executable type requires a "--command" option to be specified',
+    NoDirectoryForDynamic: 'The "dynamic" executable type requires a "--directory" option to be specified',
+    NoRegexForDynamic: 'The "dynamic" executable type requires a "--regex" option to be specified',
+    IncompatibleDirectoryWithStaticType: 'The "--directory" option is not compatible with "--type=static"',
+    IncompatibleRegexWithStaticType: 'The "--regex" option is not compatible with "--type=static"',
+    IncompatibleCommandWithDynamicType: 'The "--command" option is not compatible with "--type=dynamic"',
+    IncompatibleCommandWithDirectory: 'Arguments command and directory are mutually exclusive',
+    IncompatibleCommandWithRegex: 'Arguments command and regex are mutually exclusive',
+    IncompatibleDirectoryWithStaticExecutable: 'The "--directory" option is not compatible with a "static" executable',
+    IncompatibleRegexWithStaticExecutable: 'The "--regex" option is not compatible with a "static" executable',
+    IncompatibleCommandWithDynamicExecutable: 'The "--command" option is not compatible with a "dynamic" executable',
+  }
+
+  static getExampleFromMessage(message: string): string {
+    const example = message?.match(/"(.*?)"/g)?.pop() || ''
+    return example.substring(1, example.length - 1) // remove surrounding double quotes
+  }
+
+  static getDirectoryExampleMessage({ directory }: { directory?: string }): string {
+    return `(eg "${directory || E2eConfig.DIRECTORY.Executables}")`
+  }
+
+  static getCommandExampleMessage({
+    executableName,
+    directory,
+  }: {
+    executableName?: string
+    directory?: string
+  }): string {
+    const name = executableName || getExecutableName()
+    return `(eg "${name}" or "${path.join(directory || E2eConfig.DIRECTORY.Executables, name)}")`
+  }
+
+  static getRegexExampleMessage({ executableName }: { executableName?: string }): string {
+    const name = executableName || getExecutableName()
+    return `(eg "${SelfReference.getNameRegex(name)}")`
   }
 
   static getNameInUseMessage(name: string): string {

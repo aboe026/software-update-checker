@@ -8,9 +8,6 @@ export default class E2eDeleteUtil extends E2eBaseUtil {
       question: 'Name of existing software configuration to delete',
     },
   }
-  static readonly MESSAGES = {
-    NoSoftwares: 'No softwares to delete. Please add a software to have something to delete.',
-  }
 
   static getSilentCommand({ existingName }: { existingName: string | undefined }): string[] {
     const args: string[] = ['remove']

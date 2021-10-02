@@ -14,8 +14,8 @@ export default class E2eHelpUtil extends E2eBaseUtil {
     return subCommands.concat(['-h'])
   }
 
-  static async getHelpExecutableName(): Promise<string> {
-    let executableName = await getExecutableName()
+  static getHelpExecutableName(): string {
+    let executableName = getExecutableName()
     const nonWindowsStart = './'
     if (executableName.startsWith(nonWindowsStart)) {
       executableName = executableName.substring(nonWindowsStart.length)
@@ -34,117 +34,121 @@ export default class E2eHelpUtil extends E2eBaseUtil {
   static getGlobalsChunks(): string[] {
     return [
       'Globals:',
-      '  -v, --version                Show version number  [boolean] [default: false]',
-      '  -h, --help                   Show help  [boolean] [default: false]',
+      `  -v, --version                ${E2eHelpUtil.MESSAGES.ShowVersion}  [boolean] [default: false]`,
+      `  -h, --help                   ${E2eHelpUtil.MESSAGES.ShowHelp}  [boolean] [default: false]`,
       '  -p, --prompt, --interactive  Whether or not terminal should wait for user input if needed, or exit/error as necessary  [boolean] [default: false]',
     ]
   }
 
-  static async getRootChunks(): Promise<string[]> {
-    const executableName = await E2eHelpUtil.getHelpExecutableName()
+  static getRootChunks(): string[] {
+    const executableName = E2eHelpUtil.getHelpExecutableName()
     return [
       `${executableName} [add|view|edit|remove]`,
       '',
-      'Check if installed software has updates available',
+      E2eHelpUtil.MESSAGES.CheckUpdates,
       '',
       'Commands:',
-      `  ${executableName} [add|view|edit|remove]     Check if installed software has updates available  [default]`,
-      `  ${executableName} add <static|dynamic>       Add software configuration  [aliases: create, configure]`,
-      `  ${executableName} view                       View configured software versions  [aliases: list, read]`,
-      `  ${executableName} edit <existing>            Edit software configuration  [aliases: update, reconfigure]`,
-      `  ${executableName} remove <existing>          Remove software configuration  [aliases: delete]`,
-      `  ${executableName} version                    Show version number`,
-      `  ${executableName} help                       Show help`,
+      `  ${executableName} [add|view|edit|remove]     ${E2eHelpUtil.MESSAGES.CheckUpdates}  [default]`,
+      `  ${executableName} add <static|dynamic>       ${E2eHelpUtil.MESSAGES.Add}  [aliases: create, configure]`,
+      `  ${executableName} view                       ${E2eHelpUtil.MESSAGES.View}  [aliases: list, read]`,
+      `  ${executableName} edit <existing>            ${E2eHelpUtil.MESSAGES.Edit}  [aliases: update, reconfigure]`,
+      `  ${executableName} remove <existing>          ${E2eHelpUtil.MESSAGES.Delete}  [aliases: delete]`,
+      `  ${executableName} version                    ${E2eHelpUtil.MESSAGES.ShowVersion}`,
+      `  ${executableName} help                       ${E2eHelpUtil.MESSAGES.ShowHelp}`,
       '',
       ...this.getGlobalsChunks(),
     ]
   }
 
-  static async getAddChunks(): Promise<string[]> {
-    const executableName = await E2eHelpUtil.getHelpExecutableName()
+  static getAddChunks(): string[] {
+    const executableName = E2eHelpUtil.getHelpExecutableName()
     const spaces = E2eHelpUtil.getSpacesForExecutableName(executableName)
     return [
       `${executableName} add <static|dynamic>`,
       '',
-      'Add software configuration',
+      E2eHelpUtil.MESSAGES.Add,
       '',
       'Commands:',
-      `  ${executableName} add static   Software executable defined by a fixed, non-changing path`,
-      `  ${spaces}              (eg executable on $PATH or absolute path to executable file)`,
-      `  ${executableName} add dynamic  Software executable has changing, evolving name requiring regex patterns to determine`,
-      `  ${spaces}              (eg executable name includes version, which changes between releases)`,
+      `  ${executableName} add static   ${E2eHelpUtil.MESSAGES.Static}`,
+      `  ${spaces}              ${E2eHelpUtil.MESSAGES.StaticExample}`,
+      `  ${executableName} add dynamic  ${E2eHelpUtil.MESSAGES.Dynamic}`,
+      `  ${spaces}              ${E2eHelpUtil.MESSAGES.DynamicExample}`,
       '',
       ...this.getGlobalsChunks(),
     ]
   }
 
-  static async getStaticChunks(): Promise<string[]> {
+  static getStaticChunks(): string[] {
     return [
-      `${await E2eHelpUtil.getHelpExecutableName()} add static`,
+      `${E2eHelpUtil.getHelpExecutableName()} add static`,
       '',
-      'Software executable defined by a fixed, non-changing path',
-      '(eg executable on $PATH or absolute path to executable file)',
-      '',
-      ...this.getGlobalsChunks(),
-      '',
-      'Options:',
-      '  -a, --arguments, --args  Arguments to apply to executable to produce version',
-      '                           (eg "--version")  [string]',
-      '  -c, --command            Command or path to executable',
-      '                           (eg "git" or "C:\\Program Files\\Git\\bin\\git.exe")  [string] [required]',
-      '  -i, --installedRegex     Regex pattern applied to executable command output for singling out installed version',
-      '                           (eg "version (.*)")  [string] [required]',
-      '  -l, --latestRegex        Regex pattern applied to URL contents for singling out latest version',
-      '                           (eg "Version (\\d+\\.\\d+(\\.\\d+)?)")  [string] [required]',
-      '  -n, --name               Name to identify software configuration  [string] [required]',
-      '  -s, --shell              Shell to use instead of system default shell',
-      '                           (eg "powershell")  [string]',
-      '  -u, --url                URL to call for latest version  [string] [required]',
-    ]
-  }
-
-  static async getDynamicChunks(): Promise<string[]> {
-    return [
-      `${await E2eHelpUtil.getHelpExecutableName()} add dynamic`,
-      '',
-      'Software executable has changing, evolving name requiring regex patterns to determine',
-      '(eg executable name includes version, which changes between releases)',
+      E2eHelpUtil.MESSAGES.Static,
+      E2eHelpUtil.MESSAGES.StaticExample,
       '',
       ...this.getGlobalsChunks(),
       '',
       'Options:',
-      '  -a, --arguments, --args  Arguments to apply to executable to produce version',
-      '                           (eg "--version")  [string]',
-      '  -d, --directory          Path to directory containing executable file',
-      '                           (eg "C:\\Program Files\\GIMP 2\\bin")  [string] [required]',
-      '  -i, --installedRegex     Regex pattern applied to executable command output for singling out installed version',
-      '                           (eg "version (.*)")  [string] [required]',
-      '  -l, --latestRegex        Regex pattern applied to URL contents for singling out latest version',
-      '                           (eg "Version (\\d+\\.\\d+(\\.\\d+)?)")  [string] [required]',
-      '  -n, --name               Name to identify software configuration  [string] [required]',
-      '  -r, --regex              Regex pattern applied to files in directory for singling out executable file to use',
-      '                           (eg "gimp-\\d+\\.\\d+\\.exe")  [string] [required]',
-      '  -s, --shell              Shell to use instead of system default shell',
-      '                           (eg "powershell")  [string]',
-      '  -u, --url                URL to call for latest version  [string] [required]',
+      `  -a, --arguments, --args  ${E2eHelpUtil.MESSAGES.Arguments}`,
+      `                           ${E2eHelpUtil.MESSAGES.ArgumentsExample}  [string]`,
+      `  -c, --command            ${E2eHelpUtil.MESSAGES.Command}`,
+      `                           ${E2eHelpUtil.getCommandExampleMessage({})}  [string] [required]`,
+      `  -i, --installedRegex     ${E2eHelpUtil.MESSAGES.InstalledRegex}`,
+      `                           ${E2eHelpUtil.MESSAGES.InstalledRegexExample}  [string] [required]`,
+      `  -l, --latestRegex        ${E2eHelpUtil.MESSAGES.LatestRegex}`,
+      `                           ${E2eHelpUtil.MESSAGES.LatestRegexExample}  [string] [required]`,
+      `  -n, --name               ${E2eHelpUtil.MESSAGES.Name}`,
+      `                           ${E2eHelpUtil.MESSAGES.NameExample}  [string] [required]`,
+      `  -s, --shell              ${E2eHelpUtil.MESSAGES.Shell}`,
+      `                           ${E2eHelpUtil.MESSAGES.ShellExample}  [string]`,
+      `  -u, --url                ${E2eHelpUtil.MESSAGES.Url}`,
+      `                           ${E2eHelpUtil.MESSAGES.UrlExample}  [string] [required]`,
     ]
   }
 
-  static async getViewChunks(): Promise<string[]> {
+  static getDynamicChunks(): string[] {
     return [
-      `${await E2eHelpUtil.getHelpExecutableName()} view`,
+      `${E2eHelpUtil.getHelpExecutableName()} add dynamic`,
       '',
-      'View configured software versions',
+      E2eHelpUtil.MESSAGES.Dynamic,
+      E2eHelpUtil.MESSAGES.DynamicExample,
+      '',
+      ...this.getGlobalsChunks(),
+      '',
+      'Options:',
+      `  -a, --arguments, --args  ${E2eHelpUtil.MESSAGES.Arguments}`,
+      `                           ${E2eHelpUtil.MESSAGES.ArgumentsExample}  [string]`,
+      `  -d, --directory          ${E2eHelpUtil.MESSAGES.Directory}`,
+      `                           ${E2eHelpUtil.getDirectoryExampleMessage({})}  [string] [required]`,
+      `  -i, --installedRegex     ${E2eHelpUtil.MESSAGES.InstalledRegex}`,
+      `                           ${E2eHelpUtil.MESSAGES.InstalledRegexExample}  [string] [required]`,
+      `  -l, --latestRegex        ${E2eHelpUtil.MESSAGES.LatestRegex}`,
+      `                           ${E2eHelpUtil.MESSAGES.LatestRegexExample}  [string] [required]`,
+      `  -n, --name               ${E2eHelpUtil.MESSAGES.Name}`,
+      `                           ${E2eHelpUtil.MESSAGES.NameExample}  [string] [required]`,
+      `  -r, --regex              ${E2eHelpUtil.MESSAGES.Regex}`,
+      `                           ${E2eHelpUtil.getRegexExampleMessage({})}  [string] [required]`,
+      `  -s, --shell              ${E2eHelpUtil.MESSAGES.Shell}`,
+      `                           ${E2eHelpUtil.MESSAGES.ShellExample}  [string]`,
+      `  -u, --url                ${E2eHelpUtil.MESSAGES.Url}`,
+      `                           ${E2eHelpUtil.MESSAGES.UrlExample}  [string] [required]`,
+    ]
+  }
+
+  static getViewChunks(): string[] {
+    return [
+      `${E2eHelpUtil.getHelpExecutableName()} view`,
+      '',
+      E2eHelpUtil.MESSAGES.View,
       '',
       ...this.getGlobalsChunks(),
     ]
   }
 
-  static async getEditChunks(): Promise<string[]> {
+  static getEditChunks(): string[] {
     return [
-      `${await E2eHelpUtil.getHelpExecutableName()} edit <existing>`,
+      `${E2eHelpUtil.getHelpExecutableName()} edit <existing>`,
       '',
-      'Edit software configuration',
+      E2eHelpUtil.MESSAGES.Edit,
       '',
       'Positionals:',
       '  existing  Name of existing software configuration to edit  [string] [required]',
@@ -152,31 +156,33 @@ export default class E2eHelpUtil extends E2eBaseUtil {
       ...this.getGlobalsChunks(),
       '',
       'Options:',
-      '  -a, --arguments, --args  Arguments to apply to executable to produce version',
-      '                           (eg "--version")  [string]',
-      '  -c, --command            Command or path to executable',
-      '                           (eg "git" or "C:\\Program Files\\Git\\bin\\git.exe")  [string]',
-      '  -d, --directory          Path to directory containing executable file',
-      '                           (eg "C:\\Program Files\\GIMP 2\\bin")  [string]',
-      '  -i, --installedRegex     Regex pattern applied to executable command output for singling out installed version',
-      '                           (eg "version (.*)")  [string]',
-      '  -l, --latestRegex        Regex pattern applied to URL contents for singling out latest version',
-      '                           (eg "Version (\\d+\\.\\d+(\\.\\d+)?)")  [string]',
-      '  -n, --name               Name to identify software configuration  [string]',
-      '  -r, --regex              Regex pattern applied to files in directory for singling out executable file to use',
-      '                           (eg "gimp-\\d+\\.\\d+\\.exe")  [string]',
-      '  -s, --shell              Shell to use instead of system default shell',
-      '                           (eg "powershell")  [string]',
+      `  -a, --arguments, --args  ${E2eHelpUtil.MESSAGES.Arguments}`,
+      `                           ${E2eHelpUtil.MESSAGES.ArgumentsExample}  [string]`,
+      `  -c, --command            ${E2eHelpUtil.MESSAGES.Command}`,
+      `                           ${E2eHelpUtil.getCommandExampleMessage({})}  [string]`,
+      `  -d, --directory          ${E2eHelpUtil.MESSAGES.Directory}`,
+      `                           ${E2eHelpUtil.getDirectoryExampleMessage({})}  [string]`,
+      `  -i, --installedRegex     ${E2eHelpUtil.MESSAGES.InstalledRegex}`,
+      `                           ${E2eHelpUtil.MESSAGES.InstalledRegexExample}  [string]`,
+      `  -l, --latestRegex        ${E2eHelpUtil.MESSAGES.LatestRegex}`,
+      `                           ${E2eHelpUtil.MESSAGES.LatestRegexExample}  [string]`,
+      `  -n, --name               ${E2eHelpUtil.MESSAGES.Name}`,
+      `                           ${E2eHelpUtil.MESSAGES.NameExample}  [string]`,
+      `  -r, --regex              ${E2eHelpUtil.MESSAGES.Regex}`,
+      `                           ${E2eHelpUtil.getRegexExampleMessage({})}  [string]`,
+      `  -s, --shell              ${E2eHelpUtil.MESSAGES.Shell}`,
+      `                           ${E2eHelpUtil.MESSAGES.ShellExample}  [string]`,
       '  -t, --type               Whether executable to get installed version is fixed or dynamic  [string] [choices: "static", "dynamic"]',
-      '  -u, --url                URL to call for latest version  [string]',
+      `  -u, --url                ${E2eHelpUtil.MESSAGES.Url}`,
+      `                           ${E2eHelpUtil.MESSAGES.UrlExample}  [string]`,
     ]
   }
 
-  static async getRemoveChunks(): Promise<string[]> {
+  static getRemoveChunks(): string[] {
     return [
-      `${await E2eHelpUtil.getHelpExecutableName()} remove <existing>`,
+      `${E2eHelpUtil.getHelpExecutableName()} remove <existing>`,
       '',
-      'Remove software configuration',
+      E2eHelpUtil.MESSAGES.Delete,
       '',
       'Positionals:',
       '  existing  Name of existing software configuration to delete  [string] [required]',

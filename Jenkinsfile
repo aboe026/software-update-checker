@@ -19,6 +19,17 @@ node {
             sh 'npm --version'
           }
 
+          stage('Install PowerShell') {
+            // Download the Microsoft repository GPG keys
+            sh 'wget https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb'
+            // Register the Microsoft repository GPG keys
+            sh 'dpkg -i packages-microsoft-prod.deb'
+            // Update the list of products
+            sh 'apt-get update'
+            // Install PowerShell
+            sh 'apt-get install -y powershell'
+          }
+
           stage('Checkout') {
             checkout scm
           }

@@ -30,7 +30,7 @@ describe('Edit Silent', () => {
             latestRegex: 'oncorhynchus nerka',
           },
         }),
-        error: E2eEditUtil.MESSAGES.NoSoftwares,
+        error: E2eEditUtil.MESSAGES.NoSoftwaresToEdit,
       })
       await E2eEditUtil.verifySoftwares([])
     })
@@ -52,7 +52,7 @@ describe('Edit Silent', () => {
             latestRegex: 'sequoia',
           },
         }),
-        error: E2eEditUtil.MESSAGES.NoSoftwares,
+        error: E2eEditUtil.MESSAGES.NoSoftwaresToEdit,
       })
       await E2eEditUtil.verifySoftwares([])
     })
@@ -74,7 +74,7 @@ describe('Edit Silent', () => {
             latestRegex: 'high definition multimedia interface',
           },
         }),
-        error: E2eEditUtil.MESSAGES.NoSoftwares,
+        error: E2eEditUtil.MESSAGES.NoSoftwaresToEdit,
       })
       await E2eEditUtil.verifySoftwares([])
     })
@@ -228,7 +228,7 @@ describe('Edit Silent', () => {
           existingName: 'toast',
           newSoftware: {},
         }),
-        error: E2eEditUtil.MESSAGES.NoOptions,
+        error: E2eEditUtil.MESSAGES.NoOptionsProvided,
       })
       await E2eEditUtil.verifySoftwares([])
     })
@@ -521,7 +521,7 @@ describe('Edit Silent', () => {
             directory: 'ai',
           },
         }),
-        error: E2eEditUtil.MESSAGES.NoDirectoryForRegex,
+        error: E2eEditUtil.MESSAGES.NoRegexForDynamic,
       })
       await E2eEditUtil.verifySoftwares([software])
     })

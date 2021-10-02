@@ -7,6 +7,7 @@ export default class E2eConfig {
     UserConfig: path.join(os.homedir(), '.suc'),
     Temp: path.join(__dirname, '../.temp-work-dir'),
     BackupConfig: path.join(__dirname, '../.temp-work-dir', '.suc-temp'),
+    Executables: path.join(__dirname, '../../../dist'),
   }
   static readonly FILE = {
     Softwares: path.join(E2eConfig.DIRECTORY.UserConfig, 'softwares.json'),

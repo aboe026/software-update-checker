@@ -3,7 +3,8 @@ import fs from 'fs-extra'
 import path from 'path'
 ;(async () => {
   colors.enable() // force colors, even on non-color supporting terminals (eg Jenkins CI)
-  const fileNames = await getFilePathsRecursively(path.join(__dirname, '../test'))
+  const ignoreDirectories = await getDirectoriesToIgnore()
+  const fileNames = await getFilePathsRecursively(path.join(__dirname, '../test'), ignoreDirectories)
   const resources: TestResource[] = []
   for (const fileName of fileNames) {
     resources.push(...(await getTestResources(fileName)))
@@ -48,13 +49,27 @@ import path from 'path'
   process.exit(1)
 })
 
-async function getFilePathsRecursively(directory: string): Promise<string[]> {
+async function getDirectoriesToIgnore(): Promise<string[]> {
+  const directoriesToIgnore = []
+  const prettierIgnoreFile = path.join(__dirname, '../.prettierignore')
+  const prettierIgnoreContents = await fs.readFile(prettierIgnoreFile, {
+    encoding: 'utf-8',
+  })
+  for (const line of prettierIgnoreContents.split(/\r?\n/)) {
+    directoriesToIgnore.push(path.join(__dirname, '../', line))
+  }
+  return directoriesToIgnore
+}
+
+async function getFilePathsRecursively(directory: string, ignores: string[]): Promise<string[]> {
   const filePaths = []
   const fileNames = await fs.readdir(directory)
   for (const fileName of fileNames) {
     const stats = await fs.lstat(path.join(directory, fileName))
     if (stats.isDirectory()) {
-      filePaths.push(...(await getFilePathsRecursively(path.join(directory, fileName))))
+      if (!ignores.includes(path.join(directory, fileName))) {
+        filePaths.push(...(await getFilePathsRecursively(path.join(directory, fileName), ignores)))
+      }
     } else {
       filePaths.push(path.join(directory, fileName))
     }
@@ -69,168 +84,170 @@ async function getTestResources(filePath: string): Promise<TestResource[]> {
   })
   const lines = fileContents.split(/\r?\n/)
   for (let i = 0; i < lines.length; i++) {
-    addResourceMatchingRegex({
-      type: TestResourceType.name,
-      regex: /name: '(.*)'/,
-      ignore: [''],
-      lines,
-      line: i + 1,
-      filePath,
-      resources,
-    })
-    addResourceMatchingRegex({
-      type: TestResourceType.name,
-      regex: /name = '(.*)'/,
-      ignore: [''],
-      lines,
-      line: i + 1,
-      filePath,
-      resources,
-    })
-    addResourceMatchingRegex({
-      type: TestResourceType.command,
-      regex: /command: '(.*)'/,
-      ignore: ['', 'node'],
-      lines,
-      line: i + 1,
-      filePath,
-      resources,
-    })
-    addResourceMatchingRegex({
-      type: TestResourceType.command,
-      regex: /command = '(.*)'/,
-      ignore: ['', 'node'],
-      lines,
-      line: i + 1,
-      filePath,
-      resources,
-    })
-    addResourceMatchingRegex({
-      type: TestResourceType.directory,
-      regex: /directory: '(.*)'/,
-      ignore: [''],
-      lines,
-      line: i + 1,
-      filePath,
-      resources,
-    })
-    addResourceMatchingRegex({
-      type: TestResourceType.directory,
-      regex: /directory = '(.*)'/,
-      ignore: [''],
-      lines,
-      line: i + 1,
-      filePath,
-      resources,
-    })
-    addResourceMatchingRegex({
-      type: TestResourceType.regex,
-      regex: /regex: '(.*)'/,
-      ignore: ['', 'v(.*)'],
-      lines,
-      line: i + 1,
-      filePath,
-      resources,
-    })
-    addResourceMatchingRegex({
-      type: TestResourceType.regex,
-      regex: /regex = '(.*)'/,
-      ignore: ['', 'v(.*)'],
-      lines,
-      line: i + 1,
-      filePath,
-      resources,
-    })
-    addResourceMatchingRegex({
-      type: TestResourceType.args,
-      regex: /args: '(.*)'/,
-      ignore: [''],
-      lines,
-      line: i + 1,
-      filePath,
-      resources,
-    })
-    addResourceMatchingRegex({
-      type: TestResourceType.args,
-      regex: /args = '(.*)'/,
-      ignore: [''],
-      lines,
-      line: i + 1,
-      filePath,
-      resources,
-    })
-    addResourceMatchingRegex({
-      type: TestResourceType.shell,
-      regex: /shell: '(.*)'/,
-      ignore: [''],
-      lines,
-      line: i + 1,
-      filePath,
-      resources,
-    })
-    addResourceMatchingRegex({
-      type: TestResourceType.shell,
-      regex: /shell = '(.*)'/,
-      ignore: [''],
-      lines,
-      line: i + 1,
-      filePath,
-      resources,
-    })
-    addResourceMatchingRegex({
-      type: TestResourceType.installedRegex,
-      regex: /installedRegex: '(.*)'/,
-      ignore: ['', 'v(.*)'],
-      lines,
-      line: i + 1,
-      filePath,
-      resources,
-    })
-    addResourceMatchingRegex({
-      type: TestResourceType.installedRegex,
-      regex: /installedRegex = '(.*)'/,
-      ignore: ['', 'v(.*)'],
-      lines,
-      line: i + 1,
-      filePath,
-      resources,
-    })
-    addResourceMatchingRegex({
-      type: TestResourceType.url,
-      regex: /url: '(.*)'/,
-      ignore: [''],
-      lines,
-      line: i + 1,
-      filePath,
-      resources,
-    })
-    addResourceMatchingRegex({
-      type: TestResourceType.url,
-      regex: /url = '(.*)'/,
-      ignore: [''],
-      lines,
-      line: i + 1,
-      filePath,
-      resources,
-    })
-    addResourceMatchingRegex({
-      type: TestResourceType.latestRegex,
-      regex: /latestRegex: '(.*)'/,
-      ignore: ['', 'latest: v(.*)'],
-      lines,
-      line: i + 1,
-      filePath,
-      resources,
-    })
-    addResourceMatchingRegex({
-      type: TestResourceType.latestRegex,
-      regex: /latestRegex = '(.*)'/,
-      ignore: ['', 'latest: v(.*)'],
-      lines,
-      line: i + 1,
-      filePath,
-      resources,
-    })
+    if (!lines[i].endsWith('// ignore-duplicate-test-resource')) {
+      addResourceMatchingRegex({
+        type: TestResourceType.name,
+        regex: /name: '(.*)'/,
+        ignore: [''],
+        lines,
+        line: i + 1,
+        filePath,
+        resources,
+      })
+      addResourceMatchingRegex({
+        type: TestResourceType.name,
+        regex: /name = '(.*)'/,
+        ignore: [''],
+        lines,
+        line: i + 1,
+        filePath,
+        resources,
+      })
+      addResourceMatchingRegex({
+        type: TestResourceType.command,
+        regex: /command: '(.*)'/,
+        ignore: ['', 'node'],
+        lines,
+        line: i + 1,
+        filePath,
+        resources,
+      })
+      addResourceMatchingRegex({
+        type: TestResourceType.command,
+        regex: /command = '(.*)'/,
+        ignore: ['', 'node'],
+        lines,
+        line: i + 1,
+        filePath,
+        resources,
+      })
+      addResourceMatchingRegex({
+        type: TestResourceType.directory,
+        regex: /directory: '(.*)'/,
+        ignore: [''],
+        lines,
+        line: i + 1,
+        filePath,
+        resources,
+      })
+      addResourceMatchingRegex({
+        type: TestResourceType.directory,
+        regex: /directory = '(.*)'/,
+        ignore: [''],
+        lines,
+        line: i + 1,
+        filePath,
+        resources,
+      })
+      addResourceMatchingRegex({
+        type: TestResourceType.regex,
+        regex: /regex: '(.*)'/,
+        ignore: ['', 'v(.*)'],
+        lines,
+        line: i + 1,
+        filePath,
+        resources,
+      })
+      addResourceMatchingRegex({
+        type: TestResourceType.regex,
+        regex: /regex = '(.*)'/,
+        ignore: ['', 'v(.*)'],
+        lines,
+        line: i + 1,
+        filePath,
+        resources,
+      })
+      addResourceMatchingRegex({
+        type: TestResourceType.args,
+        regex: /args: '(.*)'/,
+        ignore: [''],
+        lines,
+        line: i + 1,
+        filePath,
+        resources,
+      })
+      addResourceMatchingRegex({
+        type: TestResourceType.args,
+        regex: /args = '(.*)'/,
+        ignore: [''],
+        lines,
+        line: i + 1,
+        filePath,
+        resources,
+      })
+      addResourceMatchingRegex({
+        type: TestResourceType.shell,
+        regex: /shell: '(.*)'/,
+        ignore: [''],
+        lines,
+        line: i + 1,
+        filePath,
+        resources,
+      })
+      addResourceMatchingRegex({
+        type: TestResourceType.shell,
+        regex: /shell = '(.*)'/,
+        ignore: [''],
+        lines,
+        line: i + 1,
+        filePath,
+        resources,
+      })
+      addResourceMatchingRegex({
+        type: TestResourceType.installedRegex,
+        regex: /installedRegex: '(.*)'/,
+        ignore: ['', 'v(.*)'],
+        lines,
+        line: i + 1,
+        filePath,
+        resources,
+      })
+      addResourceMatchingRegex({
+        type: TestResourceType.installedRegex,
+        regex: /installedRegex = '(.*)'/,
+        ignore: ['', 'v(.*)'],
+        lines,
+        line: i + 1,
+        filePath,
+        resources,
+      })
+      addResourceMatchingRegex({
+        type: TestResourceType.url,
+        regex: /url: '(.*)'/,
+        ignore: [''],
+        lines,
+        line: i + 1,
+        filePath,
+        resources,
+      })
+      addResourceMatchingRegex({
+        type: TestResourceType.url,
+        regex: /url = '(.*)'/,
+        ignore: [''],
+        lines,
+        line: i + 1,
+        filePath,
+        resources,
+      })
+      addResourceMatchingRegex({
+        type: TestResourceType.latestRegex,
+        regex: /latestRegex: '(.*)'/,
+        ignore: ['', 'latest: v(.*)'],
+        lines,
+        line: i + 1,
+        filePath,
+        resources,
+      })
+      addResourceMatchingRegex({
+        type: TestResourceType.latestRegex,
+        regex: /latestRegex = '(.*)'/,
+        ignore: ['', 'latest: v(.*)'],
+        lines,
+        line: i + 1,
+        filePath,
+        resources,
+      })
+    }
   }
   return resources
 }

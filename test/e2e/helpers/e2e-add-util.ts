@@ -1,5 +1,6 @@
 import E2eBaseUtil, { BooleanPrompt, ChoicePrompt, StringPrompt } from './e2e-base-util'
-import { KEYS } from './interactive-execute'
+import E2eConfig from './e2e-config'
+import { getExecutableName, KEYS } from './interactive-execute'
 import { isStatic } from '../../../src/software/executable'
 import Software from '../../../src/software/software'
 
@@ -27,13 +28,6 @@ export interface LatestReconfiguration {
 }
 
 export default class E2eAddUtil extends E2eBaseUtil {
-  static readonly MESSAGES = {
-    CommandTypes: [
-      'Command types:',
-      'Static - Software executable defined by a fixed, non-changing path (eg executable on $PATH or absolute path to executable file).',
-      'Dynamic - Software executable has changing, evolving name requiring regex patterns to determine (eg executable name includes version, which changes between releases).',
-    ],
-  }
   static readonly CHOICES = {
     Executable: {
       question: 'Command type of executable (see definitions above)',
@@ -196,42 +190,48 @@ export default class E2eAddUtil extends E2eBaseUtil {
     installedVersion,
     latestVersion,
     defaults,
+    executableDirectory,
+    executableFile,
   }: {
     software: Software
     installedVersion: string
     latestVersion: string
     defaults?: Software
+    executableDirectory?: string
+    executableFile?: string
   }): (string | StringPrompt | BooleanPrompt | ChoicePrompt)[] {
     return [
       {
-        question: 'Name to identify software configuration',
+        question: `${E2eAddUtil.MESSAGES.Name} ${E2eAddUtil.MESSAGES.NameExample}`,
         answer: software.name,
         default: defaults && defaults.name,
       },
-      ...this.MESSAGES.CommandTypes,
+      ...E2eAddUtil.MESSAGES.CommandTypes,
       {
-        choice: this.CHOICES.Executable,
+        choice: E2eAddUtil.CHOICES.Executable,
         answer: ExecutableChoiceOption.Static,
       },
       {
-        question: 'Command or path to executable (eg "git" or "C:\\Program Files\\Git\\bin\\git.exe")',
+        question: `${E2eAddUtil.MESSAGES.Command} ${E2eAddUtil.getCommandExampleMessage({
+          executableName: executableFile || getExecutableName(),
+          directory: executableDirectory || E2eConfig.DIRECTORY.Executables,
+        })}`,
         answer: isStatic(software.executable) ? software.executable.command : '',
         default:
           defaults && defaults.executable && isStatic(defaults.executable) ? defaults.executable.command : undefined,
       },
       {
-        question: 'Arguments to apply to executable to produce version (eg "--version")',
+        question: `${E2eAddUtil.MESSAGES.Arguments} ${E2eAddUtil.MESSAGES.ArgumentsExample}`,
         answer: software.args,
         default: defaults && defaults.args,
       },
       {
-        question: 'Shell to use instead of system default shell (eg "powershell")',
+        question: `${E2eAddUtil.MESSAGES.Shell} ${E2eAddUtil.MESSAGES.ShellExample}`,
         answer: software.shell,
         default: defaults && defaults.shell,
       },
       {
-        question:
-          'Regex pattern applied to executable command output for singling out installed version (eg "version (.*)")',
+        question: `${E2eAddUtil.MESSAGES.InstalledRegex} ${E2eAddUtil.MESSAGES.InstalledRegexExample}`,
         answer: software.installedRegex,
         default: defaults && defaults.installedRegex,
       },
@@ -241,13 +241,12 @@ export default class E2eAddUtil extends E2eBaseUtil {
         answer: true,
       },
       {
-        question: 'URL to call for latest version',
+        question: `${E2eAddUtil.MESSAGES.Url} ${E2eAddUtil.MESSAGES.UrlExample}`,
         answer: software.url,
         default: defaults && defaults.url,
       },
       {
-        question:
-          'Regex pattern applied to URL contents for singling out latest version (eg "Version (\\d+\\.\\d+(\\.\\d+)?)")',
+        question: `${E2eAddUtil.MESSAGES.LatestRegex} ${E2eAddUtil.MESSAGES.LatestRegexExample}`,
         answer: software.latestRegex,
         default: defaults && defaults.latestRegex,
       },
@@ -272,7 +271,7 @@ export default class E2eAddUtil extends E2eBaseUtil {
   }): (string | StringPrompt | BooleanPrompt | ChoicePrompt)[] {
     const chunks: (string | StringPrompt | BooleanPrompt | ChoicePrompt)[] = [
       {
-        question: 'Name to identify software configuration',
+        question: `${E2eAddUtil.MESSAGES.Name} ${E2eAddUtil.MESSAGES.NameExample}`,
         answer: name,
         default: defaults && defaults.name,
       },
@@ -282,13 +281,16 @@ export default class E2eAddUtil extends E2eBaseUtil {
       const previousConfig = i > 0 ? installed[i - 1] : defaults
       chunks.push(
         ...[
-          ...this.MESSAGES.CommandTypes,
+          ...E2eAddUtil.MESSAGES.CommandTypes,
           {
-            choice: this.CHOICES.Executable,
+            choice: E2eAddUtil.CHOICES.Executable,
             answer: ExecutableChoiceOption.Static,
           },
           {
-            question: 'Command or path to executable (eg "git" or "C:\\Program Files\\Git\\bin\\git.exe")',
+            question: `${E2eAddUtil.MESSAGES.Command} ${E2eAddUtil.getCommandExampleMessage({
+              executableName: getExecutableName(),
+              directory: E2eConfig.DIRECTORY.Executables,
+            })}`,
             answer: currentConfig.command,
             default: isSoftware(previousConfig)
               ? isStatic(previousConfig.executable)
@@ -297,12 +299,12 @@ export default class E2eAddUtil extends E2eBaseUtil {
               : previousConfig && previousConfig.command,
           },
           {
-            question: 'Arguments to apply to executable to produce version (eg "--version")',
+            question: `${E2eAddUtil.MESSAGES.Arguments} ${E2eAddUtil.MESSAGES.ArgumentsExample}`,
             answer: currentConfig.args,
             default: previousConfig && previousConfig.args,
           },
           {
-            question: 'Shell to use instead of system default shell (eg "powershell")',
+            question: `${E2eAddUtil.MESSAGES.Shell} ${E2eAddUtil.MESSAGES.ShellExample}`,
             answer: currentConfig.shell === KEYS.BACK_SPACE ? '' : currentConfig.shell,
             default: previousConfig
               ? previousConfig.shell === KEYS.BACK_SPACE
@@ -311,8 +313,7 @@ export default class E2eAddUtil extends E2eBaseUtil {
               : undefined,
           },
           {
-            question:
-              'Regex pattern applied to executable command output for singling out installed version (eg "version (.*)")',
+            question: `${E2eAddUtil.MESSAGES.InstalledRegex} ${E2eAddUtil.MESSAGES.InstalledRegexExample}`,
             answer: currentConfig.regex,
             default: isSoftware(previousConfig)
               ? previousConfig.installedRegex
@@ -349,13 +350,12 @@ export default class E2eAddUtil extends E2eBaseUtil {
         chunks.push(
           ...[
             {
-              question: 'URL to call for latest version',
+              question: `${E2eAddUtil.MESSAGES.Url} ${E2eAddUtil.MESSAGES.UrlExample}`,
               answer: currentConfig.url,
               default: previousConfig && previousConfig.url,
             },
             {
-              question:
-                'Regex pattern applied to URL contents for singling out latest version (eg "Version (\\d+\\.\\d+(\\.\\d+)?)")',
+              question: `${E2eAddUtil.MESSAGES.LatestRegex} ${E2eAddUtil.MESSAGES.LatestRegexExample}`,
               answer: currentConfig.regex,
               default: isSoftware(previousConfig) ? previousConfig.latestRegex : previousConfig && previousConfig.regex,
             },
