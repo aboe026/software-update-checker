@@ -652,7 +652,7 @@ describe('Software List Unit Tests', () => {
         })
       )
       await expect(SoftwareList.load()).rejects.toThrow(
-        `Saved file "${file}" contains an invalid software entry "${name}" whose executable is neither static or dynamic`
+        `Saved file "${file}" contains an invalid software entry "${name}" whose executable is neither static nor dynamic`
       )
     })
     it('throws error if save file has software without an installed regex', async () => {

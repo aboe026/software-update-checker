@@ -137,7 +137,7 @@ export default class SoftwareList {
         }
         if (!obj.executable.command && !obj.executable.regex) {
           throw Error(
-            `Saved file "${file}" contains an invalid software entry "${obj.name}" whose executable is neither static or dynamic`
+            `Saved file "${file}" contains an invalid software entry "${obj.name}" whose executable is neither static nor dynamic`
           )
         }
         if (!obj.installedRegex) {
