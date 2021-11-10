@@ -7,7 +7,7 @@ import E2eConfig from './e2e-config'
 export default async function ({
   args = [],
   inputs = [],
-  timeoutMs = 12000,
+  timeoutMs = 15000,
   minQuietPeriodMs = 200,
   maxQuietPeriodMs = 1000,
   directory,
