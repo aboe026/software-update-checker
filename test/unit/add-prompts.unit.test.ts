@@ -2,6 +2,7 @@ import inquirer from 'inquirer'
 
 import AddPrompts from '../../src/actions/add/add-prompts'
 import { CommandType } from '../../src/software/executable'
+import SelfReference from '../../src/util/self-reference'
 import TestUtil from '../helpers/test-util'
 
 describe('Add Prompts Unit Tests', () => {
@@ -23,44 +24,80 @@ describe('Add Prompts Unit Tests', () => {
       })
     })
   })
+  describe('getDirectory', () => {
+    it('returns inquirer output setting no default without existing', async () => {
+      await TestUtil.validateStringPrompt({
+        method: AddPrompts.getDirectory,
+        property: 'directory',
+        expected: 'autodex',
+      })
+    })
+    it('returns inquirer output setting default with existing', async () => {
+      await TestUtil.validateStringPrompt({
+        method: AddPrompts.getDirectory,
+        property: 'directory',
+        expected: 'rolodex',
+        input: 'index',
+        expectedDefault: 'index',
+      })
+    })
+  })
   describe('getCommandType', () => {
     it('returns static inquirer output setting default without existing', async () => {
       const type = CommandType.Static
       const promptSpy = jest.spyOn(inquirer, 'prompt').mockResolvedValue({ type })
       await expect(AddPrompts.getCommandType()).resolves.toBe(type)
-      TestUtil.validateDefaultProperty(promptSpy, type)
+      TestUtil.validateMockCallParameter({
+        spy: promptSpy,
+        expected: type,
+      })
     })
     it('returns static inquirer output setting default with existing static', async () => {
       const type = CommandType.Static
       const promptSpy = jest.spyOn(inquirer, 'prompt').mockResolvedValue({ type })
       await expect(AddPrompts.getCommandType(type)).resolves.toBe(type)
-      TestUtil.validateDefaultProperty(promptSpy, type)
+      TestUtil.validateMockCallParameter({
+        spy: promptSpy,
+        expected: type,
+      })
     })
     it('returns static inquirer output setting default with existing dynamic', async () => {
       const type = CommandType.Static
       const existing = CommandType.Dynamic
       const promptSpy = jest.spyOn(inquirer, 'prompt').mockResolvedValue({ type })
       await expect(AddPrompts.getCommandType(existing)).resolves.toBe(type)
-      TestUtil.validateDefaultProperty(promptSpy, existing)
+      TestUtil.validateMockCallParameter({
+        spy: promptSpy,
+        expected: existing,
+      })
     })
     it('returns dynamic inquirer output setting default without existing', async () => {
       const type = CommandType.Dynamic
       const promptSpy = jest.spyOn(inquirer, 'prompt').mockResolvedValue({ type })
       await expect(AddPrompts.getCommandType()).resolves.toBe(type)
-      TestUtil.validateDefaultProperty(promptSpy, CommandType.Static)
+      TestUtil.validateMockCallParameter({
+        spy: promptSpy,
+        expected: CommandType.Static,
+      })
     })
     it('returns dynamic inquirer output setting default with existing dynamic', async () => {
       const type = CommandType.Dynamic
       const promptSpy = jest.spyOn(inquirer, 'prompt').mockResolvedValue({ type })
       await expect(AddPrompts.getCommandType(type)).resolves.toBe(type)
-      TestUtil.validateDefaultProperty(promptSpy, type)
+      TestUtil.validateMockCallParameter({
+        spy: promptSpy,
+        expected: type,
+      })
     })
     it('returns dynamic inquirer output setting default with existing static', async () => {
       const type = CommandType.Dynamic
       const existing = CommandType.Static
       const promptSpy = jest.spyOn(inquirer, 'prompt').mockResolvedValue({ type })
       await expect(AddPrompts.getCommandType(existing)).resolves.toBe(type)
-      TestUtil.validateDefaultProperty(promptSpy, existing)
+      TestUtil.validateMockCallParameter({
+        spy: promptSpy,
+        expected: existing,
+      })
     })
   })
   describe('getCommand', () => {
@@ -81,39 +118,65 @@ describe('Add Prompts Unit Tests', () => {
       })
     })
   })
-  describe('getDirectory', () => {
-    it('returns inquirer output setting no default without existing', async () => {
-      await TestUtil.validateStringPrompt({
-        method: AddPrompts.getDirectory,
-        property: 'directory',
-        expected: 'autodex',
-      })
-    })
-    it('returns inquirer output setting default with existing', async () => {
-      await TestUtil.validateStringPrompt({
-        method: AddPrompts.getDirectory,
-        property: 'directory',
-        expected: 'rolodex',
-        input: 'index',
-        expectedDefault: 'index',
-      })
-    })
-  })
   describe('getRegex', () => {
-    it('returns inquirer output setting no default without existing', async () => {
-      await TestUtil.validateStringPrompt({
-        method: AddPrompts.getRegex,
-        property: 'regex',
-        expected: 'dotstar',
+    it('returns inquirer output setting no default with empty object', async () => {
+      const regex = 'dotstar'
+      const promptSpy = jest.spyOn(inquirer, 'prompt').mockResolvedValue({ regex })
+      await expect(AddPrompts.getRegex({})).resolves.toBe(regex)
+      TestUtil.validateMockCallParameter({
+        spy: promptSpy,
+        expected: undefined,
+      })
+      TestUtil.validateMockCallParameter({
+        spy: promptSpy,
+        parameter: 'message',
+        expected: `Regex pattern applied to files in directory for singling out executable file to use (eg "${SelfReference.getNameRegex(
+          SelfReference.getName()
+        )}"):`,
       })
     })
-    it('returns inquirer output setting default with existing', async () => {
-      await TestUtil.validateStringPrompt({
-        method: AddPrompts.getRegex,
-        property: 'regex',
-        expected: 'slashess',
-        input: 'slashplus',
-        expectedDefault: 'slashplus',
+    it('returns inquirer output setting default with object containing existing', async () => {
+      const regex = 'slashess'
+      const expectedDefault = 'slashplus'
+      const promptSpy = jest.spyOn(inquirer, 'prompt').mockResolvedValue({ regex })
+      await expect(
+        AddPrompts.getRegex({
+          existingRegex: expectedDefault,
+        })
+      ).resolves.toBe(regex)
+      TestUtil.validateMockCallParameter({
+        spy: promptSpy,
+        expected: expectedDefault,
+      })
+      TestUtil.validateMockCallParameter({
+        spy: promptSpy,
+        parameter: 'message',
+        expected: `Regex pattern applied to files in directory for singling out executable file to use (eg "${SelfReference.getNameRegex(
+          SelfReference.getName()
+        )}"):`,
+      })
+    })
+    it('replaces directory in message if specified', async () => {
+      const regex = 'dollarstar'
+      const expectedDefault = 'dollarslash'
+      const directory = '/escape/this'
+      const promptSpy = jest.spyOn(inquirer, 'prompt').mockResolvedValue({ regex })
+      await expect(
+        AddPrompts.getRegex({
+          existingRegex: expectedDefault,
+          directory,
+        })
+      ).resolves.toBe(regex)
+      TestUtil.validateMockCallParameter({
+        spy: promptSpy,
+        expected: expectedDefault,
+      })
+      TestUtil.validateMockCallParameter({
+        spy: promptSpy,
+        parameter: 'message',
+        expected: `Regex pattern applied to files in "${directory}" for singling out executable file to use (eg "${SelfReference.getNameRegex(
+          SelfReference.getName()
+        )}"):`,
       })
     })
   })

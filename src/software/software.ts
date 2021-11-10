@@ -1,6 +1,5 @@
 import fetch from 'node-fetch'
 import { ExecOptions } from 'child_process'
-import path from 'path'
 
 import { Dynamic, Static, isStatic, getDynamicExecutable } from './executable'
 import execute from '../util/execute-async'
@@ -8,6 +7,7 @@ import SelfReference from '../util/self-reference'
 
 export default class Software {
   readonly name: string
+  readonly directory?: string
   readonly executable: Dynamic | Static
   readonly args?: string
   readonly shell?: string
@@ -17,6 +17,7 @@ export default class Software {
 
   constructor({
     name,
+    directory,
     executable,
     args,
     shell,
@@ -25,6 +26,7 @@ export default class Software {
     latestRegex,
   }: {
     name: string
+    directory?: string
     executable: Dynamic | Static
     args?: string
     shell?: string
@@ -36,6 +38,7 @@ export default class Software {
       throw Error('Name must be non-empty')
     }
     this.name = name
+    this.directory = directory
     this.executable = executable
     this.args = args
     this.shell = shell
@@ -45,10 +48,14 @@ export default class Software {
   }
 
   async getInstalledVersion(): Promise<string | null> {
-    const executable = await getExecutable(this.executable)
+    const directory = this.directory || process.cwd()
+    const command = await getCommand({
+      executable: this.executable,
+      directory: directory,
+    })
     const output = await getFromExecutable({
-      directory: path.dirname(executable),
-      command: path.basename(executable),
+      directory: directory,
+      command,
       args: this.args,
       shell: this.shell,
     })
@@ -61,13 +68,19 @@ export default class Software {
   }
 }
 
-export async function getExecutable(executable: Static | Dynamic): Promise<string> {
+export async function getCommand({
+  executable,
+  directory,
+}: {
+  executable: Static | Dynamic
+  directory?: string
+}): Promise<string> {
   if (isStatic(executable)) {
     return executable.command
   }
   return getDynamicExecutable({
-    directory: executable.directory,
     regex: executable.regex,
+    directory,
   })
 }
 
@@ -77,23 +90,22 @@ export async function getFromExecutable({
   args,
   shell,
 }: {
-  directory: string
+  directory?: string
   command: string
   args?: string
   shell?: string
 }): Promise<string> {
-  const defaultEntrypoint = (process as any)?.pkg?.defaultEntrypoint
+  const defaultEntrypoint = (process as any).pkg?.defaultEntrypoint
   if (
-    command === SelfReference.getName() &&
+    (command === SelfReference.getName() || command === `./${SelfReference.getName()}`) &&
     (directory === '.' || directory === SelfReference.getDirectory()) &&
     defaultEntrypoint
   ) {
-    // TODO: the "./" should be part of the example command in the future (when the working directory is a separate question)
-    // rather than being added in here manually
-    command = `./${command} ${defaultEntrypoint}` // To get around self-reference/recursion: https://github.com/vercel/pkg/issues/376
+    command = `${command} ${defaultEntrypoint}` // To get around self-reference/recursion issue: https://github.com/vercel/pkg/issues/376
   }
-  const options: ExecOptions = {
-    cwd: directory,
+  const options: ExecOptions = {}
+  if (directory) {
+    options.cwd = directory
   }
   if (shell) {
     options.shell = shell

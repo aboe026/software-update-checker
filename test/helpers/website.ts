@@ -11,7 +11,7 @@ app.get('/error', function (req, res) {
   res.status(500).send(req.query.message)
 })
 app.get('/file', async function (req, res) {
-  res.send(await fs.readFile(path.join(__dirname, '../mocks', (req?.query?.name || '').toString())))
+  res.send(await fs.readFile(path.join(__dirname, '../helpers/mocks', (req?.query?.name || '').toString())))
 })
 
 export default class Website {

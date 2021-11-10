@@ -104,24 +104,6 @@ async function getTestResources(filePath: string): Promise<TestResource[]> {
         resources,
       })
       addResourceMatchingRegex({
-        type: TestResourceType.command,
-        regex: /command: '(.*)'/,
-        ignore: ['', 'node'],
-        lines,
-        line: i + 1,
-        filePath,
-        resources,
-      })
-      addResourceMatchingRegex({
-        type: TestResourceType.command,
-        regex: /command = '(.*)'/,
-        ignore: ['', 'node'],
-        lines,
-        line: i + 1,
-        filePath,
-        resources,
-      })
-      addResourceMatchingRegex({
         type: TestResourceType.directory,
         regex: /directory: '(.*)'/,
         ignore: [''],
@@ -134,6 +116,24 @@ async function getTestResources(filePath: string): Promise<TestResource[]> {
         type: TestResourceType.directory,
         regex: /directory = '(.*)'/,
         ignore: [''],
+        lines,
+        line: i + 1,
+        filePath,
+        resources,
+      })
+      addResourceMatchingRegex({
+        type: TestResourceType.command,
+        regex: /command: '(.*)'/,
+        ignore: ['', 'node'],
+        lines,
+        line: i + 1,
+        filePath,
+        resources,
+      })
+      addResourceMatchingRegex({
+        type: TestResourceType.command,
+        regex: /command = '(.*)'/,
+        ignore: ['', 'node'],
         lines,
         line: i + 1,
         filePath,
@@ -178,7 +178,7 @@ async function getTestResources(filePath: string): Promise<TestResource[]> {
       addResourceMatchingRegex({
         type: TestResourceType.shell,
         regex: /shell: '(.*)'/,
-        ignore: [''],
+        ignore: ['', 'pwsh'],
         lines,
         line: i + 1,
         filePath,

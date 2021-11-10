@@ -55,11 +55,9 @@ export default class E2eTestUtil {
   }
 
   static async addInteractiveReconfigure({
-    name,
     installed,
     latest = [],
   }: {
-    name: string
     installed: InstalledReconfiguration[]
     latest?: LatestReconfiguration[]
   }): Promise<void> {
@@ -67,7 +65,6 @@ export default class E2eTestUtil {
       inputs: [
         ...E2eHomeUtil.getInputs(HomeChoiceOption.Add),
         ...E2eAddUtil.getInputsReconfigure({
-          name,
           installed,
           latest,
         }),
@@ -77,7 +74,6 @@ export default class E2eTestUtil {
     await E2eAddUtil.validateChunks(response.chunks, [
       ...E2eHomeUtil.getChunks(HomeChoiceOption.Add),
       ...E2eAddUtil.getChunksReconfigure({
-        name,
         installed,
         latest,
       }),
@@ -208,13 +204,11 @@ export default class E2eTestUtil {
   static async editInteractiveReconfigure({
     existingSoftwares,
     positionToEdit,
-    name,
     installed,
     latest = [],
   }: {
     existingSoftwares: Software[]
     positionToEdit: number
-    name: string
     installed: InstalledReconfiguration[]
     latest?: LatestReconfiguration[]
   }): Promise<void> {
@@ -223,7 +217,6 @@ export default class E2eTestUtil {
         ...E2eHomeUtil.getInputs(HomeChoiceOption.Edit),
         ...E2eEditUtil.getInputsReconfigure({
           position: positionToEdit,
-          name,
           installed,
           latest,
           oldSoftware: existingSoftwares[positionToEdit],
@@ -236,7 +229,6 @@ export default class E2eTestUtil {
       ...E2eEditUtil.getChunksReconfigure({
         existingSoftwares,
         oldSoftware: existingSoftwares[positionToEdit],
-        name,
         installed,
         latest,
       }),
@@ -305,6 +297,7 @@ export default class E2eTestUtil {
         existingName,
         newSoftware: {
           name: newSoftware.name,
+          directory: newSoftware.directory,
           type: CommandType.Static,
           command: isStatic(newSoftware.executable) ? newSoftware.executable.command : '',
           args: newSoftware.args,

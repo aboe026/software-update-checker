@@ -1,5 +1,4 @@
 import fs from 'fs-extra'
-import path from 'path'
 
 export enum CommandType {
   Static = 'static',
@@ -11,7 +10,6 @@ export type Static = {
 }
 
 export type Dynamic = {
-  directory: string
   regex: string
 }
 
@@ -23,21 +21,22 @@ export async function getDynamicExecutable({
   directory,
   regex,
 }: {
-  directory: string
+  directory?: string
   regex: string
 }): Promise<string> {
+  const dir = directory || process.cwd()
   let executable = ''
-  if (!(await fs.pathExists(directory))) {
-    throw Error(`Directory specified "${directory}" does not exist. Please specify a valid path.`)
+  if (!(await fs.pathExists(dir))) {
+    throw Error(`Directory specified "${dir}" does not exist. Please specify a valid path.`)
   }
-  const files = await fs.readdir(directory)
+  const files = await fs.readdir(dir)
   for (const file of files) {
     if (!executable && new RegExp(regex).test(file)) {
-      executable = path.join(directory, file)
+      executable = file
     }
   }
   if (!executable) {
-    throw Error(`Could not find any file in directory "${directory}" matching regex pattern "${regex}"`)
+    throw Error(`Could not find any file in directory "${dir}" matching regex pattern "${regex}"`)
   }
   return executable
 }

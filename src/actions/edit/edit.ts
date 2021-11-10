@@ -39,15 +39,9 @@ export default class Edit extends Base {
           !isStatic(inputs.executable) &&
           (!inputs.type || inputs.type === CommandType.Static)
         ) {
-          if (inputs.executable.directory) {
-            throw Error(
-              `The "--${EditOptions.Directory.key}" option is not compatible with a "${CommandType.Static}" executable`
-            )
-          } else {
-            throw Error(
-              `The "--${EditOptions.Regex.key}" option is not compatible with a "${CommandType.Static}" executable`
-            )
-          }
+          throw Error(
+            `The "--${EditOptions.Regex.key}" option is not compatible with a "${CommandType.Static}" executable`
+          )
         }
 
         if (!isStatic(existing.executable) && inputs.type === CommandType.Static) {
@@ -62,16 +56,9 @@ export default class Edit extends Base {
           }
         }
         if (isStatic(existing.executable) && inputs.type === CommandType.Dynamic) {
-          let directory
           let regex
           if (inputs.executable && !isStatic(inputs.executable)) {
-            directory = inputs.executable.directory
             regex = inputs.executable.regex
-          }
-          if (!directory) {
-            throw Error(
-              `The "${CommandType.Dynamic}" executable type requires a "--${EditOptions.Directory.key}" option to be specified.`
-            )
           }
           if (!regex) {
             throw Error(

@@ -58,6 +58,7 @@ describe('Software List Unit Tests', () => {
     it('does not modify original array', () => {
       const first = new Software({
         name: 'sortByName does not modify original b first',
+        directory: 'ungulate',
         executable: {
           command: 'hooved',
         },
@@ -69,6 +70,7 @@ describe('Software List Unit Tests', () => {
       })
       const last = new Software({
         name: 'sortByName does not modify original a last',
+        directory: 'ocean',
         executable: {
           command: 'region',
         },
@@ -632,38 +634,15 @@ describe('Software List Unit Tests', () => {
         `Saved file "${file}" contains an invalid software entry "${name}" that does not have an executable`
       )
     })
-    it('throws error if save file has dynamic software without a directory', async () => {
-      const name = 'dynamic no directory'
-      fs.readFile = jest.fn().mockResolvedValue(
-        JSON.stringify({
-          softwares: [
-            {
-              name,
-              executable: {
-                regex: 'candy',
-              },
-              args: 'nougat',
-              installedRegex: 'snickers',
-              url: 'https://candy.com',
-              latestRegex: 'marathon',
-            },
-          ],
-        })
-      )
-      await expect(SoftwareList.load()).rejects.toThrow(
-        `Saved file "${file}" contains an invalid software entry "${name}" that is dynamic but does not have an executable directory`
-      )
-    })
-    it('throws error if save file has dynamic software without a regex', async () => {
+    it('throws error if save file has empty executable', async () => {
       const name = 'dynamic no regex'
       fs.readFile = jest.fn().mockResolvedValue(
         JSON.stringify({
           softwares: [
             {
               name,
-              executable: {
-                directory: 'tree',
-              },
+              directory: 'tree',
+              executable: {},
               args: 'deciduous',
               installedRegex: 'willow',
               url: 'https://trees.com',
@@ -673,7 +652,7 @@ describe('Software List Unit Tests', () => {
         })
       )
       await expect(SoftwareList.load()).rejects.toThrow(
-        `Saved file "${file}" contains an invalid software entry "${name}" that is dynamic but does not have an executable regex`
+        `Saved file "${file}" contains an invalid software entry "${name}" whose executable is neither static or dynamic`
       )
     })
     it('throws error if save file has software without an installed regex', async () => {
@@ -844,8 +823,27 @@ describe('Software List Unit Tests', () => {
         },
         shell: 'force',
         installedRegex: 'unsparing',
-        url: 'https:mywayorthehighway//.com',
+        url: 'https://mywayorthehighway.com',
         latestRegex: 'obey',
+      })
+      fs.readFile = jest.fn().mockResolvedValue(
+        JSON.stringify({
+          softwares: [software],
+        })
+      )
+      jest.spyOn(allUpgrades, 'default').mockReturnValue([])
+      await expect(SoftwareList.load()).resolves.toEqual([software])
+    })
+    it('loads software if software list is single valid dynamic executable without directory', async () => {
+      const software = new Software({
+        name: 'valid single dynamic without directory',
+        executable: {
+          regex: 'film',
+        },
+        shell: 'standard',
+        installedRegex: '70mm',
+        url: 'https://maximumimage.com',
+        latestRegex: 'imax',
       })
       fs.readFile = jest.fn().mockResolvedValue(
         JSON.stringify({

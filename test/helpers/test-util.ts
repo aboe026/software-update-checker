@@ -62,10 +62,18 @@ export default class TestUtil {
     return spy
   }
 
-  static validateDefaultProperty(spy: jest.SpyInstance, expected: string | boolean | undefined): void {
+  static validateMockCallParameter({
+    spy,
+    parameter = 'default',
+    expected,
+  }: {
+    spy: jest.SpyInstance
+    parameter?: string
+    expected: string | boolean | undefined
+  }): void {
     expect(spy.mock.calls).toHaveLength(1)
     expect(spy.mock.calls[0]).toHaveLength(1)
-    expect(spy.mock.calls[0][0]).toHaveProperty('default', expected)
+    expect(spy.mock.calls[0][0]).toHaveProperty(parameter, expected)
   }
 
   static validateGetExistingSoftwareCalls({
@@ -102,18 +110,30 @@ export default class TestUtil {
     input,
     expected,
     expectedDefault,
+    expectedMessage,
   }: {
     property: string
-    method: (existing?: string) => Promise<string>
+    method: (existing?: any) => Promise<string>
     input?: string
     expected: string
     expectedDefault?: string
+    expectedMessage?: string
   }): Promise<void> {
     const promptSpy = jest.spyOn(inquirer, 'prompt').mockResolvedValue({
       [property]: expected,
     })
     await expect(method(input)).resolves.toBe(expected)
-    TestUtil.validateDefaultProperty(promptSpy, expectedDefault)
+    TestUtil.validateMockCallParameter({
+      spy: promptSpy,
+      expected: expectedDefault,
+    })
+    if (expectedMessage) {
+      TestUtil.validateMockCallParameter({
+        spy: promptSpy,
+        expected: expectedMessage,
+        parameter: 'message',
+      })
+    }
   }
 
   static async validateBooleanPrompt({
@@ -133,7 +153,10 @@ export default class TestUtil {
       [property]: expected,
     })
     await expect(method(input)).resolves.toBe(expected)
-    TestUtil.validateDefaultProperty(promptSpy, expectedDefault)
+    TestUtil.validateMockCallParameter({
+      spy: promptSpy,
+      expected: expectedDefault,
+    })
   }
 }
 

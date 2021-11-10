@@ -14,6 +14,7 @@ describe('Upgrade 1 Interactive', () => {
   it('interactive add works with single existing software with shellOverride without version', async () => {
     const existingSoftware = {
       name: 'e2e upgrade 1 interactive add single existing shellOverride without version',
+      directory: 'identity',
       executable: {
         command: 'experiment',
       },
@@ -27,6 +28,7 @@ describe('Upgrade 1 Interactive', () => {
     const latestVersion = '0.7.7'
     const newSoftware = new Software({
       name: 'e2e upgrade 1 interactive add single shellOverride without version',
+      directory: '',
       executable: {
         command: 'node',
       },
@@ -46,6 +48,7 @@ describe('Upgrade 1 Interactive', () => {
     await E2eBaseUtil.verifySoftwares([
       new Software({
         name: existingSoftware.name,
+        directory: existingSoftware.directory,
         executable: existingSoftware.executable,
         args: existingSoftware.args,
         shell: existingSoftware.shellOverride,
@@ -59,6 +62,7 @@ describe('Upgrade 1 Interactive', () => {
   it('interactive add works with single existing software with shellOverride from version 0', async () => {
     const existingSoftware = {
       name: 'e2e upgrade 1 interactive add single existing shellOverride version 0',
+      directory: 'cow',
       executable: {
         command: 'cheeses',
       },
@@ -72,6 +76,7 @@ describe('Upgrade 1 Interactive', () => {
     const latestVersion = '0.7.8'
     const newSoftware = new Software({
       name: 'e2e upgrade 1 interactive add single shellOverride version 0',
+      directory: '',
       executable: {
         command: 'node',
       },
@@ -91,6 +96,7 @@ describe('Upgrade 1 Interactive', () => {
     await E2eBaseUtil.verifySoftwares([
       new Software({
         name: existingSoftware.name,
+        directory: existingSoftware.directory,
         executable: existingSoftware.executable,
         args: existingSoftware.args,
         shell: existingSoftware.shellOverride,
@@ -104,6 +110,7 @@ describe('Upgrade 1 Interactive', () => {
   it('interactive edit works with single existing software with shellOverride without version', async () => {
     const existingSoftware = {
       name: 'e2e upgrade 1 interactive edit single existing shellOverride without version',
+      directory: 'global',
       executable: {
         command: 'competition',
       },
@@ -117,6 +124,7 @@ describe('Upgrade 1 Interactive', () => {
     const latestVersion = '0.6.7'
     const newSoftware = new Software({
       name: `${existingSoftware.name} edited`,
+      directory: '',
       executable: {
         command: 'node',
       },
@@ -132,6 +140,7 @@ describe('Upgrade 1 Interactive', () => {
       existingSoftwares: [
         new Software({
           name: existingSoftware.name,
+          directory: existingSoftware.directory,
           executable: existingSoftware.executable,
           args: existingSoftware.args,
           shell: existingSoftware.shellOverride,
@@ -150,6 +159,7 @@ describe('Upgrade 1 Interactive', () => {
   it('interactive edit works with single existing software with shellOverride from version 0', async () => {
     const existingSoftware = {
       name: 'e2e upgrade 1 interactive edit single existing shellOverride version 0',
+      directory: 'wonder',
       executable: {
         command: 'ecosystem',
       },
@@ -163,6 +173,7 @@ describe('Upgrade 1 Interactive', () => {
     const latestVersion = '0.8.6'
     const newSoftware = new Software({
       name: `${existingSoftware.name} edited`,
+      directory: '',
       executable: {
         command: 'node',
       },
@@ -178,6 +189,7 @@ describe('Upgrade 1 Interactive', () => {
       existingSoftwares: [
         new Software({
           name: existingSoftware.name,
+          directory: existingSoftware.directory,
           executable: existingSoftware.executable,
           args: existingSoftware.args,
           shell: existingSoftware.shellOverride,
@@ -198,6 +210,7 @@ describe('Upgrade 1 Interactive', () => {
     const latestVersion = '0.6.0'
     const existingSoftware = {
       name: 'e2e upgrade 1 interactive view single existing shellOverride without version',
+      directory: '',
       executable: {
         command: 'node',
       },
@@ -222,6 +235,7 @@ describe('Upgrade 1 Interactive', () => {
     await E2eBaseUtil.verifySoftwares([
       new Software({
         name: existingSoftware.name,
+        directory: existingSoftware.directory,
         executable: existingSoftware.executable,
         args: existingSoftware.args,
         shell: existingSoftware.shellOverride,
@@ -236,6 +250,7 @@ describe('Upgrade 1 Interactive', () => {
     const latestVersion = '0.6.1'
     const existingSoftware = {
       name: 'e2e upgrade 1 interactive view single existing shellOverride version 0',
+      directory: '',
       executable: {
         command: 'node',
       },
@@ -260,6 +275,7 @@ describe('Upgrade 1 Interactive', () => {
     await E2eBaseUtil.verifySoftwares([
       new Software({
         name: existingSoftware.name,
+        directory: existingSoftware.directory,
         executable: existingSoftware.executable,
         args: existingSoftware.args,
         shell: existingSoftware.shellOverride,
@@ -272,6 +288,7 @@ describe('Upgrade 1 Interactive', () => {
   it('interactive delete works with existing softwares with shellOverride without version', async () => {
     const firstSoftware = {
       name: 'e2e upgrade 1 interactive delete shellOverride without version first',
+      directory: 'ohio',
       executable: {
         command: 'business',
       },
@@ -283,6 +300,7 @@ describe('Upgrade 1 Interactive', () => {
     }
     const lastSoftware = {
       name: 'e2e upgrade 1 interactive delete shellOverride without version last',
+      directory: 'drumbeats',
       executable: {
         command: 'game',
       },
@@ -298,6 +316,7 @@ describe('Upgrade 1 Interactive', () => {
       existingSoftwares: [
         new Software({
           name: firstSoftware.name,
+          directory: firstSoftware.directory,
           executable: firstSoftware.executable,
           args: firstSoftware.args,
           shell: firstSoftware.shellOverride,
@@ -307,6 +326,7 @@ describe('Upgrade 1 Interactive', () => {
         }),
         new Software({
           name: lastSoftware.name,
+          directory: lastSoftware.directory,
           executable: lastSoftware.executable,
           args: lastSoftware.args,
           shell: lastSoftware.shellOverride,
@@ -320,6 +340,7 @@ describe('Upgrade 1 Interactive', () => {
     await E2eBaseUtil.verifySoftwares([
       new Software({
         name: lastSoftware.name,
+        directory: lastSoftware.directory,
         executable: lastSoftware.executable,
         args: lastSoftware.args,
         shell: lastSoftware.shellOverride,
@@ -332,6 +353,7 @@ describe('Upgrade 1 Interactive', () => {
   it('interactive delete works with existing softwares with shellOverride from version 0', async () => {
     const firstSoftware = {
       name: 'e2e upgrade 1 interactive delete shellOverride version 0 first',
+      directory: 'family',
       executable: {
         command: 'word',
       },
@@ -343,6 +365,7 @@ describe('Upgrade 1 Interactive', () => {
     }
     const lastSoftware = {
       name: 'e2e upgrade 1 interactive delete shellOverride version 0 last',
+      directory: 'unleavened',
       executable: {
         command: 'flatbread',
       },
@@ -358,6 +381,7 @@ describe('Upgrade 1 Interactive', () => {
       existingSoftwares: [
         new Software({
           name: firstSoftware.name,
+          directory: firstSoftware.directory,
           executable: firstSoftware.executable,
           args: firstSoftware.args,
           shell: firstSoftware.shellOverride,
@@ -367,6 +391,7 @@ describe('Upgrade 1 Interactive', () => {
         }),
         new Software({
           name: lastSoftware.name,
+          directory: lastSoftware.directory,
           executable: lastSoftware.executable,
           args: lastSoftware.args,
           shell: lastSoftware.shellOverride,
@@ -380,6 +405,7 @@ describe('Upgrade 1 Interactive', () => {
     await E2eBaseUtil.verifySoftwares([
       new Software({
         name: lastSoftware.name,
+        directory: lastSoftware.directory,
         executable: lastSoftware.executable,
         args: lastSoftware.args,
         shell: lastSoftware.shellOverride,

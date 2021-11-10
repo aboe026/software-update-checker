@@ -1,4 +1,5 @@
 import colors from '../../src/util/colors'
+import fs from 'fs-extra'
 
 import Add, { Inputs as AddInputs } from '../../src/actions/add/add'
 import AddPrompts from '../../src/actions/add/add-prompts'
@@ -32,6 +33,7 @@ describe('Add Unit Tests', () => {
             [
               {
                 inputs,
+                existingDirectory: undefined,
                 existingExecutable: undefined,
                 existingArgs: undefined,
                 existingShell: undefined,
@@ -82,6 +84,7 @@ describe('Add Unit Tests', () => {
             [
               {
                 inputs,
+                existingDirectory: undefined,
                 existingExecutable: undefined,
                 existingArgs: undefined,
                 existingShell: undefined,
@@ -104,6 +107,7 @@ describe('Add Unit Tests', () => {
     it('adds new software if latest version and no existing', async () => {
       const software = new Software({
         name: 'adds if latest version and no existing',
+        directory: 'toy',
         executable: {
           command: 'puzzle',
         },
@@ -120,6 +124,7 @@ describe('Add Unit Tests', () => {
           configureInstalledVersionMocks: [
             {
               resolve: {
+                directory: software.directory,
                 executable: software.executable,
                 args: software.args,
                 shell: software.shell,
@@ -150,6 +155,7 @@ describe('Add Unit Tests', () => {
             [
               {
                 inputs: software,
+                existingDirectory: undefined,
                 existingExecutable: undefined,
                 existingArgs: undefined,
                 existingShell: undefined,
@@ -173,17 +179,19 @@ describe('Add Unit Tests', () => {
     it('edits existing software if latest version', async () => {
       const software = new Software({
         name: 'edits if latest version and existing',
+        directory: 'live',
         executable: {
           command: 'snl',
         },
         args: 'cast',
-        shell: 'movies',
+        shell: 'tv',
         installedRegex: 'matt foley',
         url: 'https://livininavandownbytheriver.com',
         latestRegex: 'chris farley',
       })
       const existing = new Software({
         name: 'edits if latest version and existing existing',
+        directory: 'recorded',
         executable: {
           command: 'comedy',
         },
@@ -201,6 +209,7 @@ describe('Add Unit Tests', () => {
           configureInstalledVersionMocks: [
             {
               resolve: {
+                directory: software.directory,
                 executable: software.executable,
                 args: software.args,
                 shell: software.shell,
@@ -231,6 +240,7 @@ describe('Add Unit Tests', () => {
             [
               {
                 inputs: software,
+                existingDirectory: existing.directory,
                 existingExecutable: existing.executable,
                 existingArgs: existing.args,
                 existingShell: existing.shell,
@@ -634,22 +644,219 @@ describe('Add Unit Tests', () => {
       })
     })
   })
+  describe('getDirectory', () => {
+    it('throws error if non-interactive and invalid directory', async () => {
+      const directory = '/the/chosen/one'
+      await testGetDirectory({
+        input: {
+          inputs: {
+            directory,
+          },
+          doesOptionalPathExistMocks: [{ resolve: false }],
+        },
+        output: {
+          expected: { reject: `Invalid directory "${directory}", does not exist.` },
+          doesOptionalPathExistCalls: [[{ directory }]],
+        },
+      })
+    })
+    it('re-prompts if no inputs interactive and invalid directory', async () => {
+      const invalidDir = '/copypasta'
+      const directory = '/take/me/to/your/leader'
+      await testGetDirectory({
+        input: {
+          getDirectoryMocks: [{ resolve: invalidDir }, { resolve: directory }],
+          doesOptionalPathExistMocks: [{ resolve: false }, { resolve: true }],
+        },
+        output: {
+          expected: { resolve: directory },
+          getDirectoryCalls: [[undefined], [undefined]],
+          doesOptionalPathExistCalls: [[{ directory: invalidDir }], [{ directory }]],
+          consoleErrorCalls: [[colors.red(`Invalid directory "${invalidDir}", does not exist.`)]],
+        },
+      })
+    })
+    it('re-prompts if inputs directory invalid and interactive', async () => {
+      const invalidDir = '/dark/side/of/the/moon'
+      const directory = '/aint/he/keen'
+      await testGetDirectory({
+        input: {
+          inputs: {
+            directory: invalidDir,
+            interactive: true,
+          },
+          getDirectoryMocks: [{ resolve: directory }],
+          doesOptionalPathExistMocks: [{ resolve: false }, { resolve: true }],
+        },
+        output: {
+          expected: { resolve: directory },
+          getDirectoryCalls: [[undefined]],
+          doesOptionalPathExistCalls: [[{ directory: invalidDir }], [{ directory }]],
+          consoleErrorCalls: [[colors.red(`Invalid directory "${invalidDir}", does not exist.`)]],
+        },
+      })
+    })
+    it('returns empty string if empty string passed in non-interactive', async () => {
+      const directory = ''
+      await testGetDirectory({
+        input: {
+          inputs: {
+            directory,
+          },
+          doesOptionalPathExistMocks: [{ resolve: true }],
+        },
+        output: {
+          expected: { resolve: directory },
+          doesOptionalPathExistCalls: [[{ directory }]],
+        },
+      })
+    })
+    it('returns existing directory if specified and undefined directory passed in non-interactive', async () => {
+      const directory = '/in/case/of/fire/use/stairs'
+      await testGetDirectory({
+        input: {
+          existingDirectory: directory,
+          inputs: {
+            directory: undefined,
+          },
+          doesOptionalPathExistMocks: [{ resolve: true }],
+        },
+        output: {
+          expected: { resolve: directory },
+          doesOptionalPathExistCalls: [[{ directory }]],
+        },
+      })
+    })
+    it('returns undefined if existing directory not specified and undefined directory passed in non-interactive', async () => {
+      const directory = undefined
+      await testGetDirectory({
+        input: {
+          inputs: {
+            directory,
+          },
+          doesOptionalPathExistMocks: [{ resolve: true }],
+        },
+        output: {
+          expected: { resolve: directory },
+          doesOptionalPathExistCalls: [[{ directory }]],
+        },
+      })
+    })
+    it('existing directory can be overwritted if invalid first time interactive', async () => {
+      const invalidDir = ''
+      const directory = '/how/now/brown/cow'
+      await testGetDirectory({
+        input: {
+          existingDirectory: invalidDir,
+          getDirectoryMocks: [{ resolve: invalidDir }, { resolve: directory }],
+          doesOptionalPathExistMocks: [{ resolve: false }, { resolve: true }],
+        },
+        output: {
+          expected: { resolve: directory },
+          getDirectoryCalls: [[invalidDir], [invalidDir]],
+          doesOptionalPathExistCalls: [[{ directory: invalidDir }], [{ directory }]],
+          consoleErrorCalls: [[colors.red(`Invalid directory "${invalidDir}", does not exist.`)]],
+        },
+      })
+    })
+    it('returns directory if valid non-interactive', async () => {
+      const directory = '/tell/me/more'
+      await testGetDirectory({
+        input: {
+          inputs: {
+            directory,
+          },
+          doesOptionalPathExistMocks: [{ resolve: true }],
+        },
+        output: {
+          expected: { resolve: directory },
+          doesOptionalPathExistCalls: [[{ directory }]],
+        },
+      })
+    })
+    it('returns directory if valid interactive', async () => {
+      const directory = '/its/headed/right/for/us'
+      await testGetDirectory({
+        input: {
+          getDirectoryMocks: [{ resolve: directory }],
+          doesOptionalPathExistMocks: [{ resolve: true }],
+        },
+        output: {
+          expected: { resolve: directory },
+          getDirectoryCalls: [[undefined]],
+          doesOptionalPathExistCalls: [[{ directory }]],
+        },
+      })
+    })
+  })
+  describe('doesOptionalPathExist', () => {
+    it('returns true if directory undefined', async () => {
+      await testDoesOptionalPathExist({
+        input: {
+          directory: undefined,
+        },
+        output: {
+          expected: { resolve: true },
+        },
+      })
+    })
+    it('returns true if directory empty string', async () => {
+      await testDoesOptionalPathExist({
+        input: {
+          directory: '',
+        },
+        output: {
+          expected: { resolve: true },
+        },
+      })
+    })
+    it('returns false if path does not exist', async () => {
+      const directory = '/yellow/brick/road'
+      await testDoesOptionalPathExist({
+        input: {
+          directory,
+          pathExistsMocks: [{ resolve: false }],
+        },
+        output: {
+          expected: { resolve: false },
+          pathExistsCalls: [[directory]],
+        },
+      })
+    })
+    it('returns true if path exists', async () => {
+      const directory = '/the/road/goes/ever/on/and/on'
+      await testDoesOptionalPathExist({
+        input: {
+          directory,
+          pathExistsMocks: [{ resolve: true }],
+        },
+        output: {
+          expected: { resolve: true },
+          pathExistsCalls: [[directory]],
+        },
+      })
+    })
+  })
   describe('configureInstalledVersion', () => {
     it('returns undefined if configureExecutable returns undefined', async () => {
+      const directory = ''
       await testConfigureInstalledVersion({
         input: {
+          getDirectoryMocks: [{ resolve: directory }],
           configureExecutableMocks: [{ resolve: undefined }],
         },
         output: {
           expected: {
             resolve: undefined,
           },
-          configureExecutableCalls: [[{ existingExecutable: undefined, inputs: undefined }]],
+          getDirectoryCalls: [[{ existingDirectory: undefined, inputs: undefined }]],
+          configureExecutableCalls: [[{ existingExecutable: undefined, directory, inputs: undefined }]],
         },
       })
     })
     it('returns installed version if required inputs', async () => {
       const description = 'required inputs'
+      const directory = ''
       const executable = {
         command: `${description} executable`,
       }
@@ -662,21 +869,25 @@ describe('Add Unit Tests', () => {
       await testConfigureInstalledVersion({
         input: {
           inputs,
+          getDirectoryMocks: [{ resolve: directory }],
           configureExecutableMocks: [{ resolve: executable }],
           getInstalledVersionMocks: [{ resolve: installedVersion }],
         },
         output: {
           expected: {
             resolve: {
+              directory,
               executable,
               args: '',
               shell: '',
               installedRegex,
             },
           },
+          getDirectoryCalls: [[{ existingDirectory: undefined, inputs }]],
           configureExecutableCalls: [
             [
               {
+                directory,
                 existingExecutable: undefined,
                 inputs,
               },
@@ -689,6 +900,7 @@ describe('Add Unit Tests', () => {
     })
     it('returns installed version if no inputs and existing required', async () => {
       const description = 'no inputs and existing required'
+      const directory = ''
       const executable = {
         command: `${description} executable`,
       }
@@ -702,21 +914,25 @@ describe('Add Unit Tests', () => {
           inputs,
           existingExecutable: executable,
           existingInstalledRegex: installedRegex,
+          getDirectoryMocks: [{ resolve: directory }],
           configureExecutableMocks: [{ resolve: executable }],
           getInstalledVersionMocks: [{ resolve: installedVersion }],
         },
         output: {
           expected: {
             resolve: {
+              directory,
               executable,
               args: '',
               shell: '',
               installedRegex,
             },
           },
+          getDirectoryCalls: [[{ existingDirectory: undefined, inputs }]],
           configureExecutableCalls: [
             [
               {
+                directory,
                 existingExecutable: executable,
                 inputs,
               },
@@ -738,13 +954,16 @@ describe('Add Unit Tests', () => {
       await testConfigureInstalledVersion({
         input: {
           inputs,
+          getDirectoryMocks: [{ resolve: undefined }],
           configureExecutableMocks: [{ resolve: executable }],
         },
         output: {
           expected: { reject: 'Option "installedRegex" must be non-empty string' },
+          getDirectoryCalls: [[{ existingDirectory: undefined, inputs }]],
           configureExecutableCalls: [
             [
               {
+                directory: undefined,
                 existingExecutable: undefined,
                 inputs,
               },
@@ -755,6 +974,7 @@ describe('Add Unit Tests', () => {
     })
     it('returns installed version if no required inputs and prompts for required inputs', async () => {
       const description = 'no required inputs and prompts required'
+      const directory = ''
       const executable = {
         command: `${description} executable`,
       }
@@ -768,6 +988,7 @@ describe('Add Unit Tests', () => {
       await testConfigureInstalledVersion({
         input: {
           inputs,
+          getDirectoryMocks: [{ resolve: directory }],
           configureExecutableMocks: [{ resolve: executable }],
           getArgsMocks: [{ resolve: args }],
           getshellMocks: [{ resolve: shell }],
@@ -778,15 +999,18 @@ describe('Add Unit Tests', () => {
         output: {
           expected: {
             resolve: {
+              directory,
               executable,
               args,
               shell,
               installedRegex,
             },
           },
+          getDirectoryCalls: [[{ existingDirectory: undefined, inputs }]],
           configureExecutableCalls: [
             [
               {
+                directory,
                 existingExecutable: undefined,
                 inputs,
               },
@@ -803,6 +1027,7 @@ describe('Add Unit Tests', () => {
     })
     it('installed version incorrect from required inputs can be reconfigured with prompts', async () => {
       const description = 'installed version incorrect from required inputs reconfigured with prompts'
+      const directory = ''
       const executable = {
         command: `${description} executable`,
       }
@@ -819,6 +1044,7 @@ describe('Add Unit Tests', () => {
       await testConfigureInstalledVersion({
         input: {
           inputs,
+          getDirectoryMocks: [{ resolve: directory }, { resolve: directory }],
           configureExecutableMocks: [{ resolve: executable }, { resolve: executable }],
           getArgsMocks: [{ resolve: args }, { resolve: args }],
           getshellMocks: [{ resolve: shell }, { resolve: shell }],
@@ -829,21 +1055,28 @@ describe('Add Unit Tests', () => {
         output: {
           expected: {
             resolve: {
+              directory,
               executable,
               args,
               shell,
               installedRegex,
             },
           },
+          getDirectoryCalls: [
+            [{ existingDirectory: undefined, inputs }],
+            [{ existingDirectory: directory, inputs: undefined }],
+          ],
           configureExecutableCalls: [
             [
               {
+                directory,
                 existingExecutable: undefined,
                 inputs,
               },
             ],
             [
               {
+                directory,
                 existingExecutable: executable,
                 inputs: undefined,
               },
@@ -863,6 +1096,7 @@ describe('Add Unit Tests', () => {
     })
     it('installed version incorrect from required prompts can be reconfigured with prompts', async () => {
       const description = 'installed version incorrect from required prompts reconfigured with prompts'
+      const directory = ''
       const executable = {
         command: `${description} executable`,
       }
@@ -873,6 +1107,7 @@ describe('Add Unit Tests', () => {
       const installedVersionReconfigured = `${description} installed version reconfigured`
       await testConfigureInstalledVersion({
         input: {
+          getDirectoryMocks: [{ resolve: directory }, { resolve: directory }],
           configureExecutableMocks: [{ resolve: executable }, { resolve: executable }],
           getArgsMocks: [{ resolve: args }, { resolve: args }],
           getshellMocks: [{ resolve: shell }, { resolve: shell }],
@@ -883,21 +1118,28 @@ describe('Add Unit Tests', () => {
         output: {
           expected: {
             resolve: {
+              directory,
               executable,
               args,
               shell,
               installedRegex,
             },
           },
+          getDirectoryCalls: [
+            [{ existingDirectory: undefined, inputs: undefined }],
+            [{ existingDirectory: directory, inputs: undefined }],
+          ],
           configureExecutableCalls: [
             [
               {
+                directory,
                 existingExecutable: undefined,
                 inputs: undefined,
               },
             ],
             [
               {
+                directory,
                 existingExecutable: executable,
                 inputs: undefined,
               },
@@ -917,6 +1159,7 @@ describe('Add Unit Tests', () => {
     })
     it('installed version error from required inputs can be reconfigured with prompts', async () => {
       const description = 'installed version error from required inputs reconfigured with prompts'
+      const directory = ''
       const executable = {
         command: `${description} executable`,
       }
@@ -933,6 +1176,7 @@ describe('Add Unit Tests', () => {
       await testConfigureInstalledVersion({
         input: {
           inputs,
+          getDirectoryMocks: [{ resolve: directory }, { resolve: directory }],
           configureExecutableMocks: [{ resolve: executable }, { resolve: executable }],
           getArgsMocks: [{ resolve: args }, { resolve: args }],
           getshellMocks: [{ resolve: shell }, { resolve: shell }],
@@ -944,21 +1188,28 @@ describe('Add Unit Tests', () => {
         output: {
           expected: {
             resolve: {
+              directory,
               executable,
               args,
               shell,
               installedRegex,
             },
           },
+          getDirectoryCalls: [
+            [{ existingDirectory: undefined, inputs }],
+            [{ existingDirectory: directory, inputs: undefined }],
+          ],
           configureExecutableCalls: [
             [
               {
+                directory,
                 existingExecutable: undefined,
                 inputs,
               },
             ],
             [
               {
+                directory,
                 existingExecutable: executable,
                 inputs: undefined,
               },
@@ -977,6 +1228,7 @@ describe('Add Unit Tests', () => {
     })
     it('installed version error from required prompts can be reconfigured with prompts', async () => {
       const description = 'installed version error from required prompts reconfigured with prompts'
+      const directory = ''
       const executable = {
         command: `${description} executable`,
       }
@@ -987,6 +1239,7 @@ describe('Add Unit Tests', () => {
       const installedVersion = `${description} installed version`
       await testConfigureInstalledVersion({
         input: {
+          getDirectoryMocks: [{ resolve: directory }, { resolve: directory }],
           configureExecutableMocks: [{ resolve: executable }, { resolve: executable }],
           getArgsMocks: [{ resolve: args }, { resolve: args }],
           getshellMocks: [{ resolve: shell }, { resolve: shell }],
@@ -998,21 +1251,28 @@ describe('Add Unit Tests', () => {
         output: {
           expected: {
             resolve: {
+              directory,
               executable,
               args,
               shell,
               installedRegex,
             },
           },
+          getDirectoryCalls: [
+            [{ existingDirectory: undefined, inputs: undefined }],
+            [{ existingDirectory: directory, inputs: undefined }],
+          ],
           configureExecutableCalls: [
             [
               {
+                directory,
                 existingExecutable: undefined,
                 inputs: undefined,
               },
             ],
             [
               {
+                directory,
                 existingExecutable: executable,
                 inputs: undefined,
               },
@@ -1031,6 +1291,7 @@ describe('Add Unit Tests', () => {
     })
     it('throws error if installed version error and non-interactive', async () => {
       const description = 'installed version error non-interactive'
+      const directory = ''
       const executable = {
         command: `${description} executable`,
       }
@@ -1044,15 +1305,18 @@ describe('Add Unit Tests', () => {
       await testConfigureInstalledVersion({
         input: {
           inputs,
+          getDirectoryMocks: [{ resolve: directory }],
           configureExecutableMocks: [{ resolve: executable }],
           getInstalledRegexMocks: [{ resolve: installedRegex }],
           getInstalledVersionMocks: [{ reject: installedError }],
         },
         output: {
           expected: { reject: `Could not determine installed version: ${installedError}` },
+          getDirectoryCalls: [[{ existingDirectory: undefined, inputs }]],
           configureExecutableCalls: [
             [
               {
+                directory,
                 existingExecutable: undefined,
                 inputs,
               },
@@ -1064,6 +1328,7 @@ describe('Add Unit Tests', () => {
     })
     it('returns undefined if installed version error from required prompts and no reconfigure', async () => {
       const description = 'installed version error from required prompts no reconfigure'
+      const directory = ''
       const executable = {
         command: `${description} executable`,
       }
@@ -1073,6 +1338,7 @@ describe('Add Unit Tests', () => {
       const installedError = `${description} installed error`
       await testConfigureInstalledVersion({
         input: {
+          getDirectoryMocks: [{ resolve: directory }],
           configureExecutableMocks: [{ resolve: executable }],
           getArgsMocks: [{ resolve: args }, { resolve: args }],
           getshellMocks: [{ resolve: shell }],
@@ -1082,9 +1348,11 @@ describe('Add Unit Tests', () => {
         },
         output: {
           expected: { resolve: undefined },
+          getDirectoryCalls: [[{ existingDirectory: undefined, inputs: undefined }]],
           configureExecutableCalls: [
             [
               {
+                directory,
                 existingExecutable: undefined,
                 inputs: undefined,
               },
@@ -1101,6 +1369,7 @@ describe('Add Unit Tests', () => {
     })
     it('returns installed version if optional inputs', async () => {
       const description = 'optional inputs'
+      const directory = `${description} directory`
       const executable = {
         command: `${description} executable`,
       }
@@ -1109,6 +1378,7 @@ describe('Add Unit Tests', () => {
       const installedRegex = `${description} installedRegex`
       const installedVersion = `${description} installed version`
       const inputs = {
+        directory,
         executable,
         args,
         shell,
@@ -1117,21 +1387,25 @@ describe('Add Unit Tests', () => {
       await testConfigureInstalledVersion({
         input: {
           inputs,
+          getDirectoryMocks: [{ resolve: directory }],
           configureExecutableMocks: [{ resolve: executable }],
           getInstalledVersionMocks: [{ resolve: installedVersion }],
         },
         output: {
           expected: {
             resolve: {
+              directory,
               executable,
               args,
               shell,
               installedRegex,
             },
           },
+          getDirectoryCalls: [[{ existingDirectory: undefined, inputs }]],
           configureExecutableCalls: [
             [
               {
+                directory,
                 existingExecutable: undefined,
                 inputs,
               },
@@ -1144,6 +1418,7 @@ describe('Add Unit Tests', () => {
     })
     it('returns installed version if no inputs and prompts for optional inputs', async () => {
       const description = 'no inputs and prompts optional'
+      const directory = `${description} directory`
       const executable = {
         command: `${description} executable`,
       }
@@ -1157,6 +1432,7 @@ describe('Add Unit Tests', () => {
       await testConfigureInstalledVersion({
         input: {
           inputs,
+          getDirectoryMocks: [{ resolve: directory }],
           configureExecutableMocks: [{ resolve: executable }],
           getArgsMocks: [{ resolve: args }],
           getshellMocks: [{ resolve: shell }],
@@ -1167,15 +1443,18 @@ describe('Add Unit Tests', () => {
         output: {
           expected: {
             resolve: {
+              directory,
               executable,
               args,
               shell,
               installedRegex,
             },
           },
+          getDirectoryCalls: [[{ existingDirectory: undefined, inputs }]],
           configureExecutableCalls: [
             [
               {
+                directory,
                 existingExecutable: undefined,
                 inputs,
               },
@@ -1192,9 +1471,9 @@ describe('Add Unit Tests', () => {
     })
   })
   describe('configureExecutable', () => {
-    it('calls configureStatic if static executable input', async () => {
+    it('calls configureStatic if static executable input no directory', async () => {
       const staticExecutable = {
-        command: 'static exectuable input',
+        command: 'static exectuable input no directory',
       }
       const inputs = {
         executable: staticExecutable,
@@ -1202,6 +1481,84 @@ describe('Add Unit Tests', () => {
       await testConfigureExecutable({
         input: {
           inputs,
+          configureStaticMocks: [{ resolve: staticExecutable }],
+        },
+        output: {
+          expected: staticExecutable,
+          configureStaticCalls: [
+            [
+              {
+                inputs,
+                existingCommand: undefined,
+              },
+            ],
+          ],
+        },
+      })
+    })
+    it('calls configureStatic if static executable input with undefined directory', async () => {
+      const staticExecutable = {
+        command: 'static exectuable input undefined directory',
+      }
+      const inputs = {
+        executable: staticExecutable,
+      }
+      await testConfigureExecutable({
+        input: {
+          inputs,
+          directory: undefined,
+          configureStaticMocks: [{ resolve: staticExecutable }],
+        },
+        output: {
+          expected: staticExecutable,
+          configureStaticCalls: [
+            [
+              {
+                inputs,
+                existingCommand: undefined,
+              },
+            ],
+          ],
+        },
+      })
+    })
+    it('calls configureStatic if static executable input with empty string directory', async () => {
+      const staticExecutable = {
+        command: 'static exectuable input empty string directory',
+      }
+      const inputs = {
+        executable: staticExecutable,
+      }
+      await testConfigureExecutable({
+        input: {
+          inputs,
+          directory: '',
+          configureStaticMocks: [{ resolve: staticExecutable }],
+        },
+        output: {
+          expected: staticExecutable,
+          configureStaticCalls: [
+            [
+              {
+                inputs,
+                existingCommand: undefined,
+              },
+            ],
+          ],
+        },
+      })
+    })
+    it('calls configureStatic if static executable input with non-empty string directory', async () => {
+      const staticExecutable = {
+        command: 'static exectuable input non-empty string directory',
+      }
+      const inputs = {
+        executable: staticExecutable,
+      }
+      await testConfigureExecutable({
+        input: {
+          inputs,
+          directory: '/tic/tac/toe',
           configureStaticMocks: [{ resolve: staticExecutable }],
         },
         output: {
@@ -1317,26 +1674,75 @@ describe('Add Unit Tests', () => {
         },
       })
     })
-    it('calls configureDynamic if dynamic executable input', async () => {
-      const dynamicExecutable = {
-        directory: 'dynamic exectuable input directory',
-        regex: 'dynamic exectuable input regex',
-      }
+    it('calls configureDynamic if dynamic executable input without directory', async () => {
+      const regex = 'dynamic exectuable input no directory regex'
       const inputs = {
-        executable: dynamicExecutable,
+        executable: { regex },
       }
       await testConfigureExecutable({
         input: {
           inputs,
-          configureDynamicMocks: [{ resolve: dynamicExecutable }],
+          configureDynamicMocks: [{ resolve: { regex } }],
         },
         output: {
-          expected: dynamicExecutable,
+          expected: { regex },
           configureDynamicCalls: [
             [
               {
                 inputs,
-                existingDirectory: undefined,
+                directory: undefined,
+                existingRegex: undefined,
+              },
+            ],
+          ],
+        },
+      })
+    })
+    it('calls configureDynamic if dynamic executable input with undefined directory', async () => {
+      const regex = 'dynamic exectuable input undefined directory regex'
+      const directory = undefined
+      const inputs = {
+        executable: { regex },
+      }
+      await testConfigureExecutable({
+        input: {
+          inputs,
+          directory,
+          configureDynamicMocks: [{ resolve: { regex } }],
+        },
+        output: {
+          expected: { regex },
+          configureDynamicCalls: [
+            [
+              {
+                inputs,
+                directory,
+                existingRegex: undefined,
+              },
+            ],
+          ],
+        },
+      })
+    })
+    it('calls configureDynamic if dynamic executable input with empty string directory', async () => {
+      const regex = 'dynamic exectuable input empty string directory regex'
+      const directory = ''
+      const inputs = {
+        executable: { regex },
+      }
+      await testConfigureExecutable({
+        input: {
+          inputs,
+          directory,
+          configureDynamicMocks: [{ resolve: { regex } }],
+        },
+        output: {
+          expected: { regex },
+          configureDynamicCalls: [
+            [
+              {
+                inputs,
+                directory,
                 existingRegex: undefined,
               },
             ],
@@ -1345,27 +1751,24 @@ describe('Add Unit Tests', () => {
       })
     })
     it('calls configureDynamic if no executable input and existing dynamic', async () => {
-      const dynamicExecutable = {
-        directory: 'no exectuable input existing directory',
-        regex: 'no exectuable input existing regex',
-      }
+      const regex = 'no exectuable input existing regex'
       const inputs = {
-        executable: dynamicExecutable,
+        executable: { regex },
       }
       await testConfigureExecutable({
         input: {
           inputs,
-          existingExecutable: dynamicExecutable,
-          configureDynamicMocks: [{ resolve: dynamicExecutable }],
+          existingExecutable: { regex },
+          configureDynamicMocks: [{ resolve: { regex } }],
         },
         output: {
-          expected: dynamicExecutable,
+          expected: { regex },
           configureDynamicCalls: [
             [
               {
                 inputs,
-                existingDirectory: dynamicExecutable.directory,
-                existingRegex: dynamicExecutable.regex,
+                directory: undefined,
+                existingRegex: regex,
               },
             ],
           ],
@@ -1373,23 +1776,20 @@ describe('Add Unit Tests', () => {
       })
     })
     it('calls configureDynamic if no executable input and prompts as dynamic', async () => {
-      const dynamicExecutable = {
-        directory: 'no exectuable input and prompt directory',
-        regex: 'no exectuable input and prompt regex',
-      }
+      const regex = 'no exectuable input and prompt regex'
       await testConfigureExecutable({
         input: {
           getCommandTypeMocks: [{ resolve: 'dynamic' }],
-          configureDynamicMocks: [{ resolve: dynamicExecutable }],
+          configureDynamicMocks: [{ resolve: { regex } }],
         },
         output: {
-          expected: dynamicExecutable,
+          expected: { regex },
           getCommandTypeCalls: [['static']],
           configureDynamicCalls: [
             [
               {
                 inputs: undefined,
-                existingDirectory: undefined,
+                directory: undefined,
                 existingRegex: undefined,
               },
             ],
@@ -1399,25 +1799,22 @@ describe('Add Unit Tests', () => {
       })
     })
     it('calls configureDynamic if no executable and existing dynamic input and prompts as dynamic', async () => {
-      const dynamicExecutable = {
-        directory: 'no exectuable and existing dynamic input and prompt directory',
-        regex: 'no exectuable and existing dynamic input and prompt regex',
-      }
+      const regex = 'no exectuable and existing dynamic input and prompt regex'
       await testConfigureExecutable({
         input: {
-          existingExecutable: dynamicExecutable,
+          existingExecutable: { regex },
           getCommandTypeMocks: [{ resolve: 'dynamic' }],
-          configureDynamicMocks: [{ resolve: dynamicExecutable }],
+          configureDynamicMocks: [{ resolve: { regex } }],
         },
         output: {
-          expected: dynamicExecutable,
+          expected: { regex },
           getCommandTypeCalls: [['dynamic']],
           configureDynamicCalls: [
             [
               {
                 inputs: undefined,
-                existingDirectory: dynamicExecutable.directory,
-                existingRegex: dynamicExecutable.regex,
+                directory: undefined,
+                existingRegex: regex,
               },
             ],
           ],
@@ -1498,14 +1895,11 @@ describe('Add Unit Tests', () => {
     })
   })
   describe('configureDynamic', () => {
-    it('returns dynamic if directory and regex input', async () => {
-      const dynamicExecutable = {
-        directory: 'directory and regex input directory',
-        regex: 'directory and regex input regex',
-      }
-      const resolvedExecutable = 'directory and regex input resolved'
+    it('returns dynamic if regex input without directory', async () => {
+      const regex = 'regex input no directory'
+      const resolvedExecutable = 'regex input no directory resolved'
       const inputs = {
-        executable: dynamicExecutable,
+        executable: { regex },
       }
       await testConfigureDynamic({
         input: {
@@ -1513,43 +1907,122 @@ describe('Add Unit Tests', () => {
           getDynamicExecutableMocks: [{ resolve: resolvedExecutable }],
         },
         output: {
-          expected: { resolve: dynamicExecutable },
-          getDynamicExecutableCalls: [[dynamicExecutable]],
-          consoleLogCalls: [[`Resolved executable: "${resolvedExecutable}"`]],
+          expected: { resolve: { regex } },
+          getDynamicExecutableCalls: [
+            [
+              {
+                directory: undefined,
+                regex,
+              },
+            ],
+          ],
+          consoleLogCalls: [[`Resolved executable file: "${resolvedExecutable}"`]],
         },
       })
     })
-    it('returns dynamic if no directory or regex input and existing directory and regex', async () => {
-      const dynamicExecutable = {
-        directory: 'directory and regex input directory with existing',
-        regex: 'directory and regex input regex with existing',
+    it('returns dynamic if regex input with undefined directory', async () => {
+      const regex = 'regex input undefined directory'
+      const directory = undefined
+      const resolvedExecutable = 'regex input undefined directory resolved'
+      const inputs = {
+        executable: { regex },
       }
-      const resolvedExecutable = 'directory and regex input resolved with existing'
       await testConfigureDynamic({
         input: {
-          inputs: {
-            interactive: false,
-          },
-          existingDirectory: dynamicExecutable.directory,
-          existingRegex: dynamicExecutable.regex,
+          inputs,
+          directory,
           getDynamicExecutableMocks: [{ resolve: resolvedExecutable }],
         },
         output: {
-          expected: { resolve: dynamicExecutable },
-          getDynamicExecutableCalls: [[dynamicExecutable]],
-          consoleLogCalls: [[`Resolved executable: "${resolvedExecutable}"`]],
+          expected: { resolve: { regex } },
+          getDynamicExecutableCalls: [
+            [
+              {
+                directory,
+                regex,
+              },
+            ],
+          ],
+          consoleLogCalls: [[`Resolved executable file: "${resolvedExecutable}"`]],
         },
       })
     })
-    it('throws error if no directory input and no existing directory', async () => {
+    it('returns dynamic if regex input with empty string directory', async () => {
+      const regex = 'regex input empty directory'
+      const directory = ''
+      const resolvedExecutable = 'regex input empty directory resolved'
+      const inputs = {
+        executable: { regex },
+      }
+      await testConfigureDynamic({
+        input: {
+          inputs,
+          directory,
+          getDynamicExecutableMocks: [{ resolve: resolvedExecutable }],
+        },
+        output: {
+          expected: { resolve: { regex } },
+          getDynamicExecutableCalls: [
+            [
+              {
+                directory,
+                regex,
+              },
+            ],
+          ],
+          consoleLogCalls: [[`Resolved executable file: "${resolvedExecutable}"`]],
+        },
+      })
+    })
+    it('returns dynamic if regex input with non-empty string directory', async () => {
+      const regex = 'regex non-empty directory input'
+      const directory = '/eyes/on/target'
+      const resolvedExecutable = 'regex input non-empty directory resolved'
+      const inputs = {
+        executable: { regex },
+      }
+      await testConfigureDynamic({
+        input: {
+          inputs,
+          directory,
+          getDynamicExecutableMocks: [{ resolve: resolvedExecutable }],
+        },
+        output: {
+          expected: { resolve: { regex } },
+          getDynamicExecutableCalls: [
+            [
+              {
+                directory,
+                regex,
+              },
+            ],
+          ],
+          consoleLogCalls: [[`Resolved executable file: "${resolvedExecutable}"`]],
+        },
+      })
+    })
+    it('returns dynamic if no regex input and existing regex', async () => {
+      const regex = 'input regex with existing'
+      const resolvedExecutable = 'regex input resolved with existing'
       await testConfigureDynamic({
         input: {
           inputs: {
             interactive: false,
           },
+          existingRegex: regex,
+          getDynamicExecutableMocks: [{ resolve: resolvedExecutable }],
         },
         output: {
-          expected: { reject: 'The executable type "dynamic" requires a value passed into the "--directory" option.' },
+          expected: { resolve: { regex } },
+          getDynamicExecutableCalls: [
+            [
+              {
+                directory: undefined,
+                regex,
+              },
+            ],
+          ],
+          consoleLogCalls: [[`Resolved executable file: "${resolvedExecutable}"`]],
         },
       })
     })
@@ -1559,55 +2032,57 @@ describe('Add Unit Tests', () => {
           inputs: {
             interactive: false,
           },
-          existingDirectory: 'no regex input directory',
         },
         output: {
           expected: { reject: 'The executable type "dynamic" requires a value passed into the "--regex" option.' },
         },
       })
     })
-    it('returns dynamic if no executable input and prompts for directory and regex', async () => {
-      const dynamicExecutable = {
-        directory: 'no executable input prompt directory',
-        regex: 'no executable input prompt regex',
-      }
+    it('returns dynamic if no executable input and prompts for regex', async () => {
+      const regex = 'no executable input prompt regex'
       const resolvedExecutable = 'no executable input prompt resolved'
       await testConfigureDynamic({
         input: {
-          getDirectoryMocks: [{ resolve: dynamicExecutable.directory }],
-          getRegexMocks: [{ resolve: dynamicExecutable.regex }],
+          getRegexMocks: [{ resolve: regex }],
           getDynamicExecutableMocks: [{ resolve: resolvedExecutable }],
           getExecutableCorrectMocks: [{ resolve: true }],
         },
         output: {
-          expected: { resolve: dynamicExecutable },
-          getDirectoryCalls: [[undefined]],
-          getRegexCalls: [[undefined]],
-          getDynamicExecutableCalls: [[dynamicExecutable]],
+          expected: { resolve: { regex } },
+          getRegexCalls: [
+            [
+              {
+                directory: undefined,
+                existingRegex: undefined,
+              },
+            ],
+          ],
+          getDynamicExecutableCalls: [
+            [
+              {
+                directory: undefined,
+                regex,
+              },
+            ],
+          ],
           getExecutableCorrectCalls: [[]],
-          consoleLogCalls: [[`Resolved executable: "${resolvedExecutable}"`]],
+          consoleLogCalls: [[`Resolved executable file: "${resolvedExecutable}"`]],
         },
       })
     })
-    it('dynamic executable incorrect from inputs can be reconfigured with prompts', async () => {
-      const initialDynamicExecutable = {
-        directory: 'incorrect from inputs reconfigured with prompts directory',
-        regex: 'incorrect from inputs reconfigured with prompts regex',
-      }
-      const reconfiguredDynamicExecutable = {
-        directory: 'incorrect from inputs reconfigured with prompts directory reconfigured',
-        regex: 'incorrect from inputs reconfigured with prompts regex reconfigured',
-      }
-      const initialResolvedExecutable = 'incorrect from inputs reconfigured with prompts resolved initial'
-      const reconfiguredResolvedExecutable = 'incorrect from inputs reconfigured with prompts resolved reconfigured'
+    it('dynamic executable incorrect from inputs can be reconfigured with prompts no directory', async () => {
+      const initialRegex = 'incorrect from inputs reconfigured with prompts no directory regex'
+      const reconfiguredRegex = 'incorrect from inputs reconfigured with prompts no directory regex reconfigured'
+      const initialResolvedExecutable = 'incorrect from inputs reconfigured with prompts no directory resolved initial'
+      const reconfiguredResolvedExecutable =
+        'incorrect from inputs reconfigured with prompts no directory resolved reconfigured'
       await testConfigureDynamic({
         input: {
           inputs: {
-            executable: initialDynamicExecutable,
+            executable: { regex: initialRegex },
             interactive: true,
           },
-          getDirectoryMocks: [{ resolve: reconfiguredDynamicExecutable.directory }],
-          getRegexMocks: [{ resolve: reconfiguredDynamicExecutable.regex }],
+          getRegexMocks: [{ resolve: reconfiguredRegex }],
           getDynamicExecutableMocks: [
             { resolve: initialResolvedExecutable },
             { resolve: reconfiguredResolvedExecutable },
@@ -1615,39 +2090,98 @@ describe('Add Unit Tests', () => {
           getExecutableCorrectMocks: [{ resolve: false }, { resolve: true }],
         },
         output: {
-          expected: { resolve: reconfiguredDynamicExecutable },
-          getDirectoryCalls: [[initialDynamicExecutable.directory]],
-          getRegexCalls: [[initialDynamicExecutable.regex]],
-          getDynamicExecutableCalls: [[initialDynamicExecutable], [reconfiguredDynamicExecutable]],
+          expected: { resolve: { regex: reconfiguredRegex } },
+          getRegexCalls: [
+            [
+              {
+                directory: undefined,
+                existingRegex: initialRegex,
+              },
+            ],
+          ],
+          getDynamicExecutableCalls: [
+            [
+              {
+                directory: undefined,
+                regex: initialRegex,
+              },
+            ],
+            [
+              {
+                directory: undefined,
+                regex: reconfiguredRegex,
+              },
+            ],
+          ],
           getExecutableCorrectCalls: [[], []],
           consoleLogCalls: [
-            [`Resolved executable: "${initialResolvedExecutable}"`],
-            [`Resolved executable: "${reconfiguredResolvedExecutable}"`],
+            [`Resolved executable file: "${initialResolvedExecutable}"`],
+            [`Resolved executable file: "${reconfiguredResolvedExecutable}"`],
+          ],
+        },
+      })
+    })
+    it('dynamic executable incorrect from inputs can be reconfigured with prompts and directory', async () => {
+      const initialRegex = 'incorrect from inputs reconfigured with prompts and directory regex'
+      const reconfiguredRegex = 'incorrect from inputs reconfigured with prompts and directory regex reconfigured'
+      const directory = '/sugar/were/going/down/swinging'
+      const initialResolvedExecutable = 'incorrect from inputs reconfigured with prompts and directory resolved initial'
+      const reconfiguredResolvedExecutable =
+        'incorrect from inputs reconfigured with prompts and directory resolved reconfigured'
+      await testConfigureDynamic({
+        input: {
+          inputs: {
+            executable: { regex: initialRegex },
+            interactive: true,
+          },
+          directory,
+          getRegexMocks: [{ resolve: reconfiguredRegex }],
+          getDynamicExecutableMocks: [
+            { resolve: initialResolvedExecutable },
+            { resolve: reconfiguredResolvedExecutable },
+          ],
+          getExecutableCorrectMocks: [{ resolve: false }, { resolve: true }],
+        },
+        output: {
+          expected: { resolve: { regex: reconfiguredRegex } },
+          getRegexCalls: [
+            [
+              {
+                directory,
+                existingRegex: initialRegex,
+              },
+            ],
+          ],
+          getDynamicExecutableCalls: [
+            [
+              {
+                directory,
+                regex: initialRegex,
+              },
+            ],
+            [
+              {
+                directory,
+                regex: reconfiguredRegex,
+              },
+            ],
+          ],
+          getExecutableCorrectCalls: [[], []],
+          consoleLogCalls: [
+            [`Resolved executable file: "${initialResolvedExecutable}"`],
+            [`Resolved executable file: "${reconfiguredResolvedExecutable}"`],
           ],
         },
       })
     })
     it('dynamic executable incorrect from prompts can be reconfigured with prompts', async () => {
-      const initialDynamicExecutable = {
-        directory: 'incorrect from prompts reconfigured with prompts directory',
-        regex: 'incorrect from prompts reconfigured with prompts regex',
-      }
-      const reconfiguredDynamicExecutable = {
-        directory: 'incorrect from prompts reconfigured with prompts directory reconfigured',
-        regex: 'incorrect from prompts reconfigured with prompts regex reconfigured',
-      }
+      const initialRegex = 'incorrect from prompts reconfigured with prompts regex'
+      const reconfiguredRegex = 'incorrect from prompts reconfigured with prompts regex reconfigured'
       const initialResolvedExecutable = 'incorrect from prompts reconfigured with prompts initial'
       const reconfiguredResolvedExecutable = 'incorrect from prompts reconfigured with prompts reconfigured'
       await testConfigureDynamic({
         input: {
-          getDirectoryMocks: [
-            { resolve: initialDynamicExecutable.directory },
-            { resolve: reconfiguredDynamicExecutable.directory },
-          ],
-          getRegexMocks: [
-            { resolve: initialDynamicExecutable.regex },
-            { resolve: reconfiguredDynamicExecutable.regex },
-          ],
+          getRegexMocks: [{ resolve: initialRegex }, { resolve: reconfiguredRegex }],
           getDynamicExecutableMocks: [
             { resolve: initialResolvedExecutable },
             { resolve: reconfiguredResolvedExecutable },
@@ -1655,119 +2189,169 @@ describe('Add Unit Tests', () => {
           getExecutableCorrectMocks: [{ resolve: false }, { resolve: true }],
         },
         output: {
-          expected: { resolve: reconfiguredDynamicExecutable },
-          getDirectoryCalls: [[undefined], [initialDynamicExecutable.directory]],
-          getRegexCalls: [[undefined], [initialDynamicExecutable.regex]],
-          getDynamicExecutableCalls: [[initialDynamicExecutable], [reconfiguredDynamicExecutable]],
+          expected: { resolve: { regex: reconfiguredRegex } },
+          getRegexCalls: [
+            [
+              {
+                directory: undefined,
+                existingRegex: undefined,
+              },
+            ],
+            [
+              {
+                directory: undefined,
+                existingRegex: initialRegex,
+              },
+            ],
+          ],
+          getDynamicExecutableCalls: [
+            [
+              {
+                directory: undefined,
+                regex: initialRegex,
+              },
+            ],
+            [
+              {
+                directory: undefined,
+                regex: reconfiguredRegex,
+              },
+            ],
+          ],
           getExecutableCorrectCalls: [[], []],
           consoleLogCalls: [
-            [`Resolved executable: "${initialResolvedExecutable}"`],
-            [`Resolved executable: "${reconfiguredResolvedExecutable}"`],
+            [`Resolved executable file: "${initialResolvedExecutable}"`],
+            [`Resolved executable file: "${reconfiguredResolvedExecutable}"`],
           ],
         },
       })
     })
     it('throws getDynamicExecutable error if non-interactive', async () => {
-      const dynamicExecutable = {
-        directory: 'getDynamicExecutable error non-interactive directory',
-        regex: 'getDynamicExecutable error non-interactive regex',
-      }
+      const regex = 'getDynamicExecutable error non-interactive regex'
       const getDynamicExecutableError = 'getDynamicExecutable error non-interactive'
       await testConfigureDynamic({
         input: {
           inputs: {
-            executable: dynamicExecutable,
+            executable: { regex },
           },
           getDynamicExecutableMocks: [{ reject: getDynamicExecutableError }],
         },
         output: {
           expected: { reject: getDynamicExecutableError },
-          getDynamicExecutableCalls: [[dynamicExecutable]],
+          getDynamicExecutableCalls: [
+            [
+              {
+                directory: undefined,
+                regex,
+              },
+            ],
+          ],
         },
       })
     })
-    it('getDynamicExecutable error from inputs can be reconfigured with prompts', async () => {
-      const initialDynamicExecutable = {
-        directory: 'error from inputs reconfigured with prompts directory',
-        regex: 'error from inputs reconfigured with prompts regex',
-      }
-      const reconfiguredDynamicExecutable = {
-        directory: 'error from inputs reconfigured with prompts directory reconfigured',
-        regex: 'error from inputs reconfigured with prompts regex reconfigured',
-      }
+    it('get dynamic executable error from inputs can be reconfigured with prompts', async () => {
+      const initialRegex = 'error from inputs reconfigured with prompts regex'
+      const reconfiguredRegex = 'error from inputs reconfigured with prompts regex reconfigured'
       const resolvedExecutableError = 'error from inputs reconfigured with prompts error'
       const reconfiguredResolvedExecutable = 'error from inputs reconfigured with prompts reconfigured'
       await testConfigureDynamic({
         input: {
           inputs: {
-            executable: initialDynamicExecutable,
+            executable: { regex: initialRegex },
             interactive: true,
           },
-          getDirectoryMocks: [{ resolve: reconfiguredDynamicExecutable.directory }],
-          getRegexMocks: [{ resolve: reconfiguredDynamicExecutable.regex }],
+          getRegexMocks: [{ resolve: reconfiguredRegex }],
           getDynamicExecutableMocks: [{ reject: resolvedExecutableError }, { resolve: reconfiguredResolvedExecutable }],
           getExecutableCorrectMocks: [{ resolve: true }],
           getReattemptDynamicMocks: [{ resolve: true }],
         },
         output: {
-          expected: { resolve: reconfiguredDynamicExecutable },
-          getDirectoryCalls: [[initialDynamicExecutable.directory]],
-          getRegexCalls: [[initialDynamicExecutable.regex]],
-          getDynamicExecutableCalls: [[initialDynamicExecutable], [reconfiguredDynamicExecutable]],
+          expected: { resolve: { regex: reconfiguredRegex } },
+          getRegexCalls: [
+            [
+              {
+                directory: undefined,
+                existingRegex: initialRegex,
+              },
+            ],
+          ],
+          getDynamicExecutableCalls: [
+            [
+              {
+                directory: undefined,
+                regex: initialRegex,
+              },
+            ],
+            [
+              {
+                directory: undefined,
+                regex: reconfiguredRegex,
+              },
+            ],
+          ],
           getExecutableCorrectCalls: [[]],
           getReattemptDynamicCalls: [[]],
-          consoleLogCalls: [[`Resolved executable: "${reconfiguredResolvedExecutable}"`]],
+          consoleLogCalls: [[`Resolved executable file: "${reconfiguredResolvedExecutable}"`]],
           consoleErrorCalls: [[colors.red(resolvedExecutableError)]],
         },
       })
     })
-    it('getDynamicExecutable error from prompts can be reconfigured with prompts', async () => {
-      const initialDynamicExecutable = {
-        directory: 'error from prompts reconfigured with prompts directory',
-        regex: 'error from prompts reconfigured with prompts regex',
-      }
-      const reconfiguredDynamicExecutable = {
-        directory: 'error from prompts reconfigured with prompts directory reconfigured',
-        regex: 'error from prompts reconfigured with prompts regex reconfigured',
-      }
+    it('get dynamic executable error from prompts can be reconfigured with prompts', async () => {
+      const initialRegex = 'error from prompts reconfigured with prompts regex'
+      const reconfiguredRegex = 'error from prompts reconfigured with prompts regex reconfigured'
       const resolvedExecutableError = 'error from prompts reconfigured with prompts error'
       const reconfiguredResolvedExecutable = 'error from prompts reconfigured with prompts reconfigured'
       await testConfigureDynamic({
         input: {
-          getDirectoryMocks: [
-            { resolve: initialDynamicExecutable.directory },
-            { resolve: reconfiguredDynamicExecutable.directory },
-          ],
-          getRegexMocks: [
-            { resolve: initialDynamicExecutable.regex },
-            { resolve: reconfiguredDynamicExecutable.regex },
-          ],
+          getRegexMocks: [{ resolve: initialRegex }, { resolve: reconfiguredRegex }],
           getDynamicExecutableMocks: [{ reject: resolvedExecutableError }, { resolve: reconfiguredResolvedExecutable }],
           getExecutableCorrectMocks: [{ resolve: true }],
           getReattemptDynamicMocks: [{ resolve: true }],
         },
         output: {
-          expected: { resolve: reconfiguredDynamicExecutable },
-          getDirectoryCalls: [[undefined], [initialDynamicExecutable.directory]],
-          getRegexCalls: [[undefined], [initialDynamicExecutable.regex]],
-          getDynamicExecutableCalls: [[initialDynamicExecutable], [reconfiguredDynamicExecutable]],
+          expected: { resolve: { regex: reconfiguredRegex } },
+          getRegexCalls: [
+            [
+              {
+                directory: undefined,
+                existingRegex: undefined,
+              },
+            ],
+            [
+              {
+                directory: undefined,
+                existingRegex: initialRegex,
+              },
+            ],
+          ],
+          getDynamicExecutableCalls: [
+            [
+              {
+                directory: undefined,
+                regex: initialRegex,
+              },
+            ],
+            [
+              {
+                directory: undefined,
+                regex: reconfiguredRegex,
+              },
+            ],
+          ],
           getExecutableCorrectCalls: [[]],
           getReattemptDynamicCalls: [[]],
-          consoleLogCalls: [[`Resolved executable: "${reconfiguredResolvedExecutable}"`]],
+          consoleLogCalls: [[`Resolved executable file: "${reconfiguredResolvedExecutable}"`]],
           consoleErrorCalls: [[colors.red(resolvedExecutableError)]],
         },
       })
     })
-    it('getDynamicExecutable error from inputs without reattempt returns undefined', async () => {
-      const dynamicExecutable = {
-        directory: 'error from inputs without reattempt directory',
-        regex: 'error from inputs without reattempt regex',
-      }
+    it('get dynamic executable error from inputs without reattempt returns undefined', async () => {
+      const regex = 'error from inputs without reattempt regex'
       const resolvedExecutableError = 'error from inputs without reattempt error'
       await testConfigureDynamic({
         input: {
           inputs: {
-            executable: dynamicExecutable,
+            executable: { regex },
             interactive: true,
           },
           getDynamicExecutableMocks: [{ reject: resolvedExecutableError }],
@@ -1775,30 +2359,46 @@ describe('Add Unit Tests', () => {
         },
         output: {
           expected: { resolve: undefined },
-          getDynamicExecutableCalls: [[dynamicExecutable]],
+          getDynamicExecutableCalls: [
+            [
+              {
+                directory: undefined,
+                regex,
+              },
+            ],
+          ],
           getReattemptDynamicCalls: [[]],
           consoleErrorCalls: [[colors.red(resolvedExecutableError)]],
         },
       })
     })
-    it('getDynamicExecutable error from prompts without reattempt returns undefined', async () => {
-      const dynamicExecutable = {
-        directory: 'error from prompts without reattempt directory',
-        regex: 'error from prompts without reattempt regex',
-      }
+    it('get dynamic executable error from prompts without reattempt returns undefined', async () => {
+      const regex = 'error from prompts without reattempt regex'
       const resolvedExecutableError = 'error from prompts reconfigured with prompts error'
       await testConfigureDynamic({
         input: {
-          getDirectoryMocks: [{ resolve: dynamicExecutable.directory }],
-          getRegexMocks: [{ resolve: dynamicExecutable.regex }],
+          getRegexMocks: [{ resolve: regex }],
           getDynamicExecutableMocks: [{ reject: resolvedExecutableError }],
           getReattemptDynamicMocks: [{ resolve: false }],
         },
         output: {
           expected: { resolve: undefined },
-          getDirectoryCalls: [[undefined]],
-          getRegexCalls: [[undefined]],
-          getDynamicExecutableCalls: [[dynamicExecutable]],
+          getRegexCalls: [
+            [
+              {
+                directory: undefined,
+                existingRegex: undefined,
+              },
+            ],
+          ],
+          getDynamicExecutableCalls: [
+            [
+              {
+                directory: undefined,
+                regex,
+              },
+            ],
+          ],
           getReattemptDynamicCalls: [[]],
           consoleErrorCalls: [[colors.red(resolvedExecutableError)]],
         },
@@ -2232,14 +2832,100 @@ async function testGetName({ input, output }: { input: TestGetNameInput; output:
   )
 }
 
+interface TestGetDirectoryInput {
+  inputs?: AddInputs
+  existingDirectory?: string | undefined
+  getDirectoryMocks?: Response[]
+  doesOptionalPathExistMocks?: Response[]
+}
+
+interface TestGetDirectoryOutput {
+  expected: Response
+  getDirectoryCalls?: ExpectedCalls[][]
+  doesOptionalPathExistCalls?: ExpectedCalls[][]
+  consoleErrorCalls?: (string[] | undefined)[]
+}
+
+async function testGetDirectory({
+  input,
+  output,
+}: {
+  input: TestGetDirectoryInput
+  output: TestGetDirectoryOutput
+}): Promise<void> {
+  const methodParams: any = {}
+  if (input.inputs) {
+    methodParams.inputs = input.inputs
+  }
+  if (Object.keys(input).includes('existingDirectory')) {
+    methodParams.existingDirectory = input.existingDirectory
+  }
+  const getDirectorySpy = TestUtil.mockResponses({
+    spy: jest.spyOn(AddPrompts, 'getDirectory'),
+    responses: input.getDirectoryMocks || [],
+  })
+  const doesOptionalPathExistSpy = TestUtil.mockResponses({
+    spy: jest.spyOn(Add, 'doesOptionalPathExist'),
+    responses: input.doesOptionalPathExistMocks || [],
+  })
+  const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
+  if (output.expected.reject) {
+    await expect(Add.getDirectory(methodParams)).rejects.toThrow(output.expected.reject)
+  } else {
+    await expect(Add.getDirectory(methodParams)).resolves.toBe(output.expected.resolve)
+  }
+  expect(getDirectorySpy.mock.calls).toEqual(output.getDirectoryCalls || [])
+  expect(doesOptionalPathExistSpy.mock.calls).toEqual(output.doesOptionalPathExistCalls || [])
+  expect(JSON.stringify(consoleErrorSpy.mock.calls, null, 2)).toBe(
+    JSON.stringify(output.consoleErrorCalls || [], null, 2)
+  )
+}
+
+interface TestDoesOptionalPathExistInput {
+  directory: string | undefined
+  pathExistsMocks?: Response[]
+}
+
+interface TestDoesOptionalPathExistOutput {
+  expected: Response
+  pathExistsCalls?: ExpectedCalls[][]
+}
+
+async function testDoesOptionalPathExist({
+  input,
+  output,
+}: {
+  input: TestDoesOptionalPathExistInput
+  output: TestDoesOptionalPathExistOutput
+}): Promise<void> {
+  const pathExistsSpy = jest.spyOn(fs, 'pathExists')
+  if (input.pathExistsMocks) {
+    for (const pathExistsMock of input.pathExistsMocks) {
+      pathExistsSpy.mockImplementationOnce(() => {
+        return new Promise((resolve) => {
+          resolve(pathExistsMock.resolve)
+        })
+      })
+    }
+  }
+  await expect(
+    Add.doesOptionalPathExist({
+      directory: input.directory,
+    })
+  ).resolves.toBe(output.expected.resolve)
+  expect(pathExistsSpy.mock.calls).toEqual(output.pathExistsCalls || [])
+}
+
 interface TestConfigureInstalledVersionInput {
   inputs?: AddInputs
+  existingDirectory?: string
   existingExecutable?: Static | Dynamic
   existingArgs?: string
   existingShell?: string
   existingInstalledRegex?: string
   installedVersion?: string
   installedError?: string
+  getDirectoryMocks?: Response[]
   configureExecutableMocks?: Response[]
   getArgsMocks?: Response[]
   getshellMocks?: Response[]
@@ -2251,6 +2937,7 @@ interface TestConfigureInstalledVersionInput {
 
 interface TestConfigureInstalledVersionOutput {
   expected: Response
+  getDirectoryCalls?: ExpectedCalls[][]
   configureExecutableCalls?: ExpectedCalls[][]
   getArgsCalls?: ExpectedCalls[][]
   getshellCalls?: ExpectedCalls[][]
@@ -2273,6 +2960,9 @@ async function testConfigureInstalledVersion({
   if (input.inputs) {
     methodParams.inputs = input.inputs
   }
+  if (Object.keys(input).includes('existingDirectory')) {
+    methodParams.existingDirectory = input.existingDirectory
+  }
   if (input.existingExecutable) {
     methodParams.existingExecutable = input.existingExecutable
   }
@@ -2285,6 +2975,10 @@ async function testConfigureInstalledVersion({
   if (input.existingInstalledRegex) {
     methodParams.existingInstalledRegex = input.existingInstalledRegex
   }
+  const getDirectorySpy = TestUtil.mockResponses({
+    spy: jest.spyOn(Add, 'getDirectory'),
+    responses: input.getDirectoryMocks,
+  })
   const configureExecutableSpy = TestUtil.mockResponses({
     spy: jest.spyOn(Add, 'configureExecutable'),
     responses: input.configureExecutableMocks,
@@ -2320,6 +3014,7 @@ async function testConfigureInstalledVersion({
   } else {
     await expect(Add.configureInstalledVersion(methodParams)).resolves.toStrictEqual(output.expected.resolve)
   }
+  expect(getDirectorySpy.mock.calls).toEqual(output.getDirectoryCalls || [])
   expect(configureExecutableSpy.mock.calls).toEqual(output.configureExecutableCalls || [])
   expect(getArgsSpy.mock.calls).toEqual(output.getArgsCalls || [])
   expect(getshellSpy.mock.calls).toEqual(output.getshellCalls || [])
@@ -2335,6 +3030,7 @@ async function testConfigureInstalledVersion({
 
 interface TestConfigureExecutableInput {
   inputs?: AddInputs
+  directory?: string
   existingExecutable?: Static | Dynamic
   getCommandTypeMocks?: Response[]
   configureStaticMocks?: Response[]
@@ -2362,6 +3058,9 @@ async function testConfigureExecutable({
   }
   if (input.existingExecutable) {
     methodParams.existingExecutable = input.existingExecutable
+  }
+  if (Object.keys(input).includes('directory')) {
+    methodParams.directory = input.directory
   }
   const getCommandTypeSpy = TestUtil.mockResponses({
     spy: jest.spyOn(AddPrompts, 'getCommandType'),
@@ -2427,9 +3126,8 @@ async function testConfigureStatic({
 
 interface TestConfigureDynamicInput {
   inputs?: AddInputs
-  existingDirectory?: string
+  directory?: string
   existingRegex?: string
-  getDirectoryMocks?: Response[]
   getRegexMocks?: Response[]
   getDynamicExecutableMocks?: Response[]
   getExecutableCorrectMocks?: Response[]
@@ -2438,7 +3136,6 @@ interface TestConfigureDynamicInput {
 
 interface TestConfigureDynamicOutput {
   expected: Response
-  getDirectoryCalls?: ExpectedCalls[][]
   getRegexCalls?: ExpectedCalls[][]
   getDynamicExecutableCalls?: ExpectedCalls[][]
   getExecutableCorrectCalls?: ExpectedCalls[][]
@@ -2458,16 +3155,12 @@ async function testConfigureDynamic({
   if (input.inputs) {
     methodParams.inputs = input.inputs
   }
-  if (input.existingDirectory) {
-    methodParams.existingDirectory = input.existingDirectory
+  if (Object.keys(input).includes('directory')) {
+    methodParams.directory = input.directory
   }
   if (input.existingRegex) {
     methodParams.existingRegex = input.existingRegex
   }
-  const getDirectorySpy = TestUtil.mockResponses({
-    spy: jest.spyOn(AddPrompts, 'getDirectory'),
-    responses: input.getDirectoryMocks,
-  })
   const getRegexSpy = TestUtil.mockResponses({
     spy: jest.spyOn(AddPrompts, 'getRegex'),
     responses: input.getRegexMocks,
@@ -2491,7 +3184,6 @@ async function testConfigureDynamic({
   } else {
     await expect(Add.configureDynamic(methodParams)).resolves.toEqual(output.expected.resolve)
   }
-  expect(getDirectorySpy.mock.calls).toEqual(output.getDirectoryCalls || [])
   expect(getRegexSpy.mock.calls).toEqual(output.getRegexCalls || [])
   expect(getDynamicExecutableSpy.mock.calls).toEqual(output.getDynamicExecutableCalls || [])
   expect(getExecutableCorrectSpy.mock.calls).toEqual(output.getExecutableCorrectCalls || [])

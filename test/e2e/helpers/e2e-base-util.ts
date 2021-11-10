@@ -12,6 +12,7 @@ export default class E2eBaseUtil {
   static readonly COMMAND = {
     Good: path.join(__dirname, '../../helpers/test-commands/good-command.js'),
     Bad: path.join(__dirname, '../../helpers/test-commands/bad-command.js'),
+    Powershell: path.join(__dirname, '../../helpers/test-commands/pwsh-command.ps1'),
   }
 
   static readonly MESSAGES = {
@@ -33,8 +34,8 @@ export default class E2eBaseUtil {
     DynamicExample: '(eg executable name includes version, which changes between releases)',
     Name: 'Name to identify software configuration',
     NameExample: '(eg "Software Update Checker")',
+    Directory: 'Working directory to execute command',
     Command: 'Command or path to executable',
-    Directory: 'Path to directory containing executable file',
     Arguments: 'Arguments to apply to executable to produce version',
     ArgumentsExample: '(eg "--version")',
     InstalledRegex: 'Regex pattern applied to executable command output for singling out installed version',
@@ -51,14 +52,11 @@ export default class E2eBaseUtil {
     NoSoftwaresToView: 'No softwares to view. Please add a software to have something to view.',
     NoOptionsProvided: 'Must provide something to change as an option/flag',
     NoCommandForStatic: 'The "static" executable type requires a "--command" option to be specified',
-    NoDirectoryForDynamic: 'The "dynamic" executable type requires a "--directory" option to be specified',
     NoRegexForDynamic: 'The "dynamic" executable type requires a "--regex" option to be specified',
-    IncompatibleDirectoryWithStaticType: 'The "--directory" option is not compatible with "--type=static"',
     IncompatibleRegexWithStaticType: 'The "--regex" option is not compatible with "--type=static"',
     IncompatibleCommandWithDynamicType: 'The "--command" option is not compatible with "--type=dynamic"',
     IncompatibleCommandWithDirectory: 'Arguments command and directory are mutually exclusive',
     IncompatibleCommandWithRegex: 'Arguments command and regex are mutually exclusive',
-    IncompatibleDirectoryWithStaticExecutable: 'The "--directory" option is not compatible with a "static" executable',
     IncompatibleRegexWithStaticExecutable: 'The "--regex" option is not compatible with a "static" executable',
     IncompatibleCommandWithDynamicExecutable: 'The "--command" option is not compatible with a "dynamic" executable',
   }
@@ -72,15 +70,9 @@ export default class E2eBaseUtil {
     return `(eg "${directory || E2eConfig.DIRECTORY.Executables}")`
   }
 
-  static getCommandExampleMessage({
-    executableName,
-    directory,
-  }: {
-    executableName?: string
-    directory?: string
-  }): string {
+  static getCommandExampleMessage({ executableName }: { executableName?: string }): string {
     const name = executableName || getExecutableName()
-    return `(eg "${name}" or "${path.join(directory || E2eConfig.DIRECTORY.Executables, name)}")`
+    return `(eg "${name}" or "./${name}")`
   }
 
   static getRegexExampleMessage({ executableName }: { executableName?: string }): string {
@@ -94,6 +86,10 @@ export default class E2eBaseUtil {
 
   static getNotEnoughCommandsMessage(got: number, min: number): string {
     return `Not enough non-option arguments: got ${got}, need at least ${min}`
+  }
+
+  static getPathDoesNotExistMesage(directory: string): string {
+    return `Invalid directory "${directory}", does not exist.`
   }
 
   static getInputsPrompt({
@@ -222,7 +218,7 @@ export default class E2eBaseUtil {
       const expected = expectedChunks[i]
       let actual = actualChunks[actualIndex]
       if (typeof expected === 'string') {
-        expect(stripNewlines(actual)).toBe(expected)
+        expect(condenseBackslashes(stripNewlines(actual))).toBe(expected)
         actualIndex++
       } else {
         if (isChoice(expected)) {

@@ -26,16 +26,6 @@ describe('Edit Command Unit Tests', () => {
       const handler = EditCommand.getCommand().handler as (args: Arguments) => void
       await expect(handler(await yargs.argv)).rejects.toThrow('Must provide something to change as an option/flag')
     })
-    it('handler throws error if static type and directory specified', async () => {
-      jest.spyOn(EditCommand, 'getCommandTypeArgument').mockReturnValueOnce(CommandType.Static)
-      jest.spyOn(EditCommand, 'getStringArgument').mockImplementation((argv: Arguments, option: Option): string => {
-        return option.key === 'directory' ? 'test' : ''
-      })
-      const handler = EditCommand.getCommand().handler as (args: Arguments) => void
-      await expect(handler(await yargs.argv)).rejects.toThrow(
-        'The "--directory" option is not compatible with "--type=static"'
-      )
-    })
     it('handler throws error if static type and regex specified', async () => {
       jest.spyOn(EditCommand, 'getCommandTypeArgument').mockReturnValueOnce(CommandType.Static)
       jest.spyOn(EditCommand, 'getStringArgument').mockImplementation((argv: Arguments, option: Option): string => {
@@ -70,6 +60,7 @@ describe('Edit Command Unit Tests', () => {
             inputs: {
               existing: '',
               name,
+              directory: '',
               type: undefined,
               executable: undefined,
               args: '',
@@ -97,39 +88,10 @@ describe('Edit Command Unit Tests', () => {
             inputs: {
               existing: '',
               name: '',
+              directory: '',
               type: undefined,
               executable: {
                 command,
-              },
-              args: '',
-              shell: '',
-              installedRegex: '',
-              url: '',
-              latestRegex: '',
-              interactive: undefined,
-            },
-          },
-        ],
-      ])
-    })
-    it('dynamic command passed to editConfiguration if directory option specified', async () => {
-      const editConfigurationSpy = jest.spyOn(Edit, 'editConfiguration').mockResolvedValue()
-      const directory = 'ent'
-      jest.spyOn(EditCommand, 'getStringArgument').mockImplementation((argv: Arguments, option: Option): string => {
-        return option.key === 'directory' ? directory : ''
-      })
-      const handler = EditCommand.getCommand().handler as (args: Arguments) => void
-      await handler(await yargs.argv)
-      expect(editConfigurationSpy.mock.calls).toEqual([
-        [
-          {
-            inputs: {
-              existing: '',
-              name: '',
-              type: undefined,
-              executable: {
-                directory,
-                regex: '',
               },
               args: '',
               shell: '',
@@ -156,46 +118,9 @@ describe('Edit Command Unit Tests', () => {
             inputs: {
               existing: '',
               name: '',
+              directory: '',
               type: undefined,
               executable: {
-                directory: '',
-                regex,
-              },
-              args: '',
-              shell: '',
-              installedRegex: '',
-              url: '',
-              latestRegex: '',
-              interactive: undefined,
-            },
-          },
-        ],
-      ])
-    })
-    it('dynamic command passed to editConfiguration if directory and regex option specified', async () => {
-      const editConfigurationSpy = jest.spyOn(Edit, 'editConfiguration').mockResolvedValue()
-      const directory = 'elf'
-      const regex = 'immortal'
-      jest.spyOn(EditCommand, 'getStringArgument').mockImplementation((argv: Arguments, option: Option): string => {
-        if (option.key === 'directory') {
-          return directory
-        } else if (option.key === 'regex') {
-          return regex
-        } else {
-          return ''
-        }
-      })
-      const handler = EditCommand.getCommand().handler as (args: Arguments) => void
-      await handler(await yargs.argv)
-      expect(editConfigurationSpy.mock.calls).toEqual([
-        [
-          {
-            inputs: {
-              existing: '',
-              name: '',
-              type: undefined,
-              executable: {
-                directory,
                 regex,
               },
               args: '',
@@ -212,6 +137,7 @@ describe('Edit Command Unit Tests', () => {
     it('all options passed to editConfiguration if all specified and static', async () => {
       const existing = 'test all static existing'
       const name = 'test all static name'
+      const directory = 'test all static directory'
       const type = CommandType.Static
       const command = 'test all static command'
       const args = 'test all static args'
@@ -228,6 +154,8 @@ describe('Edit Command Unit Tests', () => {
           return existing
         } else if (option.key === 'name') {
           return name
+        } else if (option.key === 'directory') {
+          return directory
         } else if (option.key === 'command') {
           return command
         } else if (option.key === 'arguments') {
@@ -252,6 +180,7 @@ describe('Edit Command Unit Tests', () => {
             inputs: {
               existing,
               name,
+              directory,
               type,
               executable: {
                 command,
@@ -314,8 +243,8 @@ describe('Edit Command Unit Tests', () => {
               existing,
               name,
               type,
+              directory,
               executable: {
-                directory,
                 regex,
               },
               args,

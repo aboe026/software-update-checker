@@ -16,6 +16,16 @@ export default class AddPrompts {
     return name
   }
 
+  static async getDirectory(existingDirectory?: string): Promise<string> {
+    const { directory }: { directory: string } = await inquirer.prompt({
+      name: 'directory',
+      message: `${AddOptions.Directory.value.description}:`,
+      type: 'input',
+      default: existingDirectory,
+    })
+    return directory
+  }
+
   static async getCommandType(existingCommandType?: CommandType): Promise<CommandType> {
     const { type }: { type: CommandType } = await inquirer.prompt({
       name: 'type',
@@ -47,23 +57,17 @@ export default class AddPrompts {
     return command
   }
 
-  static async getDirectory(existingDirectory?: string): Promise<string> {
-    const { directory }: { directory: string } = await inquirer.prompt({
-      name: 'directory',
-      message: `${DynamicOptions.Directory.value.description}:`,
-      type: 'input',
-      default: existingDirectory,
-      validate: Validators.required,
-    })
-    return directory
-  }
-
-  static async getRegex(existingRegex?: string): Promise<string> {
+  static async getRegex({ existingRegex, directory }: { existingRegex?: string; directory?: string }): Promise<string> {
+    let question = `${DynamicOptions.Regex.value.description}:`
+    if (directory) {
+      question = question.replace('directory', `"${directory}"`)
+    }
     const { regex }: { regex: string } = await inquirer.prompt({
       name: 'regex',
-      message: `${DynamicOptions.Regex.value.description}:`,
+      message: question,
       type: 'input',
       default: existingRegex,
+      validate: Validators.required,
     })
     return regex
   }
@@ -71,7 +75,7 @@ export default class AddPrompts {
   static async getExecutableCorrect(): Promise<boolean> {
     const { executableCorrect }: { executableCorrect: boolean } = await inquirer.prompt({
       name: 'executableCorrect',
-      message: 'Is the above executable correct?',
+      message: 'Is the above resolved executable correct?',
       type: 'confirm',
       default: true,
     })
