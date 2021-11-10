@@ -120,7 +120,7 @@ export default async function ({
               }
               k++
             }
-            const nlColons = nlPeriod.split(/:\\n/) // sometimes multiple string outputs get added to same line
+            const nlColons = nlPeriod.split(/(?<!\)):\\n/) // sometimes multiple string outputs get added to same line (ignore "):\n", as that can occur right after an example)
             printOutDebug('nlColons', JSON.stringify(nlColons, null, 2))
             for (let nlColon of nlColons) {
               printOutDebug('nlColon', nlColon)
