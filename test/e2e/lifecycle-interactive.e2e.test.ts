@@ -21,6 +21,7 @@ describe('Lifecycle Interactive', () => {
     const updatedLatestVersion = '1.0.0'
     const software = new Software({
       name: 'e2e lifecycle interactive',
+      directory: '',
       executable: {
         command: 'node',
       },
@@ -32,6 +33,7 @@ describe('Lifecycle Interactive', () => {
     })
     const updatedSoftware = new Software({
       name: software.name,
+      directory: software.directory,
       executable: {
         command: 'node',
       },

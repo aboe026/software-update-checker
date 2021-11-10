@@ -1,5 +1,3 @@
-import path from 'path'
-
 import { Command, Option } from '../base/base-options'
 import SelfReference from '../../util/self-reference'
 
@@ -35,6 +33,17 @@ export const AddOptions = {
       description: 'Name to identify software configuration (eg "Software Update Checker")',
       type: 'string',
       demandOption: true,
+      requiresArg: true,
+      nargs: 1,
+    },
+  }),
+  Directory: new Option({
+    key: 'directory',
+    value: {
+      alias: ['d', 'dir'],
+      description: `Working directory to execute command (eg "${SelfReference.getDirectory()}")`,
+      type: 'string',
+      demandOption: false,
       requiresArg: true,
       nargs: 1,
     },
@@ -105,10 +114,7 @@ export const StaticOptions = {
     key: 'command',
     value: {
       alias: 'c',
-      description: `Command or path to executable (eg "${SelfReference.getName()}" or "${path.join(
-        SelfReference.getDirectory(),
-        SelfReference.getName()
-      )}")`,
+      description: `Command or path to executable (eg "${SelfReference.getName()}" or "./${SelfReference.getName()}")`,
       type: 'string',
       demandOption: true,
       requiresArg: true,
@@ -119,17 +125,6 @@ export const StaticOptions = {
 
 export const DynamicOptions = {
   ...AddOptions,
-  Directory: new Option({
-    key: 'directory',
-    value: {
-      alias: 'd',
-      description: `Path to directory containing executable file (eg "${SelfReference.getDirectory()}")`,
-      type: 'string',
-      demandOption: true,
-      requiresArg: true,
-      nargs: 1,
-    },
-  }),
   Regex: new Option({
     key: 'regex',
     value: {

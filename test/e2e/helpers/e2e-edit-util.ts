@@ -79,20 +79,17 @@ export default class E2eEditUtil extends E2eBaseUtil {
   static getInputsReconfigure({
     position,
     oldSoftware,
-    name,
     installed,
     latest = [],
   }: {
     position: number
     oldSoftware: Software
-    name: string
     installed: InstalledReconfiguration[]
     latest: LatestReconfiguration[]
   }): string[] {
     return [
       ...E2eBaseUtil.getInputsNavigate(position),
       ...E2eAddUtil.getInputsReconfigure({
-        name,
         installed,
         latest,
         defaults: oldSoftware,
@@ -124,7 +121,7 @@ export default class E2eEditUtil extends E2eBaseUtil {
     return [
       {
         choice: {
-          question: this.CHOICES.Edit.question,
+          question: E2eEditUtil.CHOICES.Edit.question,
           options: existingOptions,
         },
         answer: nameToEdit,
@@ -146,7 +143,7 @@ export default class E2eEditUtil extends E2eBaseUtil {
     latestVersion: string
   }): (string | StringPrompt | BooleanPrompt | ChoicePrompt)[] {
     return [
-      ...this.getChunksNavigate({
+      ...E2eEditUtil.getChunksNavigate({
         existingSoftwares,
         nameToEdit: oldSoftware.name,
       }),
@@ -162,24 +159,21 @@ export default class E2eEditUtil extends E2eBaseUtil {
   static getChunksReconfigure({
     existingSoftwares,
     oldSoftware,
-    name,
     installed,
     latest,
   }: {
     existingSoftwares: Software[]
     oldSoftware: Software
-    name: string
     installed: InstalledReconfiguration[]
     latest: LatestReconfiguration[]
   }): (string | StringPrompt | BooleanPrompt | ChoicePrompt)[] {
     return [
-      ...this.getChunksNavigate({
+      ...E2eEditUtil.getChunksNavigate({
         existingSoftwares,
         nameToEdit: oldSoftware.name,
       }),
       ...E2eAddUtil.getChunksReconfigure({
         defaults: oldSoftware,
-        name,
         installed,
         latest,
       }),

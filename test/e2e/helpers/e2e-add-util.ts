@@ -1,5 +1,4 @@
 import E2eBaseUtil, { BooleanPrompt, ChoicePrompt, StringPrompt } from './e2e-base-util'
-import E2eConfig from './e2e-config'
 import { getExecutableName, KEYS } from './interactive-execute'
 import { isStatic } from '../../../src/software/executable'
 import Software from '../../../src/software/software'
@@ -10,12 +9,15 @@ export enum ExecutableChoiceOption {
 }
 
 export interface InstalledReconfiguration {
+  name?: string
+  directory?: string
   command?: string
   args?: string
   shell?: string
   regex?: string
   error?: string
   version?: string
+  preVersionCheckError?: boolean
   confirmOrReconfigure?: boolean
 }
 
@@ -52,10 +54,12 @@ export default class E2eAddUtil extends E2eBaseUtil {
       `--url="${software.url}"`,
       `--latestRegex="${software.latestRegex}"`,
     ]
+    if (software.directory) {
+      args.push(`--directory="${software.directory}"`)
+    }
     if (isStatic(software.executable)) {
       args.push(`--command="${software.executable.command}"`)
     } else {
-      args.push(`--directory="${software.executable.directory}"`)
       args.push(`--regex="${software.executable.regex}"`)
     }
     if (software.args) {
@@ -72,6 +76,11 @@ export default class E2eAddUtil extends E2eBaseUtil {
       ...E2eBaseUtil.getInputsPrompt({
         currentValue: software.name,
         defaultValue: defaults && defaults.name,
+      }),
+      ...E2eBaseUtil.getInputsPrompt({
+        currentValue: software.directory,
+        defaultValue: defaults && defaults.directory,
+        fallbackValue: KEYS.BACK_SPACE,
       }),
       KEYS.Enter, // static
       ...E2eBaseUtil.getInputsPrompt({
@@ -105,51 +114,61 @@ export default class E2eAddUtil extends E2eBaseUtil {
   }
 
   static getInputsReconfigure({
-    name,
     installed,
     latest = [],
     defaults,
   }: {
-    name: string
     installed: InstalledReconfiguration[]
     latest?: LatestReconfiguration[]
     defaults?: Software
   }): string[] {
-    const inputs: string[] = [
-      ...E2eBaseUtil.getInputsPrompt({
-        currentValue: name,
-      }),
-    ]
-
+    const inputs: string[] = []
     for (let i = 0; i < installed.length; i++) {
       const currentConfig = installed[i]
       const previousConfig = i === 0 ? defaults : installed[i - 1]
-      inputs.push(
-        KEYS.Enter,
-        ...E2eBaseUtil.getInputsPrompt({
-          currentValue: currentConfig.command,
-          defaultValue: isSoftware(previousConfig)
-            ? isStatic(previousConfig.executable)
-              ? previousConfig.executable.command
-              : ''
-            : previousConfig && previousConfig.command,
-        }),
-        ...E2eBaseUtil.getInputsPrompt({
-          currentValue: currentConfig.args,
-          defaultValue: previousConfig && previousConfig.args,
-        }),
-        ...E2eBaseUtil.getInputsPrompt({
-          currentValue: currentConfig.shell,
-          defaultValue: previousConfig && previousConfig.shell,
-        }),
-        ...E2eBaseUtil.getInputsPrompt({
-          currentValue: currentConfig.regex,
-          defaultValue: isSoftware(previousConfig)
-            ? previousConfig.installedRegex
-            : previousConfig && previousConfig.regex,
-        }),
-        ...(currentConfig.confirmOrReconfigure ? [KEYS.Enter] : ['No', KEYS.Enter])
-      )
+      if (i === 0 || currentConfig.name) {
+        inputs.push(
+          ...E2eBaseUtil.getInputsPrompt({
+            currentValue: currentConfig.name,
+          })
+        )
+      }
+      if (!currentConfig.preVersionCheckError || currentConfig.directory) {
+        inputs.push(
+          ...E2eBaseUtil.getInputsPrompt({
+            currentValue: currentConfig.directory,
+            defaultValue: previousConfig && previousConfig.directory,
+          })
+        )
+      }
+      if (!currentConfig.preVersionCheckError) {
+        inputs.push(
+          KEYS.Enter, // static
+          ...E2eBaseUtil.getInputsPrompt({
+            currentValue: currentConfig.command,
+            defaultValue: isSoftware(previousConfig)
+              ? isStatic(previousConfig.executable)
+                ? previousConfig.executable.command
+                : ''
+              : previousConfig && previousConfig.command,
+          }),
+          ...E2eBaseUtil.getInputsPrompt({
+            currentValue: currentConfig.args,
+            defaultValue: previousConfig && previousConfig.args,
+          }),
+          ...E2eBaseUtil.getInputsPrompt({
+            currentValue: currentConfig.shell,
+            defaultValue: previousConfig && previousConfig.shell,
+          }),
+          ...E2eBaseUtil.getInputsPrompt({
+            currentValue: currentConfig.regex,
+            defaultValue: isSoftware(previousConfig)
+              ? previousConfig.installedRegex
+              : previousConfig && previousConfig.regex,
+          }),
+          ...(currentConfig.confirmOrReconfigure ? [KEYS.Enter] : ['No', KEYS.Enter])
+        )
+      }
     }
 
     if (installed[installed.length - 1].confirmOrReconfigure) {
@@ -206,6 +225,13 @@ export default class E2eAddUtil extends E2eBaseUtil {
         answer: software.name,
         default: defaults && defaults.name,
       },
+      {
+        question: `${E2eAddUtil.MESSAGES.Directory} ${E2eAddUtil.getDirectoryExampleMessage({
+          directory: executableDirectory,
+        })}`,
+        answer: software.directory,
+        default: defaults && defaults.directory,
+      },
       ...E2eAddUtil.MESSAGES.CommandTypes,
       {
         choice: E2eAddUtil.CHOICES.Executable,
@@ -214,7 +240,6 @@ export default class E2eAddUtil extends E2eBaseUtil {
       {
         question: `${E2eAddUtil.MESSAGES.Command} ${E2eAddUtil.getCommandExampleMessage({
           executableName: executableFile || getExecutableName(),
-          directory: executableDirectory || E2eConfig.DIRECTORY.Executables,
         })}`,
         answer: isStatic(software.executable) ? software.executable.command : '',
         default:
@@ -259,73 +284,108 @@ export default class E2eAddUtil extends E2eBaseUtil {
   }
 
   static getChunksReconfigure({
-    name,
     defaults,
     installed,
     latest,
     executableDirectory,
     executableFile,
   }: {
-    name: string
     defaults?: Software
     installed: InstalledReconfiguration[]
     latest: LatestReconfiguration[]
     executableDirectory?: string
     executableFile?: string
   }): (string | StringPrompt | BooleanPrompt | ChoicePrompt)[] {
-    const chunks: (string | StringPrompt | BooleanPrompt | ChoicePrompt)[] = [
-      {
-        question: `${E2eAddUtil.MESSAGES.Name} ${E2eAddUtil.MESSAGES.NameExample}`,
-        answer: name,
-        default: defaults && defaults.name,
-      },
-    ]
+    const chunks: (string | StringPrompt | BooleanPrompt | ChoicePrompt)[] = []
     for (let i = 0; i < installed.length; i++) {
       const currentConfig = installed[i]
-      const previousConfig = i > 0 ? installed[i - 1] : defaults
-      chunks.push(
-        ...[
-          ...E2eAddUtil.MESSAGES.CommandTypes,
-          {
-            choice: E2eAddUtil.CHOICES.Executable,
-            answer: ExecutableChoiceOption.Static,
-          },
-          {
-            question: `${E2eAddUtil.MESSAGES.Command} ${E2eAddUtil.getCommandExampleMessage({
-              executableName: executableFile || getExecutableName(),
-              directory: executableDirectory || E2eConfig.DIRECTORY.Executables,
-            })}`,
-            answer: currentConfig.command,
-            default: isSoftware(previousConfig)
-              ? isStatic(previousConfig.executable)
-                ? previousConfig.executable.command
-                : undefined
-              : previousConfig && previousConfig.command,
-          },
-          {
-            question: `${E2eAddUtil.MESSAGES.Arguments} ${E2eAddUtil.MESSAGES.ArgumentsExample}`,
-            answer: currentConfig.args,
-            default: previousConfig && previousConfig.args,
-          },
-          {
-            question: `${E2eAddUtil.MESSAGES.Shell} ${E2eAddUtil.MESSAGES.ShellExample}`,
-            answer: currentConfig.shell === KEYS.BACK_SPACE ? '' : currentConfig.shell,
-            default: previousConfig
-              ? previousConfig.shell === KEYS.BACK_SPACE
-                ? ''
-                : previousConfig.shell
-              : undefined,
-          },
-          {
-            question: `${E2eAddUtil.MESSAGES.InstalledRegex} ${E2eAddUtil.MESSAGES.InstalledRegexExample}`,
-            answer: currentConfig.regex,
-            default: isSoftware(previousConfig)
-              ? previousConfig.installedRegex
-              : previousConfig && previousConfig.regex,
-          },
-        ]
-      )
-      if (currentConfig.error) {
+      let previousConfig
+      if (i === 0) {
+        previousConfig = defaults
+      } else {
+        for (let j = i - 1; j >= 0; j--) {
+          // need to ignore directory errors, because they do not "persist" values to new config
+          if (!installed[j].preVersionCheckError) {
+            previousConfig = installed[j]
+          }
+        }
+      }
+      if (i === 0 || currentConfig.name) {
+        chunks.push(
+          ...[
+            {
+              question: `${E2eAddUtil.MESSAGES.Name} ${E2eAddUtil.MESSAGES.NameExample}`,
+              answer: currentConfig.name,
+              default: defaults && defaults.name,
+            },
+          ]
+        )
+      }
+      if (!currentConfig.preVersionCheckError || currentConfig.directory) {
+        chunks.push(
+          ...[
+            {
+              question: `${E2eAddUtil.MESSAGES.Directory} ${E2eAddUtil.getDirectoryExampleMessage({
+                directory: executableDirectory,
+              })}`,
+              answer: currentConfig.directory === KEYS.BACK_SPACE ? '' : currentConfig.directory,
+              default: previousConfig
+                ? previousConfig.directory === KEYS.BACK_SPACE
+                  ? ''
+                  : previousConfig.directory
+                : undefined,
+            },
+          ]
+        )
+      }
+      if (!currentConfig.preVersionCheckError) {
+        chunks.push(
+          ...[
+            ...E2eAddUtil.MESSAGES.CommandTypes,
+            {
+              choice: E2eAddUtil.CHOICES.Executable,
+              answer: ExecutableChoiceOption.Static,
+            },
+            {
+              question: `${E2eAddUtil.MESSAGES.Command} ${E2eAddUtil.getCommandExampleMessage({
+                executableName: executableFile || getExecutableName(),
+              })}`,
+              answer: currentConfig.command,
+              default: isSoftware(previousConfig)
+                ? isStatic(previousConfig.executable)
+                  ? previousConfig.executable.command
+                  : undefined
+                : previousConfig && previousConfig.command,
+            },
+            {
+              question: `${E2eAddUtil.MESSAGES.Arguments} ${E2eAddUtil.MESSAGES.ArgumentsExample}`,
+              answer: currentConfig.args,
+              default: previousConfig && previousConfig.args,
+            },
+            {
+              question: `${E2eAddUtil.MESSAGES.Shell} ${E2eAddUtil.MESSAGES.ShellExample}`,
+              answer: currentConfig.shell === KEYS.BACK_SPACE ? '' : currentConfig.shell,
+              default: previousConfig
+                ? previousConfig.shell === KEYS.BACK_SPACE
+                  ? ''
+                  : previousConfig.shell
+                : undefined,
+            },
+            {
+              question: `${E2eAddUtil.MESSAGES.InstalledRegex} ${E2eAddUtil.MESSAGES.InstalledRegexExample}`,
+              answer: currentConfig.regex,
+              default: isSoftware(previousConfig)
+                ? previousConfig.installedRegex
+                : previousConfig && previousConfig.regex,
+            },
+          ]
+        )
+      }
+      if (currentConfig.preVersionCheckError && currentConfig.name && !currentConfig.directory) {
+        chunks.push(...[E2eAddUtil.getNameInUseMessage(currentConfig.name || '')])
+      } else if (currentConfig.preVersionCheckError) {
+        chunks.push(...[E2eAddUtil.getPathDoesNotExistMesage(currentConfig.directory || '')])
+      } else if (currentConfig.error) {
         chunks.push(
           ...[
             currentConfig.error,

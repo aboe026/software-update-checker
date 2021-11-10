@@ -44,7 +44,7 @@ export const EditOptions = {
     value: {
       ...StaticOptions.Command.value,
       demandOption: false,
-      conflicts: [DynamicOptions.Directory.key, DynamicOptions.Regex.key],
+      conflicts: [DynamicOptions.Regex.key],
     },
   }),
   Directory: new Option({
@@ -52,7 +52,6 @@ export const EditOptions = {
     value: {
       ...DynamicOptions.Directory.value,
       demandOption: false,
-      conflicts: [StaticOptions.Command.key],
     },
   }),
   Regex: new Option({

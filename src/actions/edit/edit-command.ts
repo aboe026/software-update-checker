@@ -48,11 +48,6 @@ export default class EditCommand extends BaseCommand {
         ) {
           throw Error('Must provide something to change as an option/flag')
         }
-        if (type === CommandType.Static && directory) {
-          throw Error(
-            `The "--${EditOptions.Directory.key}" option is not compatible with "--${typeKey}=${CommandType.Static}"`
-          )
-        }
         if (type === CommandType.Static && regex) {
           throw Error(
             `The "--${EditOptions.Regex.key}" option is not compatible with "--${typeKey}=${CommandType.Static}"`
@@ -68,10 +63,9 @@ export default class EditCommand extends BaseCommand {
           executable = {
             command,
           }
-        } else if (directory || regex) {
+        } else if (regex) {
           executable = {
-            directory: directory || '',
-            regex: regex || '',
+            regex,
           }
         }
 
@@ -79,6 +73,7 @@ export default class EditCommand extends BaseCommand {
           inputs: {
             existing,
             name,
+            directory,
             type,
             executable,
             args,

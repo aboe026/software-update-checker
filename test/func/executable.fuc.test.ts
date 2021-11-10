@@ -31,7 +31,7 @@ describe('Executable Func Tests', () => {
           directory,
           regex: match,
         })
-      ).resolves.toBe(path.join(directory, match))
+      ).resolves.toBe(match)
     })
     it('Second match gets ignored', async () => {
       const directory = path.join(__dirname, '../helpers/test-commands')
@@ -40,7 +40,7 @@ describe('Executable Func Tests', () => {
           directory,
           regex: '.*-command.js',
         })
-      ).resolves.toBe(path.join(directory, 'bad-command.js'))
+      ).resolves.toBe('bad-command.js')
     })
     it('First file not matching regex gets ignored', async () => {
       const directory = path.join(__dirname, '../helpers/test-commands')
@@ -49,7 +49,7 @@ describe('Executable Func Tests', () => {
           directory,
           regex: 'good-.*',
         })
-      ).resolves.toBe(path.join(directory, 'good-command.js'))
+      ).resolves.toBe('good-command.js')
     })
   })
 })

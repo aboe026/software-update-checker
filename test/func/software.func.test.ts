@@ -1,6 +1,6 @@
 import path from 'path'
 
-import Software, { getFromExecutable, getFromUrl, getExecutable } from '../../src/software/software'
+import Software, { getFromExecutable, getFromUrl, getCommand } from '../../src/software/software'
 import Website from '../helpers/website'
 import TestUtil from '../helpers/test-util'
 
@@ -34,21 +34,25 @@ describe('Software Func Tests', () => {
       ).resolves.toBe('foo bar\nhello world')
     })
   })
-  describe('getExecutable', () => {
+  describe('getCommand', () => {
     it('returns command for static', async () => {
       const command = 'caramel'
       await expect(
-        getExecutable({
-          command,
+        getCommand({
+          executable: {
+            command,
+          },
         })
       ).resolves.toBe(command)
     })
     it('throws error for non-existent directory', async () => {
       const directory = path.join(__dirname, '../helpers/fake')
       await expect(
-        getExecutable({
+        getCommand({
+          executable: {
+            regex: 'good-c.*',
+          },
           directory,
-          regex: 'good-c.*',
         })
       ).rejects.toThrow(`Directory specified "${directory}" does not exist. Please specify a valid path.`)
     })
@@ -56,9 +60,11 @@ describe('Software Func Tests', () => {
       const directory = path.join(__dirname, '../helpers/test-commands')
       const regex = 'fake-.*'
       await expect(
-        getExecutable({
+        getCommand({
+          executable: {
+            regex,
+          },
           directory,
-          regex,
         })
       ).rejects.toThrow(`Could not find any file in directory "${directory}" matching regex pattern "${regex}"`)
     })
@@ -66,29 +72,35 @@ describe('Software Func Tests', () => {
       const directory = path.join(__dirname, '../helpers/test-commands')
       const match = 'good-command.js'
       await expect(
-        getExecutable({
+        getCommand({
+          executable: {
+            regex: match,
+          },
           directory,
-          regex: match,
         })
-      ).resolves.toBe(path.join(directory, match))
+      ).resolves.toBe(match)
     })
     it('returns file for dynamic first match', async () => {
       const directory = path.join(__dirname, '../helpers/test-commands')
       await expect(
-        getExecutable({
+        getCommand({
+          executable: {
+            regex: '.*-command.*',
+          },
           directory,
-          regex: '.*-command.*',
         })
-      ).resolves.toBe(path.join(directory, 'bad-command.js'))
+      ).resolves.toBe('bad-command.js')
     })
     it('returns file for dynamic ingoring non-match', async () => {
       const directory = path.join(__dirname, '../helpers/test-commands')
       await expect(
-        getExecutable({
+        getCommand({
+          executable: {
+            regex: 'good-command.*',
+          },
           directory,
-          regex: 'good-command.*',
         })
-      ).resolves.toBe(path.join(directory, 'good-command.js'))
+      ).resolves.toBe('good-command.js')
     })
   })
   describe('getInstalledVersion', () => {
@@ -112,8 +124,8 @@ describe('Software Func Tests', () => {
       await expect(
         new Software({
           name: 'no dir',
+          directory,
           executable: {
-            directory,
             regex: '',
           },
           args: '',
@@ -129,8 +141,8 @@ describe('Software Func Tests', () => {
       await expect(
         new Software({
           name: 'dynamo',
+          directory,
           executable: {
-            directory,
             regex,
           },
           args: '',

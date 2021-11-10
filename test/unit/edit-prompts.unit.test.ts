@@ -10,7 +10,10 @@ describe('Edit Prompts Unit Tests', () => {
       const existing = 'bygone'
       const promptSpy = jest.spyOn(inquirer, 'prompt').mockResolvedValue({ existing })
       await expect(EditPrompts.getExisting([])).resolves.toBe(existing)
-      TestUtil.validateDefaultProperty(promptSpy, undefined)
+      TestUtil.validateMockCallParameter({
+        spy: promptSpy,
+        expected: undefined,
+      })
     })
     it('maps softwares to choices', async () => {
       const softwares = [

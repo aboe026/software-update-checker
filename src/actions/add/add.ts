@@ -1,3 +1,5 @@
+import fs from 'fs-extra'
+
 import { AddCommands, AddOptions } from './add-options'
 import AddPrompts from './add-prompts'
 import Base from '../base/base'
@@ -20,6 +22,7 @@ export default class Add extends Base {
     })
     const installedVersion: ConfigureInstalledVersionResponse | undefined = await Add.configureInstalledVersion({
       inputs,
+      existingDirectory: existingSoftware?.directory,
       existingExecutable: existingSoftware?.executable,
       existingArgs: existingSoftware?.args,
       existingShell: existingSoftware?.shell,
@@ -34,6 +37,7 @@ export default class Add extends Base {
       if (latestVersion) {
         const software: Software = new Software({
           name,
+          directory: installedVersion.directory,
           executable: installedVersion.executable,
           args: installedVersion.args,
           shell: installedVersion.shell,
@@ -101,21 +105,62 @@ export default class Add extends Base {
     return name
   }
 
+  static async getDirectory({
+    inputs,
+    existingDirectory,
+  }: {
+    inputs?: Inputs
+    existingDirectory?: string
+  }): Promise<string | undefined> {
+    let directory
+    if (inputs && (inputs.directory || !inputs.interactive)) {
+      directory = inputs.directory !== undefined ? inputs.directory : existingDirectory
+    } else {
+      directory = await AddPrompts.getDirectory(existingDirectory)
+    }
+    if (!(await Add.doesOptionalPathExist({ directory }))) {
+      const message = `Invalid directory "${directory}", does not exist.`
+      if (inputs && !inputs.interactive) {
+        throw Error(message)
+      }
+      console.error(colors.red(message))
+      return Add.getDirectory({
+        existingDirectory,
+      })
+    }
+    return directory
+  }
+
+  static async doesOptionalPathExist({ directory }: { directory: string | undefined }): Promise<boolean> {
+    if (directory) {
+      return fs.pathExists(directory)
+    }
+    return true
+  }
+
   static async configureInstalledVersion({
     inputs,
+    existingDirectory,
     existingExecutable,
     existingArgs,
     existingShell,
     existingInstalledRegex,
   }: {
     inputs?: Inputs
+    existingDirectory: string | undefined
     existingExecutable?: Static | Dynamic
     existingArgs?: string
     existingShell?: string
     existingInstalledRegex?: string
   }): Promise<ConfigureInstalledVersionResponse | undefined> {
+    const directory = await Add.getDirectory({
+      inputs,
+      existingDirectory,
+    })
+
     const executable = await Add.configureExecutable({
       inputs,
+      directory,
       existingExecutable,
     })
 
@@ -147,6 +192,7 @@ export default class Add extends Base {
       try {
         const software = new Software({
           name: 'Installed Test',
+          directory,
           executable,
           args,
           shell,
@@ -163,6 +209,7 @@ export default class Add extends Base {
 
         if (versionCorrect) {
           return {
+            directory: directory || '',
             executable,
             args: args || '',
             shell: shell || '',
@@ -170,6 +217,7 @@ export default class Add extends Base {
           }
         }
         return Add.configureInstalledVersion({
+          existingDirectory: directory,
           existingExecutable: executable,
           existingArgs: args,
           existingShell: shell,
@@ -185,6 +233,7 @@ export default class Add extends Base {
         const reattempt = await AddPrompts.getReattemptVersion()
         if (reattempt) {
           return Add.configureInstalledVersion({
+            existingDirectory: directory,
             existingExecutable: executable,
             existingArgs: args,
             existingShell: shell,
@@ -197,9 +246,11 @@ export default class Add extends Base {
 
   static async configureExecutable({
     inputs,
+    directory,
     existingExecutable,
   }: {
     inputs?: Inputs
+    directory: string | undefined
     existingExecutable?: Static | Dynamic
   }): Promise<Static | Dynamic | undefined> {
     let type: CommandType
@@ -228,8 +279,7 @@ export default class Add extends Base {
         })
       : Add.configureDynamic({
           inputs,
-          existingDirectory:
-            existingExecutable && !isStatic(existingExecutable) ? existingExecutable.directory : undefined,
+          directory,
           existingRegex: existingExecutable && !isStatic(existingExecutable) ? existingExecutable.regex : undefined,
         })
   }
@@ -263,39 +313,31 @@ export default class Add extends Base {
 
   static async configureDynamic({
     inputs,
-    existingDirectory,
+    directory,
     existingRegex,
   }: {
     inputs?: Inputs
-    existingDirectory?: string
+    directory: string | undefined
     existingRegex?: string
   }): Promise<Dynamic | undefined> {
-    let directory = ''
     let regex = ''
 
     if (inputs && (inputs.executable || !inputs.interactive)) {
       if (inputs.executable && !isStatic(inputs.executable)) {
-        directory = inputs.executable.directory
         regex = inputs.executable.regex
       } else {
-        if (existingDirectory) {
-          directory = existingDirectory
-        }
         if (existingRegex) {
           regex = existingRegex
         }
-      }
-      if (!directory) {
-        throw Error(
-          `The executable type "${CommandType.Dynamic}" requires a value passed into the "--directory" option.`
-        )
       }
       if (!regex) {
         throw Error(`The executable type "${CommandType.Dynamic}" requires a value passed into the "--regex" option.`)
       }
     } else {
-      directory = await AddPrompts.getDirectory(existingDirectory)
-      regex = await AddPrompts.getRegex(existingRegex)
+      regex = await AddPrompts.getRegex({
+        directory,
+        existingRegex,
+      })
     }
 
     try {
@@ -303,7 +345,7 @@ export default class Add extends Base {
         directory,
         regex,
       })
-      console.log(`Resolved executable: "${command}"`)
+      console.log(`Resolved executable file: "${command}"`)
 
       let executableCorrect = true
       if (!inputs || inputs.interactive) {
@@ -312,12 +354,11 @@ export default class Add extends Base {
 
       if (executableCorrect) {
         return {
-          directory,
           regex,
         }
       } else {
         return Add.configureDynamic({
-          existingDirectory: directory,
+          directory,
           existingRegex: regex,
         })
       }
@@ -331,7 +372,7 @@ export default class Add extends Base {
       const reattempt = await AddPrompts.getReattemptDynamic()
       if (reattempt) {
         return Add.configureDynamic({
-          existingDirectory: directory,
+          directory,
           existingRegex: regex,
         })
       }
@@ -418,6 +459,7 @@ export default class Add extends Base {
 
 export interface Inputs {
   name?: string
+  directory?: string
   executable?: Static | Dynamic
   args?: string | undefined
   shell?: string | undefined
@@ -428,6 +470,7 @@ export interface Inputs {
 }
 
 export interface ConfigureInstalledVersionResponse {
+  directory?: string
   executable: Static | Dynamic
   args?: string
   shell?: string

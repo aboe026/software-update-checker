@@ -33,19 +33,14 @@ export default class AddCommand extends BaseCommand {
       describe: addNewlineForExample(AddCommands.Dynamic.value.description),
       builder: AddCommand.sortOptions(convertToGenericOptions(DynamicOptions)),
       handler: async (argv: Arguments) => {
-        const directory = AddCommand.getStringArgument(argv, DynamicOptions.Directory) || ''
         const regex = AddCommand.getStringArgument(argv, DynamicOptions.Regex) || ''
         const interactive = AddCommand.getBooleanArgument(argv, BaseOptions.Interactive)
 
-        if (!directory && !interactive) {
-          throw Error(Add.getMissingRequiredOptionErrorMessage(DynamicOptions.Directory.key))
-        }
         if (!regex && !interactive) {
           throw Error(Add.getMissingRequiredOptionErrorMessage(DynamicOptions.Regex.key))
         }
 
         return AddCommand.configure(argv, {
-          directory,
           regex,
         })
       },
@@ -75,6 +70,7 @@ export default class AddCommand extends BaseCommand {
     return Add.configure({
       inputs: {
         name,
+        directory: AddCommand.getStringArgument(argv, AddOptions.Directory),
         executable,
         args: AddCommand.getStringArgument(argv, AddOptions.Arguments),
         shell: AddCommand.getStringArgument(argv, AddOptions.Shell),

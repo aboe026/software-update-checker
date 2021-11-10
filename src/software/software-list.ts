@@ -24,6 +24,7 @@ export default class SoftwareList {
       clonedSoftwares.push(
         new Software({
           name: software.name,
+          directory: software.directory,
           executable: software.executable,
           args: software.args,
           shell: software.shell,
@@ -134,14 +135,9 @@ export default class SoftwareList {
             `Saved file "${file}" contains an invalid software entry "${obj.name}" that does not have an executable`
           )
         }
-        if (!obj.executable.command && !obj.executable.directory) {
-          throw Error(
-            `Saved file "${file}" contains an invalid software entry "${obj.name}" that is dynamic but does not have an executable directory`
-          )
-        }
         if (!obj.executable.command && !obj.executable.regex) {
           throw Error(
-            `Saved file "${file}" contains an invalid software entry "${obj.name}" that is dynamic but does not have an executable regex`
+            `Saved file "${file}" contains an invalid software entry "${obj.name}" whose executable is neither static nor dynamic`
           )
         }
         if (!obj.installedRegex) {
@@ -163,6 +159,7 @@ export default class SoftwareList {
         softwares.push(
           new Software({
             name: obj.name,
+            directory: obj.directory,
             executable: obj.executable,
             args: obj.args,
             shell: obj.shell,

@@ -10,7 +10,10 @@ describe('Delete Prompts Unit Tests', () => {
       const existing = 'bygone'
       const promptSpy = jest.spyOn(inquirer, 'prompt').mockResolvedValue({ existing })
       await expect(DeletePrompts.getExisting([])).resolves.toBe(existing)
-      TestUtil.validateDefaultProperty(promptSpy, undefined)
+      TestUtil.validateMockCallParameter({
+        spy: promptSpy,
+        expected: undefined,
+      })
     })
     it('maps softwares to choices', async () => {
       const softwares = [
@@ -55,13 +58,19 @@ describe('Delete Prompts Unit Tests', () => {
       const deleteConfirmed = true
       const promptSpy = jest.spyOn(inquirer, 'prompt').mockResolvedValue({ deleteConfirmed })
       await expect(DeletePrompts.getDeleteConfirmed('')).resolves.toBe(deleteConfirmed)
-      TestUtil.validateDefaultProperty(promptSpy, true)
+      TestUtil.validateMockCallParameter({
+        spy: promptSpy,
+        expected: true,
+      })
     })
     it('returns inquirer output false setting default', async () => {
       const deleteConfirmed = false
       const promptSpy = jest.spyOn(inquirer, 'prompt').mockResolvedValue({ deleteConfirmed })
       await expect(DeletePrompts.getDeleteConfirmed('')).resolves.toBe(deleteConfirmed)
-      TestUtil.validateDefaultProperty(promptSpy, true)
+      TestUtil.validateMockCallParameter({
+        spy: promptSpy,
+        expected: true,
+      })
     })
   })
 })

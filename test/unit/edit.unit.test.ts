@@ -97,8 +97,8 @@ describe('Edit Unit Tests', () => {
       const name = 'throws error dynamic command option without type'
       const software = new Software({
         name,
+        directory: 'baked',
         executable: {
-          directory: 'baked',
           regex: 'cookie',
         },
         args: 'drop',
@@ -137,8 +137,8 @@ describe('Edit Unit Tests', () => {
       const name = 'throws error dynamic command option with dynamic type'
       const software = new Software({
         name,
+        directory: 'genre',
         executable: {
-          directory: 'genre',
           regex: 'fantasy',
         },
         args: 'high',
@@ -174,87 +174,6 @@ describe('Edit Unit Tests', () => {
         },
       })
     })
-    it('throws error if editing static and supply directory option without changing type', async () => {
-      const name = 'throws error static directory option without type'
-      const software = new Software({
-        name,
-        executable: {
-          command: 'inventor',
-        },
-        args: 'male',
-        shell: 'swedish',
-        installedRegex: 'dynamite',
-        url: 'https://redifinedlegacy.com',
-        latestRegex: 'Alfred Bernhard Nobel',
-      })
-      await testEditConfiguration({
-        input: {
-          inputs: {
-            existing: name,
-            executable: {
-              directory: 'scientist',
-              regex: '',
-            },
-          },
-          loadSoftwareListMocks: [{ resolve: [software] }],
-          getExistingSoftwareMocks: [{ resolve: software }],
-        },
-        output: {
-          expected: { reject: 'The "--directory" option is not compatible with a "static" executable' },
-          loadSoftwareListCalls: [[]],
-          getExistingSoftwareCalls: [
-            [
-              {
-                name,
-                softwares: [software],
-                interactive: false,
-              },
-            ],
-          ],
-        },
-      })
-    })
-    it('throws error if editing static and supply directory option with static type', async () => {
-      const name = 'throws error static directory option with static type'
-      const software = new Software({
-        name,
-        executable: {
-          command: 'wizards',
-        },
-        args: 'slytherin',
-        shell: 'hogwarts',
-        installedRegex: 'half-blood prince',
-        url: 'https://always.com',
-        latestRegex: 'Severus Snape',
-      })
-      await testEditConfiguration({
-        input: {
-          inputs: {
-            existing: name,
-            type: CommandType.Static,
-            executable: {
-              directory: 'non-muggles',
-              regex: '',
-            },
-          },
-          loadSoftwareListMocks: [{ resolve: [software] }],
-          getExistingSoftwareMocks: [{ resolve: software }],
-        },
-        output: {
-          expected: { reject: 'The "--directory" option is not compatible with a "static" executable' },
-          loadSoftwareListCalls: [[]],
-          getExistingSoftwareCalls: [
-            [
-              {
-                name,
-                softwares: [software],
-                interactive: false,
-              },
-            ],
-          ],
-        },
-      })
-    })
     it('throws error if editing static and supply regex option without changing type', async () => {
       const name = 'throws error static regex option without type'
       const software = new Software({
@@ -272,8 +191,8 @@ describe('Edit Unit Tests', () => {
         input: {
           inputs: {
             existing: name,
+            directory: '',
             executable: {
-              directory: '',
               regex: 'ludwig van',
             },
           },
@@ -313,8 +232,8 @@ describe('Edit Unit Tests', () => {
           inputs: {
             existing: name,
             type: CommandType.Static,
+            directory: '',
             executable: {
-              directory: '',
               regex: 'h20',
             },
           },
@@ -340,8 +259,8 @@ describe('Edit Unit Tests', () => {
       const name = 'throws error changing to static without command'
       const software = new Software({
         name,
+        directory: 'planets',
         executable: {
-          directory: 'planets',
           regex: 'habited',
         },
         args: 'desert',
@@ -374,43 +293,6 @@ describe('Edit Unit Tests', () => {
         },
       })
     })
-    it('throws error if changing to dynamic and do not supply directory option', async () => {
-      const name = 'throws error changing to dynamic without directory'
-      const software = new Software({
-        name,
-        executable: {
-          command: 'bread',
-        },
-        args: 'flat',
-        shell: 'grain',
-        installedRegex: 'potatoes',
-        url: 'https://norwegiantortilla.com',
-        latestRegex: 'lefse',
-      })
-      await testEditConfiguration({
-        input: {
-          inputs: {
-            existing: name,
-            type: CommandType.Dynamic,
-          },
-          loadSoftwareListMocks: [{ resolve: [software] }],
-          getExistingSoftwareMocks: [{ resolve: software }],
-        },
-        output: {
-          expected: { reject: 'The "dynamic" executable type requires a "--directory" option to be specified.' },
-          loadSoftwareListCalls: [[]],
-          getExistingSoftwareCalls: [
-            [
-              {
-                name,
-                softwares: [software],
-                interactive: false,
-              },
-            ],
-          ],
-        },
-      })
-    })
     it('throws error if changing to dynamic and do not supply regex option', async () => {
       const name = 'throws error changing to dynamic without regex'
       const software = new Software({
@@ -429,10 +311,48 @@ describe('Edit Unit Tests', () => {
           inputs: {
             existing: name,
             type: CommandType.Dynamic,
+            directory: 'aquatic',
             executable: {
-              directory: 'aquatic',
               regex: '',
             },
+          },
+          loadSoftwareListMocks: [{ resolve: [software] }],
+          getExistingSoftwareMocks: [{ resolve: software }],
+        },
+        output: {
+          expected: { reject: 'The "dynamic" executable type requires a "--regex" option to be specified.' },
+          loadSoftwareListCalls: [[]],
+          getExistingSoftwareCalls: [
+            [
+              {
+                name,
+                softwares: [software],
+                interactive: false,
+              },
+            ],
+          ],
+        },
+      })
+    })
+    it('throws error if changing to dynamic and do not supply executable', async () => {
+      const name = 'throws error changing to dynamic without executable'
+      const software = new Software({
+        name,
+        executable: {
+          command: 'wizards',
+        },
+        args: 'slytherin',
+        shell: 'hogwarts',
+        installedRegex: 'half-blood prince',
+        url: 'https://always.com',
+        latestRegex: 'Severus Snape',
+      })
+      await testEditConfiguration({
+        input: {
+          inputs: {
+            existing: name,
+            type: CommandType.Dynamic,
+            directory: 'professor',
           },
           loadSoftwareListMocks: [{ resolve: [software] }],
           getExistingSoftwareMocks: [{ resolve: software }],
@@ -497,8 +417,8 @@ describe('Edit Unit Tests', () => {
       const name = 'change dynamic to static with command'
       const software = new Software({
         name,
+        directory: 'reconnaissance',
         executable: {
-          directory: 'reconnaissance',
           regex: 'strategic',
         },
         args: 'lockheed',
@@ -543,8 +463,8 @@ describe('Edit Unit Tests', () => {
         },
       })
     })
-    it('can change to dynamic if directory and regex options specified', async () => {
-      const name = 'change static to dynamic with directory and regex'
+    it('can change to dynamic if regex option specified', async () => {
+      const name = 'change static to dynamic with regex'
       const software = new Software({
         name,
         executable: {
@@ -560,7 +480,6 @@ describe('Edit Unit Tests', () => {
         existing: name,
         type: CommandType.Dynamic,
         executable: {
-          directory: 'vehicle',
           regex: 'interstellar',
         },
       }
@@ -609,8 +528,8 @@ describe('Edit Unit Tests', () => {
       const inputs = {
         existing: name,
         type: CommandType.Dynamic,
+        directory: 'coffee',
         executable: {
-          directory: 'coffee',
           regex: 'vodka',
         },
         name: 'all changing dynamic name',
@@ -654,8 +573,8 @@ describe('Edit Unit Tests', () => {
       const name = 'all options passed dynamic'
       const software = new Software({
         name,
+        directory: 'film',
         executable: {
-          directory: 'film',
           regex: 'hollywood',
         },
         args: 'coming-of-age',
@@ -666,6 +585,7 @@ describe('Edit Unit Tests', () => {
       })
       const inputs = {
         existing: name,
+        directory: 'all changing static directory',
         type: CommandType.Static,
         executable: {
           command: 'all changing static command',

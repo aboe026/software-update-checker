@@ -4,7 +4,7 @@ import path from 'path'
 import E2eAddUtil from './helpers/e2e-add-util'
 import E2eConfig from './helpers/e2e-config'
 import E2eTestUtil from './helpers/e2e-test-util'
-import { getExecutableName } from './helpers/interactive-execute'
+import { getExecutableName, KEYS } from './helpers/interactive-execute'
 import Software from '../../src/software/software'
 import { version } from '../../package.json'
 import Website from '../helpers/website'
@@ -20,6 +20,7 @@ describe('Add Interactive', () => {
     it('add interactive fails with existing name', async () => {
       const existing = new Software({
         name: 'e2e add interactive name that already exists existing',
+        directory: 'Generation II',
         executable: {
           command: 'UNSC',
         },
@@ -42,9 +43,10 @@ describe('Add Interactive', () => {
       await E2eAddUtil.verifySoftwares([])
       const installedError = 'does not compute'
       await E2eTestUtil.addInteractiveReconfigure({
-        name: 'e2e add interactive installed error no reconfigure',
         installed: [
           {
+            name: 'e2e add interactive installed error no reconfigure',
+            directory: '',
             command: 'node',
             args: `${E2eAddUtil.COMMAND.Bad} ${installedError}`,
             shell: '',
@@ -65,9 +67,10 @@ describe('Add Interactive', () => {
         const port = Website.getPort()
         await Website.stop()
         await E2eTestUtil.addInteractiveReconfigure({
-          name: 'e2e add interactive latest error no reconfigure',
           installed: [
             {
+              name: 'e2e add interactive latest error no reconfigure',
+              directory: '',
               command: 'node',
               args: `${E2eAddUtil.COMMAND.Good} v${installedVersion}`,
               shell: '',
@@ -98,6 +101,7 @@ describe('Add Interactive', () => {
       const latestVersion = '1.0.1'
       const software = new Software({
         name: 'e2e add interactive valid with non-existent',
+        directory: '',
         executable: {
           command: 'node',
         },
@@ -121,6 +125,7 @@ describe('Add Interactive', () => {
       const latestVersion = '1.0.2'
       const software = new Software({
         name: 'e2e add interactive valid with empty file',
+        directory: '',
         executable: {
           command: 'node',
         },
@@ -144,6 +149,7 @@ describe('Add Interactive', () => {
       const latestVersion = '1.0.3'
       const software = new Software({
         name: 'e2e add interactive valid with empty array',
+        directory: '',
         executable: {
           command: 'node',
         },
@@ -163,6 +169,7 @@ describe('Add Interactive', () => {
     it('add interactive valid software to beginning with single existing softwares file', async () => {
       const existing = new Software({
         name: 'z very last von',
+        directory: 'journey',
         executable: {
           command: 'endings',
         },
@@ -178,6 +185,7 @@ describe('Add Interactive', () => {
       const latestVersion = '1.1.2'
       const software = new Software({
         name: 'e2e add interactive valid to beginning with single existing',
+        directory: '',
         executable: {
           command: 'node',
         },
@@ -197,6 +205,7 @@ describe('Add Interactive', () => {
     it('add interactive valid software to end with single existing softwares file', async () => {
       const existing = new Software({
         name: 'a first software',
+        directory: 'transition',
         executable: {
           command: 'medals',
         },
@@ -212,6 +221,7 @@ describe('Add Interactive', () => {
       const latestVersion = '1.0.0'
       const software = new Software({
         name: 'e2e add interactive valid to end with single existing',
+        directory: '',
         executable: {
           command: 'node',
         },
@@ -231,6 +241,7 @@ describe('Add Interactive', () => {
     it('add interactive valid software to middle with two existing softwares file', async () => {
       const existingFirst = new Software({
         name: 'a first of two softwares',
+        directory: 'pequod',
         executable: {
           command: 'sentences',
         },
@@ -242,6 +253,7 @@ describe('Add Interactive', () => {
       })
       const existingSecond = new Software({
         name: 'z last of two softwares',
+        directory: 'its alive',
         executable: {
           command: 'lines',
         },
@@ -257,6 +269,7 @@ describe('Add Interactive', () => {
       const latestVersion = '1.5.1'
       const software = new Software({
         name: 'e2e add interactive valid to middle with two existing',
+        directory: '',
         executable: {
           command: 'node',
         },
@@ -273,15 +286,27 @@ describe('Add Interactive', () => {
       })
       await E2eAddUtil.verifySoftwares([existingFirst, software, existingSecond])
     })
-    it('add interactive valid software if installed error is reconfigured', async () => {
-      await E2eAddUtil.setSoftwares([])
-      await E2eAddUtil.verifySoftwares([])
+    it('add interactive valid software if name error is reconfigured', async () => {
+      const existingSoftware = new Software({
+        name: 'e2e add interactive name error reconfigured existing',
+        directory: 'mare',
+        executable: {
+          command: 'equine',
+        },
+        args: 'bay',
+        shell: 'video\\ game',
+        installedRegex: 'roach',
+        url: 'https://smallfry.com',
+        latestRegex: 'rutilus rutilus',
+      })
+      await E2eAddUtil.setSoftwares([existingSoftware])
+      await E2eAddUtil.verifySoftwares([existingSoftware])
       const command = 'node'
-      const installedError = 'does not compute'
-      const installedVersion = '1.2.3'
-      const latestVersion = '2.3.4'
+      const installedVersion = '1.2.2'
+      const latestVersion = '2.3.3'
       const software = new Software({
-        name: 'e2e add interactive installed error reconfigured',
+        name: 'e2e add interactive name error reconfigured',
+        directory: '',
         executable: {
           command,
         },
@@ -292,9 +317,162 @@ describe('Add Interactive', () => {
         latestRegex: 'latest: v(.*)',
       })
       await E2eTestUtil.addInteractiveReconfigure({
-        name: software.name,
         installed: [
           {
+            name: existingSoftware.name,
+            preVersionCheckError: true,
+          },
+          {
+            name: software.name,
+            directory: software.directory,
+            command,
+            args: software.args,
+            regex: software.installedRegex,
+            version: installedVersion,
+            confirmOrReconfigure: true,
+          },
+        ],
+        latest: [
+          {
+            url: software.url,
+            regex: software.latestRegex,
+            version: latestVersion,
+            confirmOrReconfigure: true,
+          },
+        ],
+      })
+      await E2eAddUtil.verifySoftwares([software, existingSoftware])
+    })
+    it('add interactive valid software if directory error is reconfigured', async () => {
+      await E2eAddUtil.setSoftwares([])
+      await E2eAddUtil.verifySoftwares([])
+      const command = 'node'
+      const installedVersion = '1.2.3'
+      const latestVersion = '2.3.4'
+      const software = new Software({
+        name: 'e2e add interactive directory error reconfigured',
+        directory: '',
+        executable: {
+          command,
+        },
+        args: `${E2eAddUtil.COMMAND.Good} v${installedVersion}`,
+        shell: '',
+        installedRegex: 'v(.*)',
+        url: Website.getResponseUrl(`latest: v${latestVersion}`),
+        latestRegex: 'latest: v(.*)',
+      })
+      await E2eTestUtil.addInteractiveReconfigure({
+        installed: [
+          {
+            name: software.name,
+            directory: path.join(E2eConfig.DIRECTORY.Executables, 'bad bad leroy brown'),
+            preVersionCheckError: true,
+          },
+          {
+            directory: KEYS.BACK_SPACE,
+            command,
+            args: software.args,
+            regex: software.installedRegex,
+            version: installedVersion,
+            confirmOrReconfigure: true,
+          },
+        ],
+        latest: [
+          {
+            url: software.url,
+            regex: software.latestRegex,
+            version: latestVersion,
+            confirmOrReconfigure: true,
+          },
+        ],
+      })
+      await E2eAddUtil.verifySoftwares([software])
+    })
+    it('add interactive valid software if name and directory error is reconfigured', async () => {
+      const existingSoftware = new Software({
+        name: 'e2e add interactive name and directory error reconfigured existing',
+        directory: 'male',
+        executable: {
+          command: 'model',
+        },
+        args: 'balls',
+        shell: 'fashion',
+        installedRegex: 'blue steel',
+        url: 'https://reallyreallyridiculouslygoodlooking.com',
+        latestRegex: 'derek zoolander',
+      })
+      await E2eAddUtil.setSoftwares([existingSoftware])
+      await E2eAddUtil.verifySoftwares([existingSoftware])
+      const command = 'node'
+      const installedVersion = '1.6.2'
+      const latestVersion = '2.7.3'
+      const software = new Software({
+        name: 'e2e add interactive name directory error reconfigured',
+        directory: '',
+        executable: {
+          command,
+        },
+        args: `${E2eAddUtil.COMMAND.Good} v${installedVersion}`,
+        shell: '',
+        installedRegex: 'v(.*)',
+        url: Website.getResponseUrl(`latest: v${latestVersion}`),
+        latestRegex: 'latest: v(.*)',
+      })
+      await E2eTestUtil.addInteractiveReconfigure({
+        installed: [
+          {
+            name: existingSoftware.name,
+            preVersionCheckError: true,
+          },
+          {
+            name: software.name,
+            directory: path.join(E2eConfig.DIRECTORY.Executables, 'lights on but nobody home'),
+            preVersionCheckError: true,
+          },
+          {
+            directory: KEYS.BACK_SPACE,
+            command,
+            args: software.args,
+            regex: software.installedRegex,
+            version: installedVersion,
+            confirmOrReconfigure: true,
+          },
+        ],
+        latest: [
+          {
+            url: software.url,
+            regex: software.latestRegex,
+            version: latestVersion,
+            confirmOrReconfigure: true,
+          },
+        ],
+      })
+      await E2eAddUtil.verifySoftwares([existingSoftware, software])
+    })
+    it('add interactive valid software if installed error is reconfigured', async () => {
+      await E2eAddUtil.setSoftwares([])
+      await E2eAddUtil.verifySoftwares([])
+      const command = 'node'
+      const installedError = 'does not compute'
+      const installedVersion = '1.2.3'
+      const latestVersion = '2.3.4'
+      const software = new Software({
+        name: 'e2e add interactive installed error reconfigured',
+        directory: '',
+        executable: {
+          command,
+        },
+        args: `${E2eAddUtil.COMMAND.Good} v${installedVersion}`,
+        shell: '',
+        installedRegex: 'v(.*)',
+        url: Website.getResponseUrl(`latest: v${latestVersion}`),
+        latestRegex: 'latest: v(.*)',
+      })
+      await E2eTestUtil.addInteractiveReconfigure({
+        installed: [
+          {
+            name: software.name,
+            directory: software.directory,
             command,
             args: `${E2eAddUtil.COMMAND.Bad} ${installedError}`,
             shell: software.shell,
@@ -330,6 +508,7 @@ describe('Add Interactive', () => {
       const latestVersion = '4.0.0'
       const software = new Software({
         name: 'e2e add interactive latest error reconfigured',
+        directory: '',
         executable: {
           command,
         },
@@ -340,9 +519,10 @@ describe('Add Interactive', () => {
         latestRegex: 'latest: v(.*)',
       })
       await E2eTestUtil.addInteractiveReconfigure({
-        name: software.name,
         installed: [
           {
+            name: software.name,
+            directory: software.directory,
             command,
             args: software.args,
             shell: software.shell,
@@ -368,12 +548,82 @@ describe('Add Interactive', () => {
       })
       await E2eAddUtil.verifySoftwares([software])
     })
+    it('add interactive valid if specifying directory', async () => {
+      await E2eAddUtil.verifySoftwaresFileDoesNotExist()
+      const installedVersion = '1.1.4'
+      const latestVersion = '1.1.6'
+      const software = new Software({
+        name: 'e2e add interactive valid specifying directory',
+        directory: path.dirname(E2eAddUtil.COMMAND.Good),
+        executable: {
+          command: 'node',
+        },
+        args: `${path.basename(E2eAddUtil.COMMAND.Good)} v${installedVersion}`,
+        shell: '',
+        installedRegex: 'v(.*)',
+        url: Website.getResponseUrl(`latest: v${latestVersion}`),
+        latestRegex: 'latest: v(.*)',
+      })
+      await E2eTestUtil.addInteractive({
+        software,
+        installedVersion,
+        latestVersion,
+      })
+      await E2eAddUtil.verifySoftwares([software])
+    })
+    it('add interactive valid if absolute path to command without directory', async () => {
+      await E2eAddUtil.verifySoftwaresFileDoesNotExist()
+      const installedVersion = '4.1.4'
+      const latestVersion = '4.1.7'
+      const software = new Software({
+        name: 'e2e add interactive valid absolute command no directory',
+        directory: '',
+        executable: {
+          command: E2eAddUtil.COMMAND.Powershell,
+        },
+        args: `v${installedVersion}`,
+        shell: 'pwsh',
+        installedRegex: 'v(.*)',
+        url: Website.getResponseUrl(`latest: v${latestVersion}`),
+        latestRegex: 'latest: v(.*)',
+      })
+      await E2eTestUtil.addInteractive({
+        software,
+        installedVersion,
+        latestVersion,
+      })
+      await E2eAddUtil.verifySoftwares([software])
+    })
+    it('add interactive valid if absolute path to command ignores directory', async () => {
+      await E2eAddUtil.verifySoftwaresFileDoesNotExist()
+      const installedVersion = '8.0.4'
+      const latestVersion = '8.1.0'
+      const software = new Software({
+        name: 'e2e add interactive valid absolute command ignores directory',
+        directory: E2eConfig.DIRECTORY.Temp,
+        executable: {
+          command: E2eAddUtil.COMMAND.Powershell,
+        },
+        args: `v${installedVersion}`,
+        shell: 'pwsh',
+        installedRegex: 'v(.*)',
+        url: Website.getResponseUrl(`latest: v${latestVersion}`),
+        latestRegex: 'latest: v(.*)',
+      })
+      await E2eTestUtil.addInteractive({
+        software,
+        installedVersion,
+        latestVersion,
+      })
+      await E2eAddUtil.verifySoftwares([software])
+    })
     it('add interactive valid if using defaults', async () => {
       await E2eAddUtil.verifySoftwaresFileDoesNotExist()
       const installedVersion = version
       const latestVersion = '1.2.1.0'
       const software = new Software({
         name: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.NameExample),
+        directory: E2eAddUtil.getExampleFromMessage(E2eAddUtil.getDirectoryExampleMessage({})),
         executable: {
           command: E2eAddUtil.getExampleFromMessage(E2eAddUtil.getCommandExampleMessage({})),
         },
@@ -393,17 +643,20 @@ describe('Add Interactive', () => {
     it('add interactive valid if renamed executable using defaults', async () => {
       const renamedExecutableDir = path.join(E2eConfig.DIRECTORY.Temp, 'renamed-executable')
       const renamedExecutableFile = `renamed-${getExecutableName()}`
-      const renamedExecutable = path.join(renamedExecutableDir, renamedExecutableFile)
       try {
         await fs.ensureDir(renamedExecutableDir)
-        await fs.copyFile(path.join(E2eConfig.DIRECTORY.Executables, getExecutableName()), renamedExecutable)
+        await fs.copyFile(
+          path.join(E2eConfig.DIRECTORY.Executables, getExecutableName()),
+          path.join(renamedExecutableDir, renamedExecutableFile)
+        )
         await E2eAddUtil.verifySoftwaresFileDoesNotExist()
         const installedVersion = version
         const latestVersion = '1.2.1.0'
         const software = new Software({
           name: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.NameExample),
+          directory: renamedExecutableDir,
           executable: {
-            command: renamedExecutable,
+            command: `./${renamedExecutableFile}`,
           },
           args: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ArgumentsExample),
           shell: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ShellExample),
@@ -422,6 +675,42 @@ describe('Add Interactive', () => {
       } finally {
         if (await fs.pathExists(renamedExecutableDir)) {
           await fs.remove(renamedExecutableDir)
+        }
+      }
+    })
+    it('add interactive valid if spaces in directory using defaults', async () => {
+      const dirWithSpaces = path.join(E2eConfig.DIRECTORY.Temp, 'path with spaces')
+      try {
+        await fs.ensureDir(dirWithSpaces)
+        await fs.copyFile(
+          path.join(E2eConfig.DIRECTORY.Executables, getExecutableName()),
+          path.join(dirWithSpaces, getExecutableName())
+        )
+        await E2eAddUtil.verifySoftwaresFileDoesNotExist()
+        const installedVersion = version
+        const latestVersion = '1.2.1.0'
+        const software = new Software({
+          name: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.NameExample),
+          directory: dirWithSpaces,
+          executable: {
+            command: E2eAddUtil.getExampleFromMessage(E2eAddUtil.getCommandExampleMessage({})),
+          },
+          args: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ArgumentsExample),
+          shell: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ShellExample),
+          installedRegex: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.InstalledRegexExample),
+          url: Website.getFileUrl('latest-release.html'),
+          latestRegex: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.LatestRegexExample),
+        })
+        await E2eTestUtil.addInteractive({
+          software,
+          installedVersion,
+          latestVersion,
+          executableDirectory: dirWithSpaces,
+        })
+        await E2eAddUtil.verifySoftwares([software])
+      } finally {
+        if (await fs.pathExists(dirWithSpaces)) {
+          await fs.remove(dirWithSpaces)
         }
       }
     })

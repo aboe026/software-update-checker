@@ -32,6 +32,7 @@ describe('Edit Interactive', () => {
     it('edit interactive prevents using an existing name', async () => {
       const firstSoftware = new Software({
         name: 'e2e edit interactive to name that already exists first',
+        directory: 'lamb',
         executable: {
           command: 'wrap',
         },
@@ -43,6 +44,7 @@ describe('Edit Interactive', () => {
       })
       const secondSoftware = new Software({
         name: 'e2e edit interactive to name that already exists second',
+        directory: 'frozen',
         executable: {
           command: 'dessert',
         },
@@ -66,6 +68,7 @@ describe('Edit Interactive', () => {
       const installedError = 'permission denied'
       const software = new Software({
         name: 'e2e edit interactive installed error without reconfig',
+        directory: 'shipping',
         executable: {
           command: 'company',
         },
@@ -80,9 +83,10 @@ describe('Edit Interactive', () => {
       await E2eTestUtil.editInteractiveReconfigure({
         existingSoftwares: [software],
         positionToEdit: 0,
-        name: `${software.name} edited`,
         installed: [
           {
+            name: `${software.name} edited`,
+            directory: KEYS.BACK_SPACE,
             command: 'node',
             args: `${E2eEditUtil.COMMAND.Bad} ${installedError}`,
             shell: KEYS.BACK_SPACE,
@@ -99,6 +103,7 @@ describe('Edit Interactive', () => {
         const installedVersion = '1.1.0'
         const software = new Software({
           name: 'e2e edit interactive latest error without reconfig',
+          directory: 'model',
           executable: {
             command: 'theory',
           },
@@ -116,9 +121,10 @@ describe('Edit Interactive', () => {
         await E2eTestUtil.editInteractiveReconfigure({
           existingSoftwares: [software],
           positionToEdit: 0,
-          name: `${software.name} edited`,
           installed: [
             {
+              name: `${software.name} edited`,
+              directory: KEYS.BACK_SPACE,
               command: 'node',
               args: `${E2eEditUtil.COMMAND.Good} v${installedVersion}`,
               shell: KEYS.BACK_SPACE,
@@ -146,6 +152,7 @@ describe('Edit Interactive', () => {
     it('edit interactive all fields single software', async () => {
       const oldSoftware = new Software({
         name: 'e2e edit interactive all fields single old',
+        directory: 'age',
         executable: {
           command: 'periods',
         },
@@ -161,6 +168,7 @@ describe('Edit Interactive', () => {
       const latestVersion = '3.0.1'
       const editedSoftware = new Software({
         name: 'e2e edit interactive all fields single edited',
+        directory: '',
         executable: {
           command: 'node',
         },
@@ -182,6 +190,7 @@ describe('Edit Interactive', () => {
     it('edit interactive all fields first of two softwares', async () => {
       const firstSoftware = new Software({
         name: 'e2e edit interactive all fields first of two first',
+        directory: 'mythology',
         executable: {
           command: 'superfecundation',
         },
@@ -193,6 +202,7 @@ describe('Edit Interactive', () => {
       })
       const lastSoftware = new Software({
         name: 'e2e edit interactive all fields first of two last',
+        directory: 'opposites',
         executable: {
           command: 'philosophy',
         },
@@ -208,6 +218,7 @@ describe('Edit Interactive', () => {
       const latestVersion = '2.1.0'
       const editedSoftware = new Software({
         name: `${firstSoftware.name} edited`,
+        directory: '',
         executable: {
           command: 'node',
         },
@@ -229,6 +240,7 @@ describe('Edit Interactive', () => {
     it('edit interactive all fields last of two softwares', async () => {
       const firstSoftware = new Software({
         name: 'e2e edit interactive all fields last of two first',
+        directory: 'jersey',
         executable: {
           command: 'boss',
         },
@@ -240,6 +252,7 @@ describe('Edit Interactive', () => {
       })
       const lastSoftware = new Software({
         name: 'e2e edit interactive all fields last of two last',
+        directory: 'albuquerque',
         executable: {
           command: 'chemist',
         },
@@ -247,7 +260,7 @@ describe('Edit Interactive', () => {
         shell: 'amc',
         installedRegex: 'heisenberg',
         url: 'https://iamtheonewhoknocks.com',
-        latestRegex: 'walter hartwell  white sr.',
+        latestRegex: 'walter hartwell white sr.',
       })
       await E2eEditUtil.setSoftwares([firstSoftware, lastSoftware])
       await E2eEditUtil.verifySoftwares([firstSoftware, lastSoftware])
@@ -255,6 +268,7 @@ describe('Edit Interactive', () => {
       const latestVersion = '1.2.0'
       const editedSoftware = new Software({
         name: `${lastSoftware.name} edited`,
+        directory: '',
         executable: {
           command: 'node',
         },
@@ -280,17 +294,19 @@ describe('Edit Interactive', () => {
       const latestVersion = '5.4.3'
       const oldSoftware = new Software({
         name: 'e2e edit interactive all fields installed error reconfigured',
+        directory: 'hubris',
         executable: {
           command: 'mythology',
         },
         args: 'prisoner',
         shell: 'greek',
-        installedRegex: 'son-of-daedalus',
+        installedRegex: 'wax',
         url: 'https://flytothesun.com',
         latestRegex: 'icarus',
       })
       const newSoftware = new Software({
         name: `${oldSoftware.name} edited`,
+        directory: '',
         executable: {
           command,
         },
@@ -305,9 +321,10 @@ describe('Edit Interactive', () => {
       await E2eTestUtil.editInteractiveReconfigure({
         existingSoftwares: [oldSoftware],
         positionToEdit: 0,
-        name: newSoftware.name,
         installed: [
           {
+            name: newSoftware.name,
+            directory: KEYS.BACK_SPACE,
             command,
             args: `${E2eEditUtil.COMMAND.Bad} ${installedError}`,
             shell: KEYS.BACK_SPACE,
@@ -316,6 +333,7 @@ describe('Edit Interactive', () => {
             confirmOrReconfigure: true,
           },
           {
+            directory: KEYS.BACK_SPACE,
             command,
             args: newSoftware.args,
             shell: KEYS.BACK_SPACE,
@@ -342,6 +360,7 @@ describe('Edit Interactive', () => {
       const latestVersion = '10.9.8'
       const oldSoftware = new Software({
         name: 'e2e edit interactive all fields latest error reconfigured',
+        directory: 'distance',
         executable: {
           command: 'golf',
         },
@@ -353,6 +372,7 @@ describe('Edit Interactive', () => {
       })
       const newSoftware = new Software({
         name: `${oldSoftware.name} edited`,
+        directory: '',
         executable: {
           command,
         },
@@ -367,9 +387,10 @@ describe('Edit Interactive', () => {
       await E2eTestUtil.editInteractiveReconfigure({
         existingSoftwares: [oldSoftware],
         positionToEdit: 0,
-        name: newSoftware.name,
         installed: [
           {
+            name: newSoftware.name,
+            directory: KEYS.BACK_SPACE,
             command,
             args: newSoftware.args,
             shell: KEYS.BACK_SPACE,

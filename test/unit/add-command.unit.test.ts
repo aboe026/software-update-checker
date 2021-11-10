@@ -38,13 +38,6 @@ describe('Add Command Unit Tests', () => {
     })
   })
   describe('getDynamicCommand', () => {
-    it('handler throws error if directory missing and non-interactive', async () => {
-      jest.spyOn(AddCommand, 'getStringArgument').mockImplementation((argv: Arguments, option: Option): string => {
-        return option.key === 'directory' ? '' : 'test'
-      })
-      const handler = AddCommand.getDynamicCommand().handler as (args: Arguments) => void
-      await expect(handler(await yargs.argv)).rejects.toThrow('Option "directory" must be non-empty string')
-    })
     it('handler throws error if regex missing and non-interactive', async () => {
       jest.spyOn(AddCommand, 'getStringArgument').mockImplementation((argv: Arguments, option: Option): string => {
         return option.key === 'regex' ? '' : 'test'
@@ -52,7 +45,7 @@ describe('Add Command Unit Tests', () => {
       const handler = AddCommand.getDynamicCommand().handler as (args: Arguments) => void
       await expect(handler(await yargs.argv)).rejects.toThrow('Option "regex" must be non-empty string')
     })
-    it('handler calls configure if directory and regex passed', async () => {
+    it('handler calls configure if regex passed', async () => {
       jest.spyOn(AddCommand, 'getStringArgument').mockReturnValue('test')
       const configureSpy = jest.spyOn(AddCommand, 'configure').mockResolvedValue()
       const handler = AddCommand.getDynamicCommand().handler as (args: Arguments) => void
