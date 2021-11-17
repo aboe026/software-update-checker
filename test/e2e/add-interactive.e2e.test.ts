@@ -20,12 +20,12 @@ describe('Add Interactive', () => {
     it('add interactive fails with existing name', async () => {
       const existing = new Software({
         name: 'e2e add interactive name that already exists existing',
+        shell: 'halo',
         directory: 'Generation II',
         executable: {
           command: 'UNSC',
         },
         args: 'spartan',
-        shell: 'halo',
         installedRegex: '117',
         url: 'https://ineedaweapon.com',
         latestRegex: 'master chief',
@@ -46,10 +46,10 @@ describe('Add Interactive', () => {
         installed: [
           {
             name: 'e2e add interactive installed error no reconfigure',
+            shell: '',
             directory: '',
             command: 'node',
             args: `${E2eAddUtil.COMMAND.Bad} ${installedError}`,
-            shell: '',
             regex: 'v(.*)',
             error: installedError,
             confirmOrReconfigure: false,
@@ -70,10 +70,10 @@ describe('Add Interactive', () => {
           installed: [
             {
               name: 'e2e add interactive latest error no reconfigure',
+              shell: '',
               directory: '',
               command: 'node',
               args: `${E2eAddUtil.COMMAND.Good} v${installedVersion}`,
-              shell: '',
               regex: 'v(.*)',
               version: installedVersion,
               confirmOrReconfigure: true,
@@ -101,12 +101,12 @@ describe('Add Interactive', () => {
       const latestVersion = '1.0.1'
       const software = new Software({
         name: 'e2e add interactive valid with non-existent',
+        shell: '',
         directory: '',
         executable: {
           command: 'node',
         },
         args: `${E2eAddUtil.COMMAND.Good} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -125,12 +125,12 @@ describe('Add Interactive', () => {
       const latestVersion = '1.0.2'
       const software = new Software({
         name: 'e2e add interactive valid with empty file',
+        shell: '',
         directory: '',
         executable: {
           command: 'node',
         },
         args: `${E2eAddUtil.COMMAND.Good} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -149,12 +149,12 @@ describe('Add Interactive', () => {
       const latestVersion = '1.0.3'
       const software = new Software({
         name: 'e2e add interactive valid with empty array',
+        shell: '',
         directory: '',
         executable: {
           command: 'node',
         },
         args: `${E2eAddUtil.COMMAND.Good} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -169,12 +169,12 @@ describe('Add Interactive', () => {
     it('add interactive valid software to beginning with single existing softwares file', async () => {
       const existing = new Software({
         name: 'z very last von',
+        shell: 'literature',
         directory: 'journey',
         executable: {
           command: 'endings',
         },
         args: 'heroes',
-        shell: 'literature',
         installedRegex: 'return',
         url: 'https://endoftheroad.com',
         latestRegex: 'denouement',
@@ -185,12 +185,12 @@ describe('Add Interactive', () => {
       const latestVersion = '1.1.2'
       const software = new Software({
         name: 'e2e add interactive valid to beginning with single existing',
+        shell: '',
         directory: '',
         executable: {
           command: 'node',
         },
         args: `${E2eAddUtil.COMMAND.Good} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -205,12 +205,12 @@ describe('Add Interactive', () => {
     it('add interactive valid software to end with single existing softwares file', async () => {
       const existing = new Software({
         name: 'a first software',
+        shell: 'metals',
         directory: 'transition',
         executable: {
           command: 'medals',
         },
         args: 'materials',
-        shell: 'metals',
         installedRegex: 'gold',
         url: 'https://winner.com',
         latestRegex: 'aurum',
@@ -221,12 +221,12 @@ describe('Add Interactive', () => {
       const latestVersion = '1.0.0'
       const software = new Software({
         name: 'e2e add interactive valid to end with single existing',
+        shell: '',
         directory: '',
         executable: {
           command: 'node',
         },
         args: `${E2eAddUtil.COMMAND.Good} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -241,24 +241,24 @@ describe('Add Interactive', () => {
     it('add interactive valid software to middle with two existing softwares file', async () => {
       const existingFirst = new Software({
         name: 'a first of two softwares',
+        shell: 'historical fiction',
         directory: 'pequod',
         executable: {
           command: 'sentences',
         },
         args: 'first',
-        shell: 'historical fiction',
         installedRegex: 'the\\ whale',
         url: 'https://callmeishmael.com',
         latestRegex: 'moby\\ dick',
       })
       const existingSecond = new Software({
         name: 'z last of two softwares',
+        shell: 'science fiction',
         directory: 'its alive',
         executable: {
           command: 'lines',
         },
         args: 'last',
-        shell: 'science fiction',
         installedRegex: 'the\\ modern\\ prometheus',
         url: 'https://lostindarknessanddistance.com',
         latestRegex: 'frankenstein',
@@ -269,12 +269,12 @@ describe('Add Interactive', () => {
       const latestVersion = '1.5.1'
       const software = new Software({
         name: 'e2e add interactive valid to middle with two existing',
+        shell: '',
         directory: '',
         executable: {
           command: 'node',
         },
         args: `${E2eAddUtil.COMMAND.Good} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -289,12 +289,12 @@ describe('Add Interactive', () => {
     it('add interactive valid software if name error is reconfigured', async () => {
       const existingSoftware = new Software({
         name: 'e2e add interactive name error reconfigured existing',
+        shell: 'video\\ game',
         directory: 'mare',
         executable: {
           command: 'equine',
         },
         args: 'bay',
-        shell: 'video\\ game',
         installedRegex: 'roach',
         url: 'https://smallfry.com',
         latestRegex: 'rutilus rutilus',
@@ -306,12 +306,12 @@ describe('Add Interactive', () => {
       const latestVersion = '2.3.3'
       const software = new Software({
         name: 'e2e add interactive name error reconfigured',
+        shell: '',
         directory: '',
         executable: {
           command,
         },
         args: `${E2eAddUtil.COMMAND.Good} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -320,10 +320,10 @@ describe('Add Interactive', () => {
         installed: [
           {
             name: existingSoftware.name,
-            preVersionCheckError: true,
           },
           {
             name: software.name,
+            shell: software.shell,
             directory: software.directory,
             command,
             args: software.args,
@@ -351,12 +351,12 @@ describe('Add Interactive', () => {
       const latestVersion = '2.3.4'
       const software = new Software({
         name: 'e2e add interactive directory error reconfigured',
+        shell: '',
         directory: '',
         executable: {
           command,
         },
         args: `${E2eAddUtil.COMMAND.Good} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -365,8 +365,8 @@ describe('Add Interactive', () => {
         installed: [
           {
             name: software.name,
+            shell: software.shell,
             directory: path.join(E2eConfig.DIRECTORY.Executables, 'bad bad leroy brown'),
-            preVersionCheckError: true,
           },
           {
             directory: KEYS.BACK_SPACE,
@@ -391,12 +391,12 @@ describe('Add Interactive', () => {
     it('add interactive valid software if name and directory error is reconfigured', async () => {
       const existingSoftware = new Software({
         name: 'e2e add interactive name and directory error reconfigured existing',
+        shell: 'fashion',
         directory: 'male',
         executable: {
           command: 'model',
         },
         args: 'balls',
-        shell: 'fashion',
         installedRegex: 'blue steel',
         url: 'https://reallyreallyridiculouslygoodlooking.com',
         latestRegex: 'derek zoolander',
@@ -408,12 +408,12 @@ describe('Add Interactive', () => {
       const latestVersion = '2.7.3'
       const software = new Software({
         name: 'e2e add interactive name directory error reconfigured',
+        shell: '',
         directory: '',
         executable: {
           command,
         },
         args: `${E2eAddUtil.COMMAND.Good} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -422,12 +422,11 @@ describe('Add Interactive', () => {
         installed: [
           {
             name: existingSoftware.name,
-            preVersionCheckError: true,
           },
           {
             name: software.name,
+            shell: software.shell,
             directory: path.join(E2eConfig.DIRECTORY.Executables, 'lights on but nobody home'),
-            preVersionCheckError: true,
           },
           {
             directory: KEYS.BACK_SPACE,
@@ -458,12 +457,12 @@ describe('Add Interactive', () => {
       const latestVersion = '2.3.4'
       const software = new Software({
         name: 'e2e add interactive installed error reconfigured',
+        shell: '',
         directory: '',
         executable: {
           command,
         },
         args: `${E2eAddUtil.COMMAND.Good} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -472,15 +471,17 @@ describe('Add Interactive', () => {
         installed: [
           {
             name: software.name,
+            shell: software.shell,
             directory: software.directory,
             command,
             args: `${E2eAddUtil.COMMAND.Bad} ${installedError}`,
-            shell: software.shell,
             regex: software.installedRegex,
             error: installedError,
             confirmOrReconfigure: true,
           },
           {
+            shell: software.shell,
+            directory: software.directory,
             command,
             args: software.args,
             regex: software.installedRegex,
@@ -508,12 +509,12 @@ describe('Add Interactive', () => {
       const latestVersion = '4.0.0'
       const software = new Software({
         name: 'e2e add interactive latest error reconfigured',
+        shell: '',
         directory: '',
         executable: {
           command,
         },
         args: `${E2eAddUtil.COMMAND.Good} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -522,10 +523,10 @@ describe('Add Interactive', () => {
         installed: [
           {
             name: software.name,
+            shell: software.shell,
             directory: software.directory,
             command,
             args: software.args,
-            shell: software.shell,
             regex: software.installedRegex,
             version: installedVersion,
             confirmOrReconfigure: true,
@@ -554,12 +555,12 @@ describe('Add Interactive', () => {
       const latestVersion = '1.1.6'
       const software = new Software({
         name: 'e2e add interactive valid specifying directory',
+        shell: '',
         directory: path.dirname(E2eAddUtil.COMMAND.Good),
         executable: {
           command: 'node',
         },
         args: `${path.basename(E2eAddUtil.COMMAND.Good)} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -577,12 +578,12 @@ describe('Add Interactive', () => {
       const latestVersion = '4.1.7'
       const software = new Software({
         name: 'e2e add interactive valid absolute command no directory',
+        shell: 'pwsh',
         directory: '',
         executable: {
           command: E2eAddUtil.COMMAND.Powershell,
         },
         args: `v${installedVersion}`,
-        shell: 'pwsh',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -600,12 +601,12 @@ describe('Add Interactive', () => {
       const latestVersion = '8.1.0'
       const software = new Software({
         name: 'e2e add interactive valid absolute command ignores directory',
+        shell: 'pwsh',
         directory: E2eConfig.DIRECTORY.Temp,
         executable: {
           command: E2eAddUtil.COMMAND.Powershell,
         },
         args: `v${installedVersion}`,
-        shell: 'pwsh',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -623,12 +624,12 @@ describe('Add Interactive', () => {
       const latestVersion = '1.2.1.0'
       const software = new Software({
         name: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.NameExample),
+        shell: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ShellExample),
         directory: E2eAddUtil.getExampleFromMessage(E2eAddUtil.getDirectoryExampleMessage({})),
         executable: {
           command: E2eAddUtil.getExampleFromMessage(E2eAddUtil.getCommandExampleMessage({})),
         },
         args: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ArgumentsExample),
-        shell: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ShellExample),
         installedRegex: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.InstalledRegexExample),
         url: Website.getFileUrl('latest-release.html'),
         latestRegex: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.LatestRegexExample),
@@ -654,12 +655,12 @@ describe('Add Interactive', () => {
         const latestVersion = '1.2.1.0'
         const software = new Software({
           name: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.NameExample),
+          shell: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ShellExample),
           directory: renamedExecutableDir,
           executable: {
             command: `./${renamedExecutableFile}`,
           },
           args: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ArgumentsExample),
-          shell: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ShellExample),
           installedRegex: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.InstalledRegexExample),
           url: Website.getFileUrl('latest-release.html'),
           latestRegex: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.LatestRegexExample),
@@ -691,12 +692,12 @@ describe('Add Interactive', () => {
         const latestVersion = '1.2.1.0'
         const software = new Software({
           name: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.NameExample),
+          shell: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ShellExample),
           directory: dirWithSpaces,
           executable: {
             command: E2eAddUtil.getExampleFromMessage(E2eAddUtil.getCommandExampleMessage({})),
           },
           args: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ArgumentsExample),
-          shell: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ShellExample),
           installedRegex: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.InstalledRegexExample),
           url: Website.getFileUrl('latest-release.html'),
           latestRegex: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.LatestRegexExample),
@@ -715,4 +716,7 @@ describe('Add Interactive', () => {
       }
     })
   })
+  /**
+   * TODO: add tests around dynamic
+   */
 })

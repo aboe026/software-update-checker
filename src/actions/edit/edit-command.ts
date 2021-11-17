@@ -23,12 +23,12 @@ export default class EditCommand extends BaseCommand {
 
         const existing = EditCommand.getStringArgument(argv, EditCommands.Existing)
         const name = EditCommand.getStringArgument(argv, EditOptions.Name)
+        const shell = EditCommand.getStringArgument(argv, EditOptions.Shell)
+        const directory = EditCommand.getStringArgument(argv, EditOptions.Directory)
         const type = EditCommand.getCommandTypeArgument(argv, EditOptions.Type)
         const command = EditCommand.getStringArgument(argv, EditOptions.Command)
-        const directory = EditCommand.getStringArgument(argv, EditOptions.Directory)
         const regex = EditCommand.getStringArgument(argv, EditOptions.Regex)
         const args = EditCommand.getStringArgument(argv, EditOptions.Arguments)
-        const shell = EditCommand.getStringArgument(argv, EditOptions.Shell)
         const installedRegex = EditCommand.getStringArgument(argv, EditOptions.InstalledRegex)
         const url = EditCommand.getStringArgument(argv, EditOptions.Url)
         const latestRegex = EditCommand.getStringArgument(argv, EditOptions.LatestRegex)
@@ -36,12 +36,12 @@ export default class EditCommand extends BaseCommand {
 
         if (
           name === undefined &&
+          shell === undefined &&
+          directory === undefined &&
           type === undefined &&
           command === undefined &&
-          directory === undefined &&
           regex === undefined &&
           args === undefined &&
-          shell === undefined &&
           installedRegex === undefined &&
           url === undefined &&
           latestRegex === undefined
@@ -73,11 +73,11 @@ export default class EditCommand extends BaseCommand {
           inputs: {
             existing,
             name,
+            shell,
             directory,
             type,
             executable,
             args,
-            shell,
             installedRegex,
             url,
             latestRegex,

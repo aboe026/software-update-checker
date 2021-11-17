@@ -28,23 +28,23 @@ export default class E2eEditUtil extends E2eBaseUtil {
     if (newSoftware.name !== undefined) {
       args.push(`--name="${newSoftware.name}"`)
     }
+    if (newSoftware.shell !== undefined) {
+      args.push(`--shell="${newSoftware.shell}"`)
+    }
+    if (newSoftware.directory !== undefined) {
+      args.push(`--directory="${newSoftware.directory}"`)
+    }
     if (newSoftware.type !== undefined) {
       args.push(`--type="${newSoftware.type}"`)
     }
     if (newSoftware.command !== undefined) {
       args.push(`--command="${newSoftware.command}"`)
     }
-    if (newSoftware.directory !== undefined) {
-      args.push(`--directory="${newSoftware.directory}"`)
-    }
     if (newSoftware.regex !== undefined) {
       args.push(`--regex="${newSoftware.regex}"`)
     }
     if (newSoftware.args !== undefined) {
       args.push(`--args="${newSoftware.args}"`)
-    }
-    if (newSoftware.shell !== undefined) {
-      args.push(`--shell="${newSoftware.shell}"`)
     }
     if (newSoftware.installedRegex !== undefined) {
       args.push(`--installedRegex="${newSoftware.installedRegex}"`)
@@ -183,12 +183,12 @@ export default class E2eEditUtil extends E2eBaseUtil {
 
 export interface EditOptions {
   name?: string
+  shell?: string
+  directory?: string
   type?: CommandType
   command?: string
-  directory?: string
   regex?: string
   args?: string
-  shell?: string
   installedRegex?: string
   url?: string
   latestRegex?: string

@@ -23,10 +23,10 @@ describe('Upgrade 1 Unit Tests', () => {
     const softwares = [
       {
         name: 'single shell override empty',
+        shellOverride: '',
         executable: {
           command: 'ecosystems',
         },
-        shellOverride: '',
         installedRegex: 'grass',
         url: 'https://homeontheplains.com',
         latestRegex: 'prairie',
@@ -63,11 +63,11 @@ describe('Upgrade 1 Unit Tests', () => {
     const softwaresBefore = [
       {
         name: 'single with shell override',
+        shellOverride: 'system',
         executable: {
           command: 'transport',
         },
         args: 'physical',
-        shellOverride: 'system',
         installedRegex: 'mail',
         url: 'https://neithersnownorrainnorheatnorgloom.com',
         latestRegex: 'e-mail',
@@ -76,9 +76,9 @@ describe('Upgrade 1 Unit Tests', () => {
     const softwaresAfter = [
       {
         name: softwaresBefore[0].name,
+        shell: softwaresBefore[0].shellOverride,
         executable: softwaresBefore[0].executable,
         args: softwaresBefore[0].args,
-        shell: softwaresBefore[0].shellOverride,
         installedRegex: softwaresBefore[0].installedRegex,
         url: softwaresBefore[0].url,
         latestRegex: softwaresBefore[0].latestRegex,
@@ -90,11 +90,11 @@ describe('Upgrade 1 Unit Tests', () => {
     const softwaresBefore = [
       {
         name: 'single with empty shell override',
+        shellOverride: '',
         executable: {
           command: 'indigenous',
         },
         args: 'polynesian',
-        shellOverride: '',
         installedRegex: 'new zealand',
         url: 'https://haka.com',
         latestRegex: 'maori',
@@ -103,9 +103,9 @@ describe('Upgrade 1 Unit Tests', () => {
     const softwaresAfter = [
       {
         name: softwaresBefore[0].name,
+        shell: softwaresBefore[0].shellOverride,
         executable: softwaresBefore[0].executable,
         args: softwaresBefore[0].args,
-        shell: softwaresBefore[0].shellOverride,
         installedRegex: softwaresBefore[0].installedRegex,
         url: softwaresBefore[0].url,
         latestRegex: softwaresBefore[0].latestRegex,
@@ -117,22 +117,22 @@ describe('Upgrade 1 Unit Tests', () => {
     const softwaresBefore = [
       {
         name: 'multiple with shell override first',
+        shellOverride: 'breakfast',
         executable: {
           command: 'dish',
         },
         args: 'ironed',
-        shellOverride: 'breakfast',
         installedRegex: 'waffle',
         url: 'https://leggomyeggo.com',
         latestRegex: 'belgian',
       },
       {
         name: 'multiple with shell override last',
+        shellOverride: 'cultivar',
         executable: {
           command: 'berry',
         },
         args: 'blackberry',
-        shellOverride: 'cultivar',
         installedRegex: 'oregon',
         url: 'https://avemarion.com',
         latestRegex: 'marionberry',
@@ -141,18 +141,18 @@ describe('Upgrade 1 Unit Tests', () => {
     const softwaresAfter = [
       {
         name: softwaresBefore[0].name,
+        shell: softwaresBefore[0].shellOverride,
         executable: softwaresBefore[0].executable,
         args: softwaresBefore[0].args,
-        shell: softwaresBefore[0].shellOverride,
         installedRegex: softwaresBefore[0].installedRegex,
         url: softwaresBefore[0].url,
         latestRegex: softwaresBefore[0].latestRegex,
       },
       {
         name: softwaresBefore[1].name,
+        shell: softwaresBefore[1].shellOverride,
         executable: softwaresBefore[1].executable,
         args: softwaresBefore[1].args,
-        shell: softwaresBefore[1].shellOverride,
         installedRegex: softwaresBefore[1].installedRegex,
         url: softwaresBefore[1].url,
         latestRegex: softwaresBefore[1].latestRegex,
@@ -164,11 +164,11 @@ describe('Upgrade 1 Unit Tests', () => {
     const softwaresBefore = [
       {
         name: 'some of many first',
+        shellOverride: 'metal',
         executable: {
           command: 'machine',
         },
         args: 'tool',
-        shellOverride: 'metal',
         installedRegex: 'rotate',
         url: 'https://turniton.com',
         latestRegex: 'lathe',
@@ -185,11 +185,11 @@ describe('Upgrade 1 Unit Tests', () => {
       },
       {
         name: 'some of many last',
+        shellOverride: 'mathematics',
         executable: {
           command: 'constant',
         },
         args: 'irrational',
-        shellOverride: 'mathematics',
         installedRegex: '3.14*',
         url: 'https://memorizethis.com',
         latestRegex: 'pi',
@@ -198,27 +198,27 @@ describe('Upgrade 1 Unit Tests', () => {
     const softwaresAfter = [
       {
         name: softwaresBefore[0].name,
+        shell: softwaresBefore[0].shellOverride,
         executable: softwaresBefore[0].executable,
         args: softwaresBefore[0].args,
-        shell: softwaresBefore[0].shellOverride,
         installedRegex: softwaresBefore[0].installedRegex,
         url: softwaresBefore[0].url,
         latestRegex: softwaresBefore[0].latestRegex,
       },
       {
         name: softwaresBefore[1].name,
+        shell: softwaresBefore[1].shellOverride,
         executable: softwaresBefore[1].executable,
         args: softwaresBefore[1].args,
-        shell: softwaresBefore[1].shellOverride,
         installedRegex: softwaresBefore[1].installedRegex,
         url: softwaresBefore[1].url,
         latestRegex: softwaresBefore[1].latestRegex,
       },
       {
         name: softwaresBefore[2].name,
+        shell: softwaresBefore[2].shellOverride,
         executable: softwaresBefore[2].executable,
         args: softwaresBefore[2].args,
-        shell: softwaresBefore[2].shellOverride,
         installedRegex: softwaresBefore[2].installedRegex,
         url: softwaresBefore[2].url,
         latestRegex: softwaresBefore[2].latestRegex,

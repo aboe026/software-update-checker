@@ -98,11 +98,11 @@ describe('Delete Unit Tests', () => {
       const name = 'throws error about no name specified delete'
       const software = new Software({
         name,
+        shell: 'confection',
         executable: {
           command: 'candy',
         },
         args: 'hershey',
-        shell: 'confection',
         installedRegex: 'caramel',
         url: 'https://failedroundcandies.com',
         latestRegex: 'milk duds',
@@ -136,11 +136,11 @@ describe('Delete Unit Tests', () => {
       const name = 'throws error about name specified not existing delete'
       const software = new Software({
         name,
+        shell: 'athletic',
         executable: {
           command: 'trophy',
         },
         args: 'nfl',
-        shell: 'athletic',
         installedRegex: 'superbowl',
         url: 'https://winningistheonlything.com',
         latestRegex: 'Vince Lombardi Trophy',
@@ -174,11 +174,11 @@ describe('Delete Unit Tests', () => {
       const name = 'no delete existing input interactive deny confirmation'
       const software = new Software({
         name,
+        shell: 'american',
         executable: {
           command: 'ball',
         },
         args: 'football',
-        shell: 'american',
         installedRegex: 'nfl',
         url: 'https://passthepigskin.com',
         latestRegex: 'the duke',

@@ -60,11 +60,11 @@ describe('Edit Command Unit Tests', () => {
             inputs: {
               existing: '',
               name,
+              shell: '',
               directory: '',
               type: undefined,
               executable: undefined,
               args: '',
-              shell: '',
               installedRegex: '',
               url: '',
               latestRegex: '',
@@ -88,13 +88,13 @@ describe('Edit Command Unit Tests', () => {
             inputs: {
               existing: '',
               name: '',
+              shell: '',
               directory: '',
               type: undefined,
               executable: {
                 command,
               },
               args: '',
-              shell: '',
               installedRegex: '',
               url: '',
               latestRegex: '',
@@ -118,13 +118,13 @@ describe('Edit Command Unit Tests', () => {
             inputs: {
               existing: '',
               name: '',
+              shell: '',
               directory: '',
               type: undefined,
               executable: {
                 regex,
               },
               args: '',
-              shell: '',
               installedRegex: '',
               url: '',
               latestRegex: '',
@@ -137,11 +137,11 @@ describe('Edit Command Unit Tests', () => {
     it('all options passed to editConfiguration if all specified and static', async () => {
       const existing = 'test all static existing'
       const name = 'test all static name'
+      const shell = 'test all static shell'
       const directory = 'test all static directory'
       const type = CommandType.Static
       const command = 'test all static command'
       const args = 'test all static args'
-      const shell = 'test all static shell'
       const installedRegex = 'test all static installedRegex'
       const latestRegex = 'test all static latestRegex'
       const url = 'test all static url'
@@ -154,14 +154,14 @@ describe('Edit Command Unit Tests', () => {
           return existing
         } else if (option.key === 'name') {
           return name
+        } else if (option.key === 'shell') {
+          return shell
         } else if (option.key === 'directory') {
           return directory
         } else if (option.key === 'command') {
           return command
         } else if (option.key === 'arguments') {
           return args
-        } else if (option.key === 'shell') {
-          return shell
         } else if (option.key === 'installedRegex') {
           return installedRegex
         } else if (option.key === 'url') {
@@ -180,13 +180,13 @@ describe('Edit Command Unit Tests', () => {
             inputs: {
               existing,
               name,
+              shell,
               directory,
               type,
               executable: {
                 command,
               },
               args,
-              shell,
               installedRegex,
               url,
               latestRegex,
@@ -199,11 +199,11 @@ describe('Edit Command Unit Tests', () => {
     it('all options passed to editConfiguration if all specified and dynamic', async () => {
       const existing = 'test all dynamic existing'
       const name = 'test all dynamic name'
-      const type = CommandType.Dynamic
+      const shell = 'test all dynamic shell'
       const directory = 'test all dynamic directory'
+      const type = CommandType.Dynamic
       const regex = 'test all dynamic regex'
       const args = 'test all dynamic args'
-      const shell = 'test all dynamic shell'
       const installedRegex = 'test all dynamic installedRegex'
       const latestRegex = 'test all dynamic latestRegex'
       const url = 'test all dynamic url'
@@ -216,14 +216,14 @@ describe('Edit Command Unit Tests', () => {
           return existing
         } else if (option.key === 'name') {
           return name
+        } else if (option.key === 'shell') {
+          return shell
         } else if (option.key === 'directory') {
           return directory
         } else if (option.key === 'regex') {
           return regex
         } else if (option.key === 'arguments') {
           return args
-        } else if (option.key === 'shell') {
-          return shell
         } else if (option.key === 'installedRegex') {
           return installedRegex
         } else if (option.key === 'url') {
@@ -242,13 +242,13 @@ describe('Edit Command Unit Tests', () => {
             inputs: {
               existing,
               name,
-              type,
+              shell,
               directory,
+              type,
               executable: {
                 regex,
               },
               args,
-              shell,
               installedRegex,
               url,
               latestRegex,

@@ -20,12 +20,12 @@ describe('Add Silent', () => {
     it('add silent fails with existing name', async () => {
       const existing = new Software({
         name: 'e2e add silent name that already exists existing',
+        shell: 'vehicle',
         directory: 'chain',
         executable: {
           command: 'cycle',
         },
         args: 'bi',
-        shell: 'vehicle',
         installedRegex: 'hybrid',
         url: 'https://lookmanohands.com',
         latestRegex: 'general-purpose',
@@ -36,11 +36,11 @@ describe('Add Silent', () => {
         args: E2eAddUtil.getSilentCommand({
           software: new Software({
             name: existing.name,
+            shell: 'auto',
             executable: {
               command: 'suv',
             },
             args: 'electric',
-            shell: 'auto',
             installedRegex: 'model y',
             url: 'https://plugmein.com',
             latestRegex: 'tesla',
@@ -59,12 +59,12 @@ describe('Add Silent', () => {
         args: E2eAddUtil.getSilentCommand({
           software: new Software({
             name: 'e2e add silent installed error',
+            shell: '',
             directory: '',
             executable: {
               command: 'node',
             },
             args: `${E2eAddUtil.COMMAND.Bad} ${installedError}`,
-            shell: '',
             installedRegex: 'v(.*)',
             url: 'https://donbot.com',
             latestRegex: 'latest: v(.*)',
@@ -86,12 +86,12 @@ describe('Add Silent', () => {
           args: E2eAddUtil.getSilentCommand({
             software: new Software({
               name: 'e2e add silent latest error',
+              shell: '',
               directory: '',
               executable: {
                 command: 'node',
               },
               args: `${E2eAddUtil.COMMAND.Good} v${installedVersion}`,
-              shell: '',
               installedRegex: 'v(.*)',
               url,
               latestRegex: 'v(.*)',
@@ -113,12 +113,12 @@ describe('Add Silent', () => {
         args: E2eAddUtil.getSilentCommand({
           software: new Software({
             name: 'e2e add silent invalid without type subcommand',
+            shell: '',
             directory: '',
             executable: {
               command: 'node',
             },
             args: `${E2eAddUtil.COMMAND.Good} v1.4.3`,
-            shell: '',
             installedRegex: 'v(.*)',
             url: Website.getResponseUrl(`latest: v1.4.3`),
             latestRegex: 'latest: v(.*)',
@@ -135,12 +135,12 @@ describe('Add Silent', () => {
         args: E2eAddUtil.getSilentCommand({
           software: new Software({
             name: 'e2e add silent invalid without name flag',
+            shell: '',
             directory: '',
             executable: {
               command: 'node',
             },
             args: `${E2eAddUtil.COMMAND.Good} v1.7.1`,
-            shell: '',
             installedRegex: 'v(.*)',
             url: Website.getResponseUrl(`latest: v1.7.2`),
             latestRegex: 'latest: v(.*)',
@@ -157,12 +157,12 @@ describe('Add Silent', () => {
         args: E2eAddUtil.getSilentCommand({
           software: new Software({
             name: 'e2e add silent invalid without installedRegex flag',
+            shell: '',
             directory: '',
             executable: {
               command: 'node',
             },
             args: `${E2eAddUtil.COMMAND.Good} v1.8.2`,
-            shell: '',
             installedRegex: 'v(.*)',
             url: Website.getResponseUrl(`latest: v1.8.3`),
             latestRegex: 'latest: v(.*)',
@@ -179,12 +179,12 @@ describe('Add Silent', () => {
         args: E2eAddUtil.getSilentCommand({
           software: new Software({
             name: 'e2e add silent invalid without url flag',
+            shell: '',
             directory: '',
             executable: {
               command: 'node',
             },
             args: `${E2eAddUtil.COMMAND.Good} v1.9.4`,
-            shell: '',
             installedRegex: 'v(.*)',
             url: Website.getResponseUrl(`latest: v1.9.5`),
             latestRegex: 'latest: v(.*)',
@@ -201,12 +201,12 @@ describe('Add Silent', () => {
         args: E2eAddUtil.getSilentCommand({
           software: new Software({
             name: 'e2e add silent invalid without latestRegex flag',
+            shell: '',
             directory: '',
             executable: {
               command: 'node',
             },
             args: `${E2eAddUtil.COMMAND.Good} v1.9.6`,
-            shell: '',
             installedRegex: 'v(.*)',
             url: Website.getResponseUrl(`latest: v1.9.7`),
             latestRegex: 'latest: v(.*)',
@@ -224,12 +224,12 @@ describe('Add Silent', () => {
       const latestVersion = '2.0.1'
       const software = new Software({
         name: 'e2e add silent valid with non-existent',
+        shell: '',
         directory: '',
         executable: {
           command: 'node',
         },
         args: `${E2eAddUtil.COMMAND.Good} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -248,12 +248,12 @@ describe('Add Silent', () => {
       const latestVersion = '1.0.8'
       const software = new Software({
         name: 'e2e add silent valid with empty file',
+        shell: '',
         directory: '',
         executable: {
           command: 'node',
         },
         args: `${E2eAddUtil.COMMAND.Good} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -272,12 +272,12 @@ describe('Add Silent', () => {
       const latestVersion = '1.0.10'
       const software = new Software({
         name: 'e2e add silent valid with empty array',
+        shell: '',
         directory: '',
         executable: {
           command: 'node',
         },
         args: `${E2eAddUtil.COMMAND.Good} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -292,12 +292,12 @@ describe('Add Silent', () => {
     it('add silent valid software to beginning with single existing softwares file', async () => {
       const existing = new Software({
         name: 'z end of z line',
+        shell: 'biological',
         directory: 'unkown',
         executable: {
           command: 'functions',
         },
         args: 'irreversible',
-        shell: 'biological',
         installedRegex: 'death',
         url: 'https://forwhomethebelltolls.com',
         latestRegex: 'thee',
@@ -308,12 +308,12 @@ describe('Add Silent', () => {
       const latestVersion = '1.2.2'
       const software = new Software({
         name: 'e2e add silent valid to beginning with single existing',
+        shell: '',
         directory: '',
         executable: {
           command: 'node',
         },
         args: `${E2eAddUtil.COMMAND.Good} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -328,12 +328,12 @@ describe('Add Silent', () => {
     it('add silent valid software to end with single existing softwares file', async () => {
       const existing = new Software({
         name: 'an initial software',
+        shell: 'electronics',
         directory: 'routines',
         executable: {
           command: 'sequence',
         },
         args: 'pre-boot',
-        shell: 'electronics',
         installedRegex: 'post',
         url: 'https://poweronselftest.com',
         latestRegex: 'beep',
@@ -344,12 +344,12 @@ describe('Add Silent', () => {
       const latestVersion = '2.0.0'
       const software = new Software({
         name: 'e2e add silent valid to end with single existing',
+        shell: '',
         directory: '',
         executable: {
           command: 'node',
         },
         args: `${E2eAddUtil.COMMAND.Good} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -364,24 +364,24 @@ describe('Add Silent', () => {
     it('add silent valid software to middle with two existing softwares file', async () => {
       const existingFirst = new Software({
         name: 'an initial of two softwares',
+        shell: 'transportation',
         directory: 'train',
         executable: {
           command: 'rail',
         },
         args: 'power',
-        shell: 'transportation',
         installedRegex: 'engine',
         url: 'https://thomasthetankengine.com',
         latestRegex: 'locomotive',
       })
       const existingSecond = new Software({
         name: 'z end of two softwares',
+        shell: 'train',
         directory: 'shelter',
         executable: {
           command: 'freight',
         },
         args: 'cars',
-        shell: 'train',
         installedRegex: 'caboose',
         url: 'https://waitforit.com',
         latestRegex: 'cupola',
@@ -392,12 +392,12 @@ describe('Add Silent', () => {
       const latestVersion = '2.5.1'
       const software = new Software({
         name: 'e2e add silent valid to middle with two existing',
+        shell: '',
         directory: '',
         executable: {
           command: 'node',
         },
         args: `${E2eAddUtil.COMMAND.Good} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -415,12 +415,12 @@ describe('Add Silent', () => {
       const latestVersion = '4.5.6'
       const software = new Software({
         name: 'e2e add silent valid specifying directory',
+        shell: '',
         directory: path.dirname(E2eAddUtil.COMMAND.Good),
         executable: {
           command: 'node',
         },
         args: `${path.basename(E2eAddUtil.COMMAND.Good)} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -438,12 +438,12 @@ describe('Add Silent', () => {
       const latestVersion = '6.3.2'
       const software = new Software({
         name: 'e2e add silent valid absolute command no directory',
+        shell: 'pwsh',
         directory: '',
         executable: {
           command: E2eAddUtil.COMMAND.Powershell,
         },
         args: `v${installedVersion}`,
-        shell: 'pwsh',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -461,12 +461,12 @@ describe('Add Silent', () => {
       const latestVersion = '8.1.1'
       const software = new Software({
         name: 'e2e add silent valid absolute command ignores directory',
+        shell: 'pwsh',
         directory: E2eConfig.DIRECTORY.Temp,
         executable: {
           command: E2eAddUtil.COMMAND.Powershell,
         },
         args: `v${installedVersion}`,
-        shell: 'pwsh',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -484,12 +484,12 @@ describe('Add Silent', () => {
       const latestVersion = '1.2.1.0'
       const software = new Software({
         name: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.NameExample),
+        shell: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ShellExample),
         directory: E2eAddUtil.getExampleFromMessage(E2eAddUtil.getDirectoryExampleMessage({})),
         executable: {
           command: E2eAddUtil.getExampleFromMessage(E2eAddUtil.getCommandExampleMessage({})),
         },
         args: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ArgumentsExample),
-        shell: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ShellExample),
         installedRegex: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.InstalledRegexExample),
         url: Website.getFileUrl('latest-release.html'),
         latestRegex: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.LatestRegexExample),
@@ -515,12 +515,12 @@ describe('Add Silent', () => {
         const latestVersion = '1.2.1.0'
         const software = new Software({
           name: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.NameExample),
+          shell: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ShellExample),
           directory: renamedExecutableDir,
           executable: {
             command: `./${renamedExecutableFile}`,
           },
           args: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ArgumentsExample),
-          shell: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ShellExample),
           installedRegex: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.InstalledRegexExample),
           url: Website.getFileUrl('latest-release.html'),
           latestRegex: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.LatestRegexExample),
@@ -552,12 +552,12 @@ describe('Add Silent', () => {
         const latestVersion = '1.2.1.0'
         const software = new Software({
           name: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.NameExample),
+          shell: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ShellExample),
           directory: dirWithSpaces,
           executable: {
             command: E2eAddUtil.getExampleFromMessage(E2eAddUtil.getCommandExampleMessage({})),
           },
           args: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ArgumentsExample),
-          shell: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ShellExample),
           installedRegex: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.InstalledRegexExample),
           url: Website.getFileUrl('latest-release.html'),
           latestRegex: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.LatestRegexExample),
@@ -576,6 +576,7 @@ describe('Add Silent', () => {
       }
     })
     /**
+     * TODO: test dynamic
      * TODO: test optional args (no args, with shell?)
      */
   })

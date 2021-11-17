@@ -104,6 +104,24 @@ async function getTestResources(filePath: string): Promise<TestResource[]> {
         resources,
       })
       addResourceMatchingRegex({
+        type: TestResourceType.shell,
+        regex: /shell: '(.*)'/,
+        ignore: ['', 'pwsh'],
+        lines,
+        line: i + 1,
+        filePath,
+        resources,
+      })
+      addResourceMatchingRegex({
+        type: TestResourceType.shell,
+        regex: /shell = '(.*)'/,
+        ignore: [''],
+        lines,
+        line: i + 1,
+        filePath,
+        resources,
+      })
+      addResourceMatchingRegex({
         type: TestResourceType.directory,
         regex: /directory: '(.*)'/,
         ignore: [''],
@@ -169,24 +187,6 @@ async function getTestResources(filePath: string): Promise<TestResource[]> {
       addResourceMatchingRegex({
         type: TestResourceType.args,
         regex: /args = '(.*)'/,
-        ignore: [''],
-        lines,
-        line: i + 1,
-        filePath,
-        resources,
-      })
-      addResourceMatchingRegex({
-        type: TestResourceType.shell,
-        regex: /shell: '(.*)'/,
-        ignore: ['', 'pwsh'],
-        lines,
-        line: i + 1,
-        filePath,
-        resources,
-      })
-      addResourceMatchingRegex({
-        type: TestResourceType.shell,
-        regex: /shell = '(.*)'/,
         ignore: [''],
         lines,
         line: i + 1,
@@ -285,11 +285,11 @@ function addResourceMatchingRegex({
 
 enum TestResourceType {
   name = 'name',
-  command = 'command',
+  shell = 'shell',
   directory = 'directory',
+  command = 'command',
   regex = 'regex',
   args = 'args',
-  shell = 'shell',
   installedRegex = 'installedRegex',
   url = 'url',
   latestRegex = 'latestRegex',

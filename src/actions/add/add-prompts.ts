@@ -16,6 +16,16 @@ export default class AddPrompts {
     return name
   }
 
+  static async getShell(existingShell?: string): Promise<string> {
+    const { shell }: { shell: string } = await inquirer.prompt({
+      name: 'shell',
+      message: `${AddOptions.Shell.value.description}:`,
+      type: 'input',
+      default: existingShell,
+    })
+    return shell
+  }
+
   static async getDirectory(existingDirectory?: string): Promise<string> {
     const { directory }: { directory: string } = await inquirer.prompt({
       name: 'directory',
@@ -100,16 +110,6 @@ export default class AddPrompts {
       default: existingArgs,
     })
     return args
-  }
-
-  static async getShell(existingShell?: string): Promise<string> {
-    const { shell }: { shell: string } = await inquirer.prompt({
-      name: 'shell',
-      message: `${AddOptions.Shell.value.description}:`,
-      type: 'input',
-      default: existingShell,
-    })
-    return shell
   }
 
   static async getInstalledRegex(existingInstalledRegex?: string): Promise<string> {

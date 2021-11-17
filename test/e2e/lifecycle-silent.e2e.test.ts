@@ -16,22 +16,22 @@ describe('Lifecycle Silent', () => {
     const updatedLatestVersion = '1.0.0'
     const software = new Software({
       name: 'e2e lifecycle silent',
+      shell: '',
       executable: {
         command: 'node',
       },
       args: `${E2eBaseUtil.COMMAND.Good} v${installedVersion}`,
-      shell: '',
       installedRegex: 'v(.*)',
       url: Website.getResponseUrl(`latest: v${latestVersion}`),
       latestRegex: 'latest: v(.*)',
     })
     const updatedSoftware = new Software({
       name: software.name,
+      shell: software.shell,
       executable: {
         command: 'node',
       },
       args: software.args,
-      shell: software.shell,
       installedRegex: software.installedRegex,
       url: Website.getResponseUrl(`latest: v${updatedLatestVersion}`),
       latestRegex: software.latestRegex,

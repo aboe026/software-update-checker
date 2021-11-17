@@ -32,24 +32,24 @@ describe('Edit Interactive', () => {
     it('edit interactive prevents using an existing name', async () => {
       const firstSoftware = new Software({
         name: 'e2e edit interactive to name that already exists first',
+        shell: 'food',
         directory: 'lamb',
         executable: {
           command: 'wrap',
         },
         args: 'greece',
-        shell: 'food',
         installedRegex: 'gyros',
         url: 'https://itsallgreektome.com',
         latestRegex: 'doner kebab',
       })
       const secondSoftware = new Software({
         name: 'e2e edit interactive to name that already exists second',
+        shell: 'treat',
         directory: 'frozen',
         executable: {
           command: 'dessert',
         },
         args: 'italian',
-        shell: 'treat',
         installedRegex: 'gelato',
         url: 'https://bestfoodonearth.com',
         latestRegex: 'artisanal gelato',
@@ -68,12 +68,12 @@ describe('Edit Interactive', () => {
       const installedError = 'permission denied'
       const software = new Software({
         name: 'e2e edit interactive installed error without reconfig',
+        shell: 'department',
         directory: 'shipping',
         executable: {
           command: 'company',
         },
         args: 'mail',
-        shell: 'department',
         installedRegex: 'sears',
         url: 'https://catalogittome.com',
         latestRegex: 'Sears, Roebuck and Co.',
@@ -86,10 +86,10 @@ describe('Edit Interactive', () => {
         installed: [
           {
             name: `${software.name} edited`,
+            shell: KEYS.BACK_SPACE,
             directory: KEYS.BACK_SPACE,
             command: 'node',
             args: `${E2eEditUtil.COMMAND.Bad} ${installedError}`,
-            shell: KEYS.BACK_SPACE,
             regex: 'v(.*)',
             error: installedError,
             confirmOrReconfigure: false,
@@ -103,12 +103,12 @@ describe('Edit Interactive', () => {
         const installedVersion = '1.1.0'
         const software = new Software({
           name: 'e2e edit interactive latest error without reconfig',
+          shell: 'cosmology',
           directory: 'model',
           executable: {
             command: 'theory',
           },
           args: 'universe',
-          shell: 'cosmology',
           installedRegex: 'singularity',
           url: 'https://expandonthis.com',
           latestRegex: 'the big bang',
@@ -124,10 +124,10 @@ describe('Edit Interactive', () => {
           installed: [
             {
               name: `${software.name} edited`,
+              shell: KEYS.BACK_SPACE,
               directory: KEYS.BACK_SPACE,
               command: 'node',
               args: `${E2eEditUtil.COMMAND.Good} v${installedVersion}`,
-              shell: KEYS.BACK_SPACE,
               regex: 'v(.*)',
               version: installedVersion,
               confirmOrReconfigure: true,
@@ -152,12 +152,12 @@ describe('Edit Interactive', () => {
     it('edit interactive all fields single software', async () => {
       const oldSoftware = new Software({
         name: 'e2e edit interactive all fields single old',
+        shell: 'past',
         directory: 'age',
         executable: {
           command: 'periods',
         },
         args: 'technological',
-        shell: 'past',
         installedRegex: 'paleolithic',
         url: 'https://frombonetosatellite.com',
         latestRegex: 'information age',
@@ -168,12 +168,12 @@ describe('Edit Interactive', () => {
       const latestVersion = '3.0.1'
       const editedSoftware = new Software({
         name: 'e2e edit interactive all fields single edited',
+        shell: '',
         directory: '',
         executable: {
           command: 'node',
         },
         args: `${E2eEditUtil.COMMAND.Good} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -190,24 +190,24 @@ describe('Edit Interactive', () => {
     it('edit interactive all fields first of two softwares', async () => {
       const firstSoftware = new Software({
         name: 'e2e edit interactive all fields first of two first',
+        shell: 'grecian',
         directory: 'mythology',
         executable: {
           command: 'superfecundation',
         },
         args: 'homopaternal',
-        shell: 'grecian',
         installedRegex: 'gemini',
         url: 'https://castortroyandpolluxtroy.com',
         latestRegex: 'dioscuri',
       })
       const lastSoftware = new Software({
         name: 'e2e edit interactive all fields first of two last',
+        shell: 'chinese',
         directory: 'opposites',
         executable: {
           command: 'philosophy',
         },
         args: 'concept',
-        shell: 'chinese',
         installedRegex: 'dualism',
         url: 'https://yinyang.com',
         latestRegex: 'cosmological qi',
@@ -218,12 +218,12 @@ describe('Edit Interactive', () => {
       const latestVersion = '2.1.0'
       const editedSoftware = new Software({
         name: `${firstSoftware.name} edited`,
+        shell: '',
         directory: '',
         executable: {
           command: 'node',
         },
         args: `${E2eEditUtil.COMMAND.Good} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -240,24 +240,24 @@ describe('Edit Interactive', () => {
     it('edit interactive all fields last of two softwares', async () => {
       const firstSoftware = new Software({
         name: 'e2e edit interactive all fields last of two first',
+        shell: 'hbo',
         directory: 'jersey',
         executable: {
           command: 'boss',
         },
         args: 'mafia',
-        shell: 'hbo',
         installedRegex: 't',
         url: 'https://sadclown.com',
         latestRegex: 'anthony john soprano sr.',
       })
       const lastSoftware = new Software({
         name: 'e2e edit interactive all fields last of two last',
+        shell: 'amc',
         directory: 'albuquerque',
         executable: {
           command: 'chemist',
         },
         args: 'drugs',
-        shell: 'amc',
         installedRegex: 'heisenberg',
         url: 'https://iamtheonewhoknocks.com',
         latestRegex: 'walter hartwell white sr.',
@@ -268,12 +268,12 @@ describe('Edit Interactive', () => {
       const latestVersion = '1.2.0'
       const editedSoftware = new Software({
         name: `${lastSoftware.name} edited`,
+        shell: '',
         directory: '',
         executable: {
           command: 'node',
         },
         args: `${E2eEditUtil.COMMAND.Good} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -294,24 +294,24 @@ describe('Edit Interactive', () => {
       const latestVersion = '5.4.3'
       const oldSoftware = new Software({
         name: 'e2e edit interactive all fields installed error reconfigured',
+        shell: 'greek',
         directory: 'hubris',
         executable: {
           command: 'mythology',
         },
         args: 'prisoner',
-        shell: 'greek',
         installedRegex: 'wax',
         url: 'https://flytothesun.com',
         latestRegex: 'icarus',
       })
       const newSoftware = new Software({
         name: `${oldSoftware.name} edited`,
+        shell: '',
         directory: '',
         executable: {
           command,
         },
         args: `${E2eEditUtil.COMMAND.Good} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -324,19 +324,19 @@ describe('Edit Interactive', () => {
         installed: [
           {
             name: newSoftware.name,
+            shell: KEYS.BACK_SPACE,
             directory: KEYS.BACK_SPACE,
             command,
             args: `${E2eEditUtil.COMMAND.Bad} ${installedError}`,
-            shell: KEYS.BACK_SPACE,
             regex: newSoftware.installedRegex,
             error: installedError,
             confirmOrReconfigure: true,
           },
           {
+            shell: KEYS.BACK_SPACE,
             directory: KEYS.BACK_SPACE,
             command,
             args: newSoftware.args,
-            shell: KEYS.BACK_SPACE,
             regex: newSoftware.installedRegex,
             version: installedVersion,
             confirmOrReconfigure: true,
@@ -360,24 +360,24 @@ describe('Edit Interactive', () => {
       const latestVersion = '10.9.8'
       const oldSoftware = new Software({
         name: 'e2e edit interactive all fields latest error reconfigured',
+        shell: 'sports',
         directory: 'distance',
         executable: {
           command: 'golf',
         },
         args: 'clubs',
-        shell: 'sports',
         installedRegex: 'wood',
         url: 'https://onthescrews.com',
         latestRegex: 'driver',
       })
       const newSoftware = new Software({
         name: `${oldSoftware.name} edited`,
+        shell: '',
         directory: '',
         executable: {
           command,
         },
         args: `${E2eEditUtil.COMMAND.Good} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -390,10 +390,10 @@ describe('Edit Interactive', () => {
         installed: [
           {
             name: newSoftware.name,
+            shell: KEYS.BACK_SPACE,
             directory: KEYS.BACK_SPACE,
             command,
             args: newSoftware.args,
-            shell: KEYS.BACK_SPACE,
             regex: newSoftware.installedRegex,
             version: installedVersion,
             confirmOrReconfigure: true,

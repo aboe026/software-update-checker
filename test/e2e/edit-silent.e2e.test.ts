@@ -21,11 +21,11 @@ describe('Edit Silent', () => {
           existingName,
           newSoftware: {
             name: 'Sockeye',
+            shell: 'animals',
             directory: 'fish',
             type: CommandType.Static,
             command: 'salmon',
             args: 'anadromous',
-            shell: 'animals',
             installedRegex: 'red',
             url: 'https://swimupstream.com',
             latestRegex: 'oncorhynchus nerka',
@@ -44,11 +44,11 @@ describe('Edit Silent', () => {
           existingName,
           newSoftware: {
             name: 'Big Tree',
+            shell: 'plants',
             directory: 'california',
             type: CommandType.Static,
             command: 'trees',
             args: 'conifers',
-            shell: 'plants',
             installedRegex: 'redwood',
             url: 'https://longnecks.com',
             latestRegex: 'sequoia',
@@ -67,11 +67,11 @@ describe('Edit Silent', () => {
           existingName,
           newSoftware: {
             name: 'HDMI',
+            shell: 'digital',
             directory: 'proprietary',
             type: CommandType.Static,
             command: 'interface',
             args: 'av',
-            shell: 'digital',
             installedRegex: 'hdmi',
             url: 'https://sweetsweethidef.com',
             latestRegex: 'high definition multimedia interface',
@@ -85,12 +85,12 @@ describe('Edit Silent', () => {
       const name = 'e2e edit silent does not exist'
       const software = new Software({
         name,
+        shell: 'instrument',
         directory: 'doubly-reflective',
         executable: {
           command: 'navigation',
         },
         args: 'celestial',
-        shell: 'instrument',
         installedRegex: 'doubly reflecting',
         url: 'https://bringmethathorizon.com',
         latestRegex: 'sextant',
@@ -103,11 +103,11 @@ describe('Edit Silent', () => {
           existingName,
           newSoftware: {
             name: `${name} edited`,
+            shell: 'technique',
             directory: 'navigation',
             type: CommandType.Static,
             command: 'detection',
             args: 'sound',
-            shell: 'technique',
             installedRegex: 'propagation',
             url: 'https://batsub.com',
             latestRegex: 'sonar',
@@ -120,24 +120,24 @@ describe('Edit Silent', () => {
     it('edit silent prevents using an existing name', async () => {
       const firstSoftware = new Software({
         name: 'e2e edit silent to name that already exists first',
+        shell: 'people',
         directory: 'general',
         executable: {
           command: 'presidents',
         },
         args: 'usa',
-        shell: 'people',
         installedRegex: 'first',
         url: 'https://fatherofthenation.com',
         latestRegex: 'george washington',
       })
       const secondSoftware = new Software({
         name: 'e2e edit silent to name that already exists second',
+        shell: 'person',
         directory: 'western',
         executable: {
           command: 'emperor',
         },
         args: 'rome',
-        shell: 'person',
         installedRegex: 'last',
         url: 'https://littledisgrace.com',
         latestRegex: 'romulus augustus',
@@ -160,12 +160,12 @@ describe('Edit Silent', () => {
       const installedError = 'syntax error'
       const software = new Software({
         name: 'e2e edit silent installed error',
+        shell: 'male',
         directory: 'american',
         executable: {
           command: 'actors',
         },
         args: 'movie',
-        shell: 'male',
         installedRegex: 'the chip',
         url: 'https://sixdegrees.org',
         latestRegex: 'kevin norwood bacon',
@@ -177,10 +177,10 @@ describe('Edit Silent', () => {
           existingName: software.name,
           newSoftware: {
             name: `${software.name} edited`,
+            shell: '',
             directory: '',
             command: 'node',
             args: `${E2eEditUtil.COMMAND.Bad} ${installedError}`,
-            shell: '',
             installedRegex: 'v(.*)',
           },
         }),
@@ -193,12 +193,12 @@ describe('Edit Silent', () => {
         const installedVersion = '1.1.0'
         const software = new Software({
           name: 'e2e edit silent latest error',
+          shell: 'substances',
           directory: 'thirst mutilator',
           executable: {
             command: 'dissolves',
           },
           args: 'yield anions',
-          shell: 'substances',
           installedRegex: 'electrolytes',
           url: 'https://itswhatplantscrave.com',
           latestRegex: 'brwando',
@@ -213,10 +213,10 @@ describe('Edit Silent', () => {
             existingName: software.name,
             newSoftware: {
               name: `${software.name} edited`,
+              shell: '',
               directory: '',
               command: 'node',
               args: `${E2eEditUtil.COMMAND.Good} v${installedVersion}`,
-              shell: '',
               installedRegex: 'v(.*)',
               url,
               latestRegex: 'latest: v(.*)',
@@ -246,12 +246,12 @@ describe('Edit Silent', () => {
     it('edit silent requires existing name positional argument', async () => {
       const software = new Software({
         name: 'e2e edit silent no existing name positional argument',
+        shell: 'mythology',
         directory: 'king',
         executable: {
           command: 'norse',
         },
         args: 'god',
-        shell: 'mythology',
         installedRegex: 'woden',
         url: 'https://wednesday.com',
         latestRegex: 'odin',
@@ -272,12 +272,12 @@ describe('Edit Silent', () => {
     it('edit silent regex flag does not work with static type', async () => {
       const software = new Software({
         name: 'e2e edit silent regex flag does not work with static type',
+        shell: 'female',
         directory: 'polish',
         executable: {
           command: 'scientist',
         },
         args: 'nobel-laureate',
-        shell: 'female',
         installedRegex: 'physics|chemistry',
         url: 'https://motherofmodernphysics.com',
         latestRegex: 'marie curie',
@@ -300,12 +300,12 @@ describe('Edit Silent', () => {
     it('edit silent command flag does not work with dynamic type', async () => {
       const software = new Software({
         name: 'e2e edit silent command flag does not work with dynamic type',
+        shell: 'bean',
         directory: 'pods',
         executable: {
           command: 'seed',
         },
         args: 'theobroma',
-        shell: 'bean',
         installedRegex: 'cocoa',
         url: 'https://darkormilk.com',
         latestRegex: 'chocolate',
@@ -328,12 +328,12 @@ describe('Edit Silent', () => {
     it('edit silent command flag not compatible with regex flag', async () => {
       const software = new Software({
         name: 'e2e edit silent command flag not compatible with regex flag',
+        shell: 'geology',
         directory: 'cascades',
         executable: {
           command: 'volcano',
         },
         args: 'cascades',
-        shell: 'geology',
         installedRegex: 'tahoma',
         url: 'https://thelonelymountain.com',
         latestRegex: 'mount rainier',
@@ -356,12 +356,12 @@ describe('Edit Silent', () => {
     it('edit silent command flag not compatible with dynamic executable', async () => {
       const software = new Software({
         name: 'e2e edit silent command flag not compatible with dynamic executable',
+        shell: 'bread',
         directory: 'leavened',
         executable: {
           regex: 'flat',
         },
         args: 'mediterranean',
-        shell: 'bread',
         installedRegex: 'focaccia',
         url: 'https://protopizza.com',
         latestRegex: 'panis focacius',
@@ -383,12 +383,12 @@ describe('Edit Silent', () => {
     it('edit silent regex flag not compatible with static executable', async () => {
       const software = new Software({
         name: 'e2e edit silent regex flag not compatible with static executable',
+        shell: 'animal',
         directory: 'backwards',
         executable: {
           command: 'avian',
         },
         args: 'sweet-beak',
-        shell: 'animal',
         installedRegex: 'ruby throated hummingbird',
         url: 'https://backwardsandupsidedown.com',
         latestRegex: 'crchilochus colubris',
@@ -410,12 +410,12 @@ describe('Edit Silent', () => {
     it('edit silent change type to dynamic errors without regex option', async () => {
       const software = new Software({
         name: 'e2e edit silent change type to dynamic without regex',
+        shell: 'english',
         directory: 'english',
         executable: {
           command: 'mathematician',
         },
         args: 'ww2',
-        shell: 'english',
         installedRegex: 'computer\\ scientist|logician|cryptanalyst|philosopher|theoretical\\ biologist',
         url: 'https://fatherofcomputers.com',
         latestRegex: 'alan mathison turing',
@@ -438,12 +438,12 @@ describe('Edit Silent', () => {
     it('edit silent change type to static errors without command option', async () => {
       const software = new Software({
         name: 'e2e edit silent change type to static without command',
+        shell: 'hotel',
         directory: 'horror',
         executable: {
           regex: 'overlook',
         },
         args: 'room',
-        shell: 'hotel',
         installedRegex: 'redrum',
         url: 'https://theshine.com',
         latestRegex: '237',
@@ -467,12 +467,12 @@ describe('Edit Silent', () => {
     it('edit silent all fields single software', async () => {
       const oldSoftware = new Software({
         name: 'e2e edit silent all fields single old',
+        shell: 'geography',
         directory: 'cass county',
         executable: {
           command: 'cities',
         },
         args: 'north dakota',
-        shell: 'geography',
         installedRegex: 'populous',
         url: 'https://youbetcha.com',
         latestRegex: 'fargo',
@@ -483,12 +483,12 @@ describe('Edit Silent', () => {
       const latestVersion = '3.1.1'
       const editedSoftware = new Software({
         name: 'e2e edit silent all fields single edited',
+        shell: '',
         directory: '',
         executable: {
           command: 'node',
         },
         args: `${E2eEditUtil.COMMAND.Good} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -504,24 +504,24 @@ describe('Edit Silent', () => {
     it('edit silent all fields first of two softwares', async () => {
       const firstSoftware = new Software({
         name: 'e2e edit silent all fields first of two first',
+        shell: 'astrology',
         directory: 'spiral',
         executable: {
           command: 'galaxy',
         },
         args: 'nearest',
-        shell: 'astrology',
         installedRegex: 'andromeda',
         url: 'https://sonearyetsofar.com',
         latestRegex: 'Messier 31',
       })
       const lastSoftware = new Software({
         name: 'e2e edit silent all fields first of two last',
+        shell: 'astronaut',
         directory: 'aeronautical engineer',
         executable: {
           command: 'apollo',
         },
         args: '11',
-        shell: 'astronaut',
         installedRegex: 'commander',
         url: 'https://onesmallstep.com',
         latestRegex: 'neil armstrong',
@@ -532,12 +532,12 @@ describe('Edit Silent', () => {
       const latestVersion = '2.2.0'
       const editedSoftware = new Software({
         name: `${firstSoftware.name} edited`,
+        shell: '',
         directory: '',
         executable: {
           command: 'node',
         },
         args: `${E2eEditUtil.COMMAND.Good} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -553,24 +553,24 @@ describe('Edit Silent', () => {
     it('edit silent all fields last of two softwares', async () => {
       const firstSoftware = new Software({
         name: 'e2e edit silent all fields last of two first',
+        shell: 'machine',
         directory: 'automated',
         executable: {
           command: 'equipment',
         },
         args: 'farming',
-        shell: 'machine',
         installedRegex: 'thresher',
         url: 'https://westernminnesotasteamthreshersreunion.com',
         latestRegex: 'garr-scott',
       })
       const lastSoftware = new Software({
         name: 'e2e edit silent all fields last of two last',
+        shell: 'character',
         directory: 'british',
         executable: {
           command: 'owner',
         },
         args: 'factory',
-        shell: 'character',
         installedRegex: 'candies',
         url: 'https://snozberries.com',
         latestRegex: 'willy wonka',
@@ -581,12 +581,12 @@ describe('Edit Silent', () => {
       const latestVersion = '1.2.1'
       const editedSoftware = new Software({
         name: `${lastSoftware.name} edited`,
+        shell: '',
         directory: '',
         executable: {
           command: 'node',
         },
         args: `${E2eEditUtil.COMMAND.Good} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -602,12 +602,12 @@ describe('Edit Silent', () => {
     it('edit silent directory flag works with static type', async () => {
       const oldSoftware = new Software({
         name: 'e2e edit silent directory flag works with static type',
+        shell: 'platform',
         directory: 'microsoft',
         executable: {
           command: 'gaming',
         },
         args: 'console',
-        shell: 'platform',
         installedRegex: 'directx',
         url: 'https://staggersticks4life.com',
         latestRegex: 'xbox',
@@ -618,12 +618,12 @@ describe('Edit Silent', () => {
       const latestVersion = '3.1.1'
       const editedSoftware = new Software({
         name: `${oldSoftware.name} edited`,
+        shell: '',
         directory: '',
         executable: {
           command: 'node',
         },
         args: `${E2eEditUtil.COMMAND.Good} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',

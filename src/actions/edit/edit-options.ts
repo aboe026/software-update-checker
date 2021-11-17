@@ -28,6 +28,20 @@ export const EditOptions = {
       demandOption: false,
     },
   }),
+  Shell: new Option({
+    key: AddOptions.Shell.key,
+    value: {
+      ...AddOptions.Shell.value,
+      demandOption: false,
+    },
+  }),
+  Directory: new Option({
+    key: DynamicOptions.Directory.key,
+    value: {
+      ...DynamicOptions.Directory.value,
+      demandOption: false,
+    },
+  }),
   Type: new Option({
     key: 'type',
     value: {
@@ -47,13 +61,6 @@ export const EditOptions = {
       conflicts: [DynamicOptions.Regex.key],
     },
   }),
-  Directory: new Option({
-    key: DynamicOptions.Directory.key,
-    value: {
-      ...DynamicOptions.Directory.value,
-      demandOption: false,
-    },
-  }),
   Regex: new Option({
     key: DynamicOptions.Regex.key,
     value: {
@@ -66,13 +73,6 @@ export const EditOptions = {
     key: AddOptions.Arguments.key,
     value: {
       ...AddOptions.Arguments.value,
-      demandOption: false,
-    },
-  }),
-  Shell: new Option({
-    key: AddOptions.Shell.key,
-    value: {
-      ...AddOptions.Shell.value,
       demandOption: false,
     },
   }),
