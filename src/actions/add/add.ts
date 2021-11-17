@@ -22,10 +22,10 @@ export default class Add extends Base {
     })
     const installedVersion: ConfigureInstalledVersionResponse | undefined = await Add.configureInstalledVersion({
       inputs,
+      existingShell: existingSoftware?.shell,
       existingDirectory: existingSoftware?.directory,
       existingExecutable: existingSoftware?.executable,
       existingArgs: existingSoftware?.args,
-      existingShell: existingSoftware?.shell,
       existingInstalledRegex: existingSoftware?.installedRegex,
     })
     if (installedVersion) {
@@ -37,10 +37,10 @@ export default class Add extends Base {
       if (latestVersion) {
         const software: Software = new Software({
           name,
+          shell: installedVersion.shell,
           directory: installedVersion.directory,
           executable: installedVersion.executable,
           args: installedVersion.args,
-          shell: installedVersion.shell,
           installedRegex: installedVersion.installedRegex,
           url: latestVersion.url,
           latestRegex: latestVersion.latestRegex,
@@ -105,13 +105,109 @@ export default class Add extends Base {
     return name
   }
 
+  static async configureInstalledVersion({
+    inputs,
+    existingShell,
+    existingDirectory,
+    existingExecutable,
+    existingArgs,
+    existingInstalledRegex,
+  }: {
+    inputs?: Inputs
+    existingShell?: string | undefined
+    existingDirectory: string | undefined
+    existingExecutable?: Static | Dynamic
+    existingArgs?: string | undefined
+    existingInstalledRegex?: string
+  }): Promise<ConfigureInstalledVersionResponse | undefined> {
+    const shell = await Add.getShell({
+      inputs,
+      existingShell,
+    })
+
+    const directory = await Add.getDirectory({
+      inputs,
+      existingDirectory,
+    })
+
+    const executable = await Add.configureExecutable({
+      inputs,
+      directory,
+      existingExecutable,
+    })
+
+    if (executable) {
+      const args = await Add.getArgs({
+        inputs,
+        existingArgs,
+      })
+      const installedRegex = await Add.getInstalledRegex({
+        inputs,
+        existingInstalledRegex,
+      })
+
+      try {
+        const software = new Software({
+          name: 'Installed Test',
+          shell,
+          directory,
+          executable,
+          args,
+          installedRegex,
+          url: '',
+          latestRegex: '',
+        })
+        console.log(`Installed version: "${await software.getInstalledVersion()}"`)
+
+        let versionCorrect = true
+        if (!inputs || inputs.interactive) {
+          versionCorrect = await AddPrompts.getVersionCorrect()
+        }
+
+        if (versionCorrect) {
+          return {
+            shell,
+            directory,
+            executable,
+            args,
+            installedRegex,
+          }
+        }
+        return Add.configureInstalledVersion({
+          existingShell: shell,
+          existingDirectory: directory,
+          existingExecutable: executable,
+          existingArgs: args,
+          existingInstalledRegex: installedRegex,
+        })
+      } catch (err: any) {
+        const message = err.message || err
+        if (inputs && !inputs.interactive) {
+          throw new Error(`Could not determine installed version: ${message}`)
+        }
+        console.error(colors.red(message))
+
+        const reattempt = await AddPrompts.getReattemptVersion()
+        if (reattempt) {
+          return Add.configureInstalledVersion({
+            existingShell: shell,
+            existingDirectory: directory,
+            existingExecutable: executable,
+            existingArgs: args,
+            existingInstalledRegex: installedRegex,
+          })
+        }
+      }
+    }
+  }
+
   static async getDirectory({
     inputs,
     existingDirectory,
   }: {
     inputs?: Inputs
     existingDirectory?: string
-  }): Promise<string | undefined> {
+  }): Promise<string> {
     let directory
     if (inputs && (inputs.directory || !inputs.interactive)) {
       directory = inputs.directory !== undefined ? inputs.directory : existingDirectory
@@ -128,7 +224,7 @@ export default class Add extends Base {
         existingDirectory,
       })
     }
-    return directory
+    return directory || ''
   }
 
   static async doesOptionalPathExist({ directory }: { directory: string | undefined }): Promise<boolean> {
@@ -138,110 +234,14 @@ export default class Add extends Base {
     return true
   }
 
-  static async configureInstalledVersion({
-    inputs,
-    existingDirectory,
-    existingExecutable,
-    existingArgs,
-    existingShell,
-    existingInstalledRegex,
-  }: {
-    inputs?: Inputs
-    existingDirectory: string | undefined
-    existingExecutable?: Static | Dynamic
-    existingArgs?: string
-    existingShell?: string
-    existingInstalledRegex?: string
-  }): Promise<ConfigureInstalledVersionResponse | undefined> {
-    const directory = await Add.getDirectory({
-      inputs,
-      existingDirectory,
-    })
-
-    const executable = await Add.configureExecutable({
-      inputs,
-      directory,
-      existingExecutable,
-    })
-
-    if (executable) {
-      let args
-      if (inputs && (inputs.args || !inputs.interactive)) {
-        args = inputs.args !== undefined ? inputs.args : existingArgs
-      } else {
-        args = await AddPrompts.getArgs(existingArgs)
-      }
-
-      let shell
-      if (inputs && (inputs.shell || !inputs.interactive)) {
-        shell = inputs.shell !== undefined ? inputs.shell : existingShell
-      } else {
-        shell = await AddPrompts.getShell(existingShell)
-      }
-
-      let installedRegex = ''
-      if (inputs && (inputs.installedRegex || !inputs.interactive)) {
-        installedRegex = inputs.installedRegex || existingInstalledRegex || ''
-      } else {
-        installedRegex = await AddPrompts.getInstalledRegex(existingInstalledRegex)
-      }
-      if (!installedRegex) {
-        throw Error(Add.getMissingRequiredOptionErrorMessage(AddOptions.InstalledRegex.key))
-      }
-
-      try {
-        const software = new Software({
-          name: 'Installed Test',
-          directory,
-          executable,
-          args,
-          shell,
-          installedRegex,
-          url: '',
-          latestRegex: '',
-        })
-        console.log(`Installed version: "${await software.getInstalledVersion()}"`)
-
-        let versionCorrect = true
-        if (!inputs || inputs.interactive) {
-          versionCorrect = await AddPrompts.getVersionCorrect()
-        }
-
-        if (versionCorrect) {
-          return {
-            directory: directory || '',
-            executable,
-            args: args || '',
-            shell: shell || '',
-            installedRegex,
-          }
-        }
-        return Add.configureInstalledVersion({
-          existingDirectory: directory,
-          existingExecutable: executable,
-          existingArgs: args,
-          existingShell: shell,
-          existingInstalledRegex: installedRegex,
-        })
-      } catch (err: any) {
-        const message = err.message || err
-        if (inputs && !inputs.interactive) {
-          throw new Error(`Could not determine installed version: ${message}`)
-        }
-        console.error(colors.red(message))
-
-        const reattempt = await AddPrompts.getReattemptVersion()
-        if (reattempt) {
-          return Add.configureInstalledVersion({
-            existingDirectory: directory,
-            existingExecutable: executable,
-            existingArgs: args,
-            existingShell: shell,
-            existingInstalledRegex: installedRegex,
-          })
-        }
-      }
+  static async getShell({ inputs, existingShell }: { inputs?: Inputs; existingShell?: string }): Promise<string> {
+    let shell
+    if (inputs && (inputs.shell || !inputs.interactive)) {
+      shell = inputs.shell !== undefined ? inputs.shell : existingShell
+    } else {
+      shell = await AddPrompts.getShell(existingShell)
     }
+    return shell || ''
   }
 
   static async configureExecutable({
@@ -250,7 +250,7 @@ export default class Add extends Base {
     existingExecutable,
   }: {
     inputs?: Inputs
-    directory: string | undefined
+    directory: string
     existingExecutable?: Static | Dynamic
   }): Promise<Static | Dynamic | undefined> {
     let type: CommandType
@@ -317,28 +317,14 @@ export default class Add extends Base {
     existingRegex,
   }: {
     inputs?: Inputs
-    directory: string | undefined
+    directory: string
     existingRegex?: string
   }): Promise<Dynamic | undefined> {
-    let regex = ''
-
-    if (inputs && (inputs.executable || !inputs.interactive)) {
-      if (inputs.executable && !isStatic(inputs.executable)) {
-        regex = inputs.executable.regex
-      } else {
-        if (existingRegex) {
-          regex = existingRegex
-        }
-      }
-      if (!regex) {
-        throw Error(`The executable type "${CommandType.Dynamic}" requires a value passed into the "--regex" option.`)
-      }
-    } else {
-      regex = await AddPrompts.getRegex({
-        directory,
-        existingRegex,
-      })
-    }
+    const regex = await Add.getRegex({
+      inputs,
+      directory,
+      existingRegex,
+    })
 
     try {
       const command = await getDynamicExecutable({
@@ -380,6 +366,65 @@ export default class Add extends Base {
     }
   }
 
+  static async getRegex({
+    inputs,
+    directory,
+    existingRegex,
+  }: {
+    inputs?: Inputs
+    directory?: string
+    existingRegex?: string
+  }): Promise<string> {
+    let regex = ''
+
+    if (inputs && (inputs.executable || !inputs.interactive)) {
+      if (inputs.executable && !isStatic(inputs.executable)) {
+        regex = inputs.executable.regex
+      }
+      if (!regex && existingRegex) {
+        regex = existingRegex
+      }
+    } else {
+      regex = await AddPrompts.getRegex({
+        directory,
+        existingRegex,
+      })
+    }
+    if (!regex) {
+      throw Error(`The executable type "${CommandType.Dynamic}" requires a value passed into the "--regex" option.`)
+    }
+    return regex
+  }
+
+  static async getArgs({ inputs, existingArgs }: { inputs?: Inputs; existingArgs?: string }): Promise<string> {
+    let args
+    if (inputs && (inputs.args || !inputs.interactive)) {
+      args = inputs.args !== undefined ? inputs.args : existingArgs
+    } else {
+      args = await AddPrompts.getArgs(existingArgs)
+    }
+    return args || ''
+  }
+
+  static async getInstalledRegex({
+    inputs,
+    existingInstalledRegex,
+  }: {
+    inputs?: Inputs
+    existingInstalledRegex?: string
+  }): Promise<string> {
+    let installedRegex = ''
+    if (inputs && (inputs.installedRegex || !inputs.interactive)) {
+      installedRegex = inputs.installedRegex || existingInstalledRegex || ''
+    } else {
+      installedRegex = await AddPrompts.getInstalledRegex(existingInstalledRegex)
+    }
+    if (!installedRegex) {
+      throw Error(Add.getMissingRequiredOptionErrorMessage(AddOptions.InstalledRegex.key))
+    }
+    return installedRegex
+  }
+
   static async configureLatestVersion({
     inputs,
     existingUrl,
@@ -389,34 +434,24 @@ export default class Add extends Base {
     existingUrl?: string
     existingLatestRegex?: string
   }): Promise<ConfigureLatestVersionResponse | undefined> {
-    let url = ''
-    if (inputs && (inputs.url || !inputs.interactive)) {
-      url = inputs.url || existingUrl || ''
-    } else {
-      url = await AddPrompts.getUrl(existingUrl)
-    }
-    if (!url) {
-      throw Error(Add.getMissingRequiredOptionErrorMessage(AddOptions.Url.key))
-    }
-
-    let latestRegex = ''
-    if (inputs && (inputs.latestRegex || !inputs.interactive)) {
-      latestRegex = inputs.latestRegex || existingLatestRegex || ''
-    } else {
-      latestRegex = await AddPrompts.getLatestRegex(existingLatestRegex)
-    }
-    if (!latestRegex) {
-      throw Error(Add.getMissingRequiredOptionErrorMessage(AddOptions.LatestRegex.key))
-    }
+    const url = await Add.getUrl({
+      inputs,
+      existingUrl,
+    })
+    const latestRegex = await Add.getLatestRegex({
+      inputs,
+      existingLatestRegex,
+    })
 
     try {
       const software = new Software({
         name: 'Latest Test',
+        shell: '',
+        directory: '',
         executable: {
           command: 'false',
         },
         args: '',
-        shell: '',
         installedRegex: '',
         url,
         latestRegex,
@@ -455,14 +490,46 @@ export default class Add extends Base {
       }
     }
   }
+
+  static async getUrl({ inputs, existingUrl }: { inputs?: Inputs; existingUrl?: string }): Promise<string> {
+    let url = ''
+    if (inputs && (inputs.url || !inputs.interactive)) {
+      url = inputs.url || existingUrl || ''
+    } else {
+      url = await AddPrompts.getUrl(existingUrl)
+    }
+    if (!url) {
+      throw Error(Add.getMissingRequiredOptionErrorMessage(AddOptions.Url.key))
+    }
+    return url
+  }
+
+  static async getLatestRegex({
+    inputs,
+    existingLatestRegex,
+  }: {
+    inputs?: Inputs
+    existingLatestRegex?: string
+  }): Promise<string> {
+    let latestRegex = ''
+    if (inputs && (inputs.latestRegex || !inputs.interactive)) {
+      latestRegex = inputs.latestRegex || existingLatestRegex || ''
+    } else {
+      latestRegex = await AddPrompts.getLatestRegex(existingLatestRegex)
+    }
+    if (!latestRegex) {
+      throw Error(Add.getMissingRequiredOptionErrorMessage(AddOptions.LatestRegex.key))
+    }
+    return latestRegex
+  }
 }
 
 export interface Inputs {
   name?: string
-  directory?: string
+  shell?: string | undefined
+  directory?: string | undefined
   executable?: Static | Dynamic
   args?: string | undefined
-  shell?: string | undefined
   installedRegex?: string
   url?: string
   latestRegex?: string
@@ -470,10 +537,10 @@ export interface Inputs {
 }
 
 export interface ConfigureInstalledVersionResponse {
-  directory?: string
+  shell: string
+  directory: string
   executable: Static | Dynamic
-  args?: string
-  shell?: string
+  args: string
   installedRegex: string
 }
 

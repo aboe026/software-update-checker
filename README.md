@@ -100,6 +100,8 @@ _Note_: To run a specific test, execute
 npm run test:unit -- -t 'test name'
 ```
 
+With spaces separating describe blocks and test names
+
 #### Functional Tests
 
 Functional tests are for portions of the code that cannot easily be mocked or rely on elements outside their scope, such as executables and interacting with a live website. They can be run with
@@ -113,6 +115,8 @@ _Note_: To run a specific test, execute
 ```sh
 npm run test:func -- -t 'test name'
 ```
+
+With spaces separating describe blocks and test names
 
 #### End to End Tests
 
@@ -129,6 +133,8 @@ _Note_: To run a specific test, execute
 ```sh
 npm run test:e2e -- -t 'test name'
 ```
+
+With spaces separating describe blocks and test names
 
 ### Code Coverage
 

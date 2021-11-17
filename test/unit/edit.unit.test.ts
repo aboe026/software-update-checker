@@ -24,11 +24,11 @@ describe('Edit Unit Tests', () => {
       const name = 'throws error about no name specified edit'
       const software = new Software({
         name,
+        shell: 'french',
         executable: {
           command: 'tart',
         },
         args: 'pastry-crust',
-        shell: 'french',
         installedRegex: 'eggs',
         url: 'https://breakthefast.com',
         latestRegex: 'quiche',
@@ -97,12 +97,12 @@ describe('Edit Unit Tests', () => {
       const name = 'throws error dynamic command option without type'
       const software = new Software({
         name,
+        shell: 'dessert',
         directory: 'baked',
         executable: {
           regex: 'cookie',
         },
         args: 'drop',
-        shell: 'dessert',
         installedRegex: 'chocolate chip',
         url: 'https://sidneymonsterdonations.com',
         latestRegex: 'semi sweet morsels',
@@ -137,12 +137,12 @@ describe('Edit Unit Tests', () => {
       const name = 'throws error dynamic command option with dynamic type'
       const software = new Software({
         name,
+        shell: 'authors',
         directory: 'genre',
         executable: {
           regex: 'fantasy',
         },
         args: 'high',
-        shell: 'authors',
         installedRegex: 'Beren',
         url: 'https://fatherofmodernfantasy.com',
         latestRegex: 'John Ronald Reuel Tolkien',
@@ -178,11 +178,11 @@ describe('Edit Unit Tests', () => {
       const name = 'throws error static regex option without type'
       const software = new Software({
         name,
+        shell: 'symphony',
         executable: {
           command: 'beethoven',
         },
         args: 'd minor',
-        shell: 'symphony',
         installedRegex: 'no 9',
         url: 'https://befreetosing.com',
         latestRegex: 'ode to joy',
@@ -218,11 +218,11 @@ describe('Edit Unit Tests', () => {
       const name = 'throws error static regex option with static type'
       const software = new Software({
         name,
+        shell: 'body',
         executable: {
           command: 'water',
         },
         args: 'salt',
-        shell: 'body',
         installedRegex: 'largest',
         url: 'https://peacefulsea.com',
         latestRegex: 'pacific ocean',
@@ -259,12 +259,12 @@ describe('Edit Unit Tests', () => {
       const name = 'throws error changing to static without command'
       const software = new Software({
         name,
+        shell: 'fictional',
         directory: 'planets',
         executable: {
           regex: 'habited',
         },
         args: 'desert',
-        shell: 'fictional',
         installedRegex: 'dune',
         url: 'https://thespicesmustflow.com',
         latestRegex: 'arrakis',
@@ -297,11 +297,11 @@ describe('Edit Unit Tests', () => {
       const name = 'throws error changing to dynamic without regex'
       const software = new Software({
         name,
+        shell: 'maritime',
         executable: {
           command: 'fish',
         },
         args: 'male-pregnancy',
-        shell: 'maritime',
         installedRegex: 'seahorse',
         url: 'https://slowandsteadywinstherace.com',
         latestRegex: 'hippocampus',
@@ -338,11 +338,11 @@ describe('Edit Unit Tests', () => {
       const name = 'throws error changing to dynamic without executable'
       const software = new Software({
         name,
+        shell: 'hogwarts',
         executable: {
           command: 'wizards',
         },
         args: 'slytherin',
-        shell: 'hogwarts',
         installedRegex: 'half-blood prince',
         url: 'https://always.com',
         latestRegex: 'Severus Snape',
@@ -376,11 +376,11 @@ describe('Edit Unit Tests', () => {
       const name = 'calls configure with existing if not inputs and prompt'
       const software = new Software({
         name,
+        shell: 'pastry',
         executable: {
           command: 'donut',
         },
         args: 'cake',
-        shell: 'pastry',
         installedRegex: 'cracks',
         url: 'https://doh.com',
         latestRegex: 'old fashioned',
@@ -417,12 +417,12 @@ describe('Edit Unit Tests', () => {
       const name = 'change dynamic to static with command'
       const software = new Software({
         name,
+        shell: 'aircraft',
         directory: 'reconnaissance',
         executable: {
           regex: 'strategic',
         },
         args: 'lockheed',
-        shell: 'aircraft',
         installedRegex: 'blackbird',
         url: 'https://speedcheck.com',
         latestRegex: 'sr-71',
@@ -467,11 +467,11 @@ describe('Edit Unit Tests', () => {
       const name = 'change static to dynamic with regex'
       const software = new Software({
         name,
+        shell: 'star-trek',
         executable: {
           command: 'starship',
         },
         args: 'starfleet',
-        shell: 'star-trek',
         installedRegex: 'USS Enterprise',
         url: 'https://toboldlygo.com',
         latestRegex: 'NCC-1701',
@@ -516,25 +516,25 @@ describe('Edit Unit Tests', () => {
       const name = 'all options passed static'
       const software = new Software({
         name,
+        shell: 'cocktail',
         executable: {
           command: 'liquer',
         },
         args: 'cream',
-        shell: 'cocktail',
         installedRegex: 'caucasian',
         url: 'https://thedudeabides.com',
         latestRegex: 'white russian',
       })
       const inputs = {
         existing: name,
-        type: CommandType.Dynamic,
+        name: 'all changing dynamic name',
+        shell: 'all changing dynamic shell',
         directory: 'coffee',
+        type: CommandType.Dynamic,
         executable: {
           regex: 'vodka',
         },
-        name: 'all changing dynamic name',
         args: 'all changing dynamic args',
-        shell: 'all changing dynamic shell',
         installedRegex: 'all changing dynamic installedRegex',
         url: 'all changing dynamic url',
         latestRegex: 'all changing dynamic latestRegex',
@@ -573,26 +573,26 @@ describe('Edit Unit Tests', () => {
       const name = 'all options passed dynamic'
       const software = new Software({
         name,
+        shell: 'children',
         directory: 'film',
         executable: {
           regex: 'hollywood',
         },
         args: 'coming-of-age',
-        shell: 'children',
         installedRegex: 'baseball',
         url: 'https://legendsneverdie.com',
         latestRegex: 'the sandlot',
       })
       const inputs = {
         existing: name,
+        name: 'all changing static name',
+        shell: 'all changing static shell',
         directory: 'all changing static directory',
         type: CommandType.Static,
         executable: {
           command: 'all changing static command',
         },
-        name: 'all changing static name',
         args: 'all changing static args',
-        shell: 'all changing static shell',
         installedRegex: 'all changing static installedRegex',
         url: 'all changing static url',
         latestRegex: 'all changing static latestRegex',

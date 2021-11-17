@@ -297,11 +297,11 @@ export default class E2eTestUtil {
         existingName,
         newSoftware: {
           name: newSoftware.name,
+          shell: newSoftware.shell,
           directory: newSoftware.directory,
           type: CommandType.Static,
           command: isStatic(newSoftware.executable) ? newSoftware.executable.command : '',
           args: newSoftware.args,
-          shell: newSoftware.shell,
           installedRegex: newSoftware.installedRegex,
           url: newSoftware.url,
           latestRegex: newSoftware.latestRegex,

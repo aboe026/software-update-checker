@@ -34,11 +34,11 @@ describe('View Silent', () => {
       const latestVersion = '1.0.0'
       const software = new Software({
         name: 'e2e view silent single no error or update',
+        shell: '',
         executable: {
           command: 'node',
         },
         args: `${E2eViewUtil.COMMAND.Good} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -61,11 +61,11 @@ describe('View Silent', () => {
       const latestVersion = '1.0.0'
       const software = new Software({
         name: 'e2e view silent single installed error',
+        shell: '',
         executable: {
           command: 'node',
         },
         args: `${E2eViewUtil.COMMAND.Bad} ${installedError}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -90,11 +90,11 @@ describe('View Silent', () => {
         const latestError = 'socket timeout'
         const software = new Software({
           name: 'e2e view single latest error',
+          shell: '',
           executable: {
             command: 'node',
           },
           args: `${E2eViewUtil.COMMAND.Good} v${installedVersion}`,
-          shell: '',
           installedRegex: 'v(.*)',
           url: Website.getErrorUrl(latestError),
           latestRegex: 'latest: v(.*)',
@@ -122,11 +122,11 @@ describe('View Silent', () => {
       const latestVersion = '1.0.1'
       const software = new Software({
         name: 'e2e view single update',
+        shell: '',
         executable: {
           command: 'node',
         },
         args: `${E2eViewUtil.COMMAND.Good} v${installedVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${latestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -152,22 +152,22 @@ describe('View Silent', () => {
       const lastLatestVersion = '1.0.1'
       const firstSoftware = new Software({
         name: 'e2e view silent two no error or update first',
+        shell: '',
         executable: {
           command: 'node',
         },
         args: `${E2eViewUtil.COMMAND.Good} v${firstInstalledVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${firstLatestVersion}`),
         latestRegex: 'latest: v(.*)',
       })
       const lastSoftware = new Software({
         name: 'e2e view silent two no error or update last',
+        shell: '',
         executable: {
           command: 'node',
         },
         args: `${E2eViewUtil.COMMAND.Good} v${lastInstalledVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${lastLatestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -197,22 +197,22 @@ describe('View Silent', () => {
       const lastLatestVersion = '1.0.1'
       const firstSoftware = new Software({
         name: 'e2e view silent two first installed error second none first',
+        shell: '',
         executable: {
           command: 'node',
         },
         args: `${E2eViewUtil.COMMAND.Bad} ${firstInstalledError}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${firstLatestVersion}`),
         latestRegex: 'latest: v(.*)',
       })
       const lastSoftware = new Software({
         name: 'e2e view silent two first installed error second none last',
+        shell: '',
         executable: {
           command: 'node',
         },
         args: `${E2eViewUtil.COMMAND.Good} v${lastInstalledVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${lastLatestVersion}`),
         latestRegex: 'latest: v(.*)',
@@ -243,22 +243,22 @@ describe('View Silent', () => {
       const lastLatestError = 'EADDRESS_NOT_FOUND'
       const firstSoftware = new Software({
         name: 'e2e view silent two first update second latest error first',
+        shell: '',
         executable: {
           command: 'node',
         },
         args: `${E2eViewUtil.COMMAND.Good} v${firstInstalledVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getResponseUrl(`latest: v${firstLatestVersion}`),
         latestRegex: 'latest: v(.*)',
       })
       const lastSoftware = new Software({
         name: 'e2e view silent two first update second latest error last',
+        shell: '',
         executable: {
           command: 'node',
         },
         args: `${E2eViewUtil.COMMAND.Good} v${lastInstalledVersion}`,
-        shell: '',
         installedRegex: 'v(.*)',
         url: Website.getErrorUrl(lastLatestError),
         latestRegex: 'latest: v(.*)',

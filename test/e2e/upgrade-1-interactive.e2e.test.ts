@@ -14,12 +14,12 @@ describe('Upgrade 1 Interactive', () => {
   it('interactive add works with single existing software with shellOverride without version', async () => {
     const existingSoftware = {
       name: 'e2e upgrade 1 interactive add single existing shellOverride without version',
+      shellOverride: 'metaphysics',
       directory: 'identity',
       executable: {
         command: 'experiment',
       },
       args: 'thought',
-      shellOverride: 'metaphysics',
       installedRegex: 'ship',
       url: 'https://whoami.com',
       latestRegex: 'theseus',
@@ -28,12 +28,12 @@ describe('Upgrade 1 Interactive', () => {
     const latestVersion = '0.7.7'
     const newSoftware = new Software({
       name: 'e2e upgrade 1 interactive add single shellOverride without version',
+      shell: '',
       directory: '',
       executable: {
         command: 'node',
       },
       args: `${E2eBaseUtil.COMMAND.Good} v${installedVersion}`,
-      shell: '',
       installedRegex: 'v(.*)',
       url: Website.getResponseUrl(`latest: v${latestVersion}`),
       latestRegex: 'latest: v(.*)',
@@ -48,10 +48,10 @@ describe('Upgrade 1 Interactive', () => {
     await E2eBaseUtil.verifySoftwares([
       new Software({
         name: existingSoftware.name,
+        shell: existingSoftware.shellOverride,
         directory: existingSoftware.directory,
         executable: existingSoftware.executable,
         args: existingSoftware.args,
-        shell: existingSoftware.shellOverride,
         installedRegex: existingSoftware.installedRegex,
         url: existingSoftware.url,
         latestRegex: existingSoftware.latestRegex,
@@ -63,11 +63,11 @@ describe('Upgrade 1 Interactive', () => {
     const existingSoftware = {
       name: 'e2e upgrade 1 interactive add single existing shellOverride version 0',
       directory: 'cow',
+      shellOverride: 'diary',
       executable: {
         command: 'cheeses',
       },
       args: 'alpine',
-      shellOverride: 'diary',
       installedRegex: 'veneto',
       url: 'https://productofthemountains.com',
       latestRegex: 'asiago',
@@ -76,12 +76,12 @@ describe('Upgrade 1 Interactive', () => {
     const latestVersion = '0.7.8'
     const newSoftware = new Software({
       name: 'e2e upgrade 1 interactive add single shellOverride version 0',
+      shell: '',
       directory: '',
       executable: {
         command: 'node',
       },
       args: `${E2eBaseUtil.COMMAND.Good} v${installedVersion}`,
-      shell: '',
       installedRegex: 'v(.*)',
       url: Website.getResponseUrl(`latest: v${latestVersion}`),
       latestRegex: 'latest: v(.*)',
@@ -96,10 +96,10 @@ describe('Upgrade 1 Interactive', () => {
     await E2eBaseUtil.verifySoftwares([
       new Software({
         name: existingSoftware.name,
+        shell: existingSoftware.shellOverride,
         directory: existingSoftware.directory,
         executable: existingSoftware.executable,
         args: existingSoftware.args,
-        shell: existingSoftware.shellOverride,
         installedRegex: existingSoftware.installedRegex,
         url: existingSoftware.url,
         latestRegex: existingSoftware.latestRegex,
@@ -110,12 +110,12 @@ describe('Upgrade 1 Interactive', () => {
   it('interactive edit works with single existing software with shellOverride without version', async () => {
     const existingSoftware = {
       name: 'e2e upgrade 1 interactive edit single existing shellOverride without version',
+      shellOverride: 'game',
       directory: 'global',
       executable: {
         command: 'competition',
       },
       args: 'athletic',
-      shellOverride: 'game',
       installedRegex: 'greek',
       url: 'https://icallupontheyouthoftheworld.com',
       latestRegex: 'olympics',
@@ -124,12 +124,12 @@ describe('Upgrade 1 Interactive', () => {
     const latestVersion = '0.6.7'
     const newSoftware = new Software({
       name: `${existingSoftware.name} edited`,
+      shell: '',
       directory: '',
       executable: {
         command: 'node',
       },
       args: `${E2eBaseUtil.COMMAND.Good} v${installedVersion}`,
-      shell: '',
       installedRegex: 'v(.*)',
       url: Website.getResponseUrl(`latest: v${latestVersion}`),
       latestRegex: 'latest: v(.*)',
@@ -140,10 +140,10 @@ describe('Upgrade 1 Interactive', () => {
       existingSoftwares: [
         new Software({
           name: existingSoftware.name,
+          shell: existingSoftware.shellOverride,
           directory: existingSoftware.directory,
           executable: existingSoftware.executable,
           args: existingSoftware.args,
-          shell: existingSoftware.shellOverride,
           installedRegex: existingSoftware.installedRegex,
           url: existingSoftware.url,
           latestRegex: existingSoftware.latestRegex,
@@ -159,12 +159,12 @@ describe('Upgrade 1 Interactive', () => {
   it('interactive edit works with single existing software with shellOverride from version 0', async () => {
     const existingSoftware = {
       name: 'e2e upgrade 1 interactive edit single existing shellOverride version 0',
+      shellOverride: 'marine',
       directory: 'wonder',
       executable: {
         command: 'ecosystem',
       },
       args: 'coral',
-      shellOverride: 'marine',
       installedRegex: 'australia',
       url: 'https://fisharefriends.com',
       latestRegex: 'great barrier reef',
@@ -173,12 +173,12 @@ describe('Upgrade 1 Interactive', () => {
     const latestVersion = '0.8.6'
     const newSoftware = new Software({
       name: `${existingSoftware.name} edited`,
+      shell: '',
       directory: '',
       executable: {
         command: 'node',
       },
       args: `${E2eBaseUtil.COMMAND.Good} v${installedVersion}`,
-      shell: '',
       installedRegex: 'v(.*)',
       url: Website.getResponseUrl(`latest: v${latestVersion}`),
       latestRegex: 'latest: v(.*)',
@@ -189,10 +189,10 @@ describe('Upgrade 1 Interactive', () => {
       existingSoftwares: [
         new Software({
           name: existingSoftware.name,
+          shell: existingSoftware.shellOverride,
           directory: existingSoftware.directory,
           executable: existingSoftware.executable,
           args: existingSoftware.args,
-          shell: existingSoftware.shellOverride,
           installedRegex: existingSoftware.installedRegex,
           url: existingSoftware.url,
           latestRegex: existingSoftware.latestRegex,
@@ -210,12 +210,12 @@ describe('Upgrade 1 Interactive', () => {
     const latestVersion = '0.6.0'
     const existingSoftware = {
       name: 'e2e upgrade 1 interactive view single existing shellOverride without version',
+      shellOverride: '',
       directory: '',
       executable: {
         command: 'node',
       },
       args: `${E2eBaseUtil.COMMAND.Good} v${installedVersion}`,
-      shellOverride: '',
       installedRegex: 'v(.*)',
       url: Website.getResponseUrl(`latest: v${latestVersion}`),
       latestRegex: 'latest: v(.*)',
@@ -235,10 +235,10 @@ describe('Upgrade 1 Interactive', () => {
     await E2eBaseUtil.verifySoftwares([
       new Software({
         name: existingSoftware.name,
+        shell: existingSoftware.shellOverride,
         directory: existingSoftware.directory,
         executable: existingSoftware.executable,
         args: existingSoftware.args,
-        shell: existingSoftware.shellOverride,
         installedRegex: existingSoftware.installedRegex,
         url: existingSoftware.url,
         latestRegex: existingSoftware.latestRegex,
@@ -250,12 +250,12 @@ describe('Upgrade 1 Interactive', () => {
     const latestVersion = '0.6.1'
     const existingSoftware = {
       name: 'e2e upgrade 1 interactive view single existing shellOverride version 0',
+      shellOverride: '',
       directory: '',
       executable: {
         command: 'node',
       },
       args: `${E2eBaseUtil.COMMAND.Good} v${installedVersion}`,
-      shellOverride: '',
       installedRegex: 'v(.*)',
       url: Website.getResponseUrl(`latest: v${latestVersion}`),
       latestRegex: 'latest: v(.*)',
@@ -275,10 +275,10 @@ describe('Upgrade 1 Interactive', () => {
     await E2eBaseUtil.verifySoftwares([
       new Software({
         name: existingSoftware.name,
+        shell: existingSoftware.shellOverride,
         directory: existingSoftware.directory,
         executable: existingSoftware.executable,
         args: existingSoftware.args,
-        shell: existingSoftware.shellOverride,
         installedRegex: existingSoftware.installedRegex,
         url: existingSoftware.url,
         latestRegex: existingSoftware.latestRegex,
@@ -288,24 +288,24 @@ describe('Upgrade 1 Interactive', () => {
   it('interactive delete works with existing softwares with shellOverride without version', async () => {
     const firstSoftware = {
       name: 'e2e upgrade 1 interactive delete shellOverride without version first',
+      shellOverride: 'comedy',
       directory: 'ohio',
       executable: {
         command: 'business',
       },
       args: 'automotive',
-      shellOverride: 'comedy',
       installedRegex: 'break pads',
       url: 'https://holyschnikes.com',
       latestRegex: 'callahan auto',
     }
     const lastSoftware = {
       name: 'e2e upgrade 1 interactive delete shellOverride without version last',
+      shellOverride: 'supernatural',
       directory: 'drumbeats',
       executable: {
         command: 'game',
       },
       args: 'board',
-      shellOverride: 'supernatural',
       installedRegex: 'jungle',
       url: 'https://whatyearisit.com',
       latestRegex: 'jumanji',
@@ -316,20 +316,20 @@ describe('Upgrade 1 Interactive', () => {
       existingSoftwares: [
         new Software({
           name: firstSoftware.name,
+          shell: firstSoftware.shellOverride,
           directory: firstSoftware.directory,
           executable: firstSoftware.executable,
           args: firstSoftware.args,
-          shell: firstSoftware.shellOverride,
           installedRegex: firstSoftware.installedRegex,
           url: firstSoftware.url,
           latestRegex: firstSoftware.latestRegex,
         }),
         new Software({
           name: lastSoftware.name,
+          shell: lastSoftware.shellOverride,
           directory: lastSoftware.directory,
           executable: lastSoftware.executable,
           args: lastSoftware.args,
-          shell: lastSoftware.shellOverride,
           installedRegex: lastSoftware.installedRegex,
           url: lastSoftware.url,
           latestRegex: lastSoftware.latestRegex,
@@ -340,10 +340,10 @@ describe('Upgrade 1 Interactive', () => {
     await E2eBaseUtil.verifySoftwares([
       new Software({
         name: lastSoftware.name,
+        shell: lastSoftware.shellOverride,
         directory: lastSoftware.directory,
         executable: lastSoftware.executable,
         args: lastSoftware.args,
-        shell: lastSoftware.shellOverride,
         installedRegex: lastSoftware.installedRegex,
         url: lastSoftware.url,
         latestRegex: lastSoftware.latestRegex,
@@ -353,24 +353,24 @@ describe('Upgrade 1 Interactive', () => {
   it('interactive delete works with existing softwares with shellOverride from version 0', async () => {
     const firstSoftware = {
       name: 'e2e upgrade 1 interactive delete shellOverride version 0 first',
+      shellOverride: 'fiction',
       directory: 'family',
       executable: {
         command: 'word',
       },
       args: 'one from many',
-      shellOverride: 'fiction',
       installedRegex: 'high speech',
       url: 'https://longdayspleasantnights.com',
       latestRegex: 'ka-tet',
     }
     const lastSoftware = {
       name: 'e2e upgrade 1 interactive delete shellOverride version 0 last',
+      shellOverride: 'grain',
       directory: 'unleavened',
       executable: {
         command: 'flatbread',
       },
       args: 'corn',
-      shellOverride: 'grain',
       installedRegex: 'hominy',
       url: 'https://littlecake.com',
       latestRegex: 'tortilla',
@@ -381,20 +381,20 @@ describe('Upgrade 1 Interactive', () => {
       existingSoftwares: [
         new Software({
           name: firstSoftware.name,
+          shell: firstSoftware.shellOverride,
           directory: firstSoftware.directory,
           executable: firstSoftware.executable,
           args: firstSoftware.args,
-          shell: firstSoftware.shellOverride,
           installedRegex: firstSoftware.installedRegex,
           url: firstSoftware.url,
           latestRegex: firstSoftware.latestRegex,
         }),
         new Software({
           name: lastSoftware.name,
+          shell: lastSoftware.shellOverride,
           directory: lastSoftware.directory,
           executable: lastSoftware.executable,
           args: lastSoftware.args,
-          shell: lastSoftware.shellOverride,
           installedRegex: lastSoftware.installedRegex,
           url: lastSoftware.url,
           latestRegex: lastSoftware.latestRegex,
@@ -405,10 +405,10 @@ describe('Upgrade 1 Interactive', () => {
     await E2eBaseUtil.verifySoftwares([
       new Software({
         name: lastSoftware.name,
+        shell: lastSoftware.shellOverride,
         directory: lastSoftware.directory,
         executable: lastSoftware.executable,
         args: lastSoftware.args,
-        shell: lastSoftware.shellOverride,
         installedRegex: lastSoftware.installedRegex,
         url: lastSoftware.url,
         latestRegex: lastSoftware.latestRegex,

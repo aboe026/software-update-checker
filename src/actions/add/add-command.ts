@@ -70,10 +70,10 @@ export default class AddCommand extends BaseCommand {
     return Add.configure({
       inputs: {
         name,
+        shell: AddCommand.getStringArgument(argv, AddOptions.Shell),
         directory: AddCommand.getStringArgument(argv, AddOptions.Directory),
         executable,
         args: AddCommand.getStringArgument(argv, AddOptions.Arguments),
-        shell: AddCommand.getStringArgument(argv, AddOptions.Shell),
         installedRegex,
         url,
         latestRegex,

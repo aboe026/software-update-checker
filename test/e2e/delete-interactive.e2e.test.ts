@@ -32,11 +32,11 @@ describe('Delete Interactive', () => {
       const name = 'e2e delete without confirm'
       const software = new Software({
         name,
+        shell: 'television',
         executable: {
           command: 'show',
         },
         args: 'reality',
-        shell: 'television',
         installedRegex: 'competition',
         url: 'https://thetribehasspoken.com',
         latestRegex: 'survivor',
@@ -55,11 +55,11 @@ describe('Delete Interactive', () => {
     it('delete interactive only software', async () => {
       const software = new Software({
         name: 'e2e delete only',
+        shell: 'DOS',
         executable: {
           command: 'commands',
         },
         args: 'delete',
-        shell: 'DOS',
         installedRegex: 'del',
         url: 'https://goodbye.com',
         latestRegex: 'erase',
@@ -75,22 +75,22 @@ describe('Delete Interactive', () => {
     it('delete interactive first of two softwares', async () => {
       const firstSoftware = new Software({
         name: 'e2e delete first of two first',
+        shell: 'animated',
         executable: {
           command: 'assistant-manager',
         },
         args: 'propane',
-        shell: 'animated',
         installedRegex: 'hank',
         url: 'https://goshdangitbobby.com',
         latestRegex: 'Hank Rutherford Hill',
       })
       const lastSoftware = new Software({
         name: 'e2e delete first of two last',
+        shell: 'sitcom',
         executable: {
           command: 'regional-manager',
         },
         args: 'paper',
-        shell: 'sitcom',
         installedRegex: 'michael',
         url: 'https://thatswhatshesaid.com',
         latestRegex: 'Michael Gary Scott',
@@ -106,22 +106,22 @@ describe('Delete Interactive', () => {
     it('delete interactive last of two softwares', async () => {
       const firstSoftware = new Software({
         name: 'e2e delete last of two first',
+        shell: 'marvel',
         executable: {
           command: 'hero',
         },
         args: 'mortal',
-        shell: 'marvel',
         installedRegex: 'tony',
         url: 'https://3000.com',
         latestRegex: 'iron man',
       })
       const lastSoftware = new Software({
         name: 'e2e delete last of two last',
+        shell: 'dc',
         executable: {
           command: 'villian',
         },
         args: 'human',
-        shell: 'dc',
         installedRegex: 'clown',
         url: 'https://whysoserious.com',
         latestRegex: 'joker',

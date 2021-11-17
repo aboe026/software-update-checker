@@ -19,22 +19,22 @@ describe('Edit Prompts Unit Tests', () => {
       const softwares = [
         new Software({
           name: 'first to edit',
+          shell: 'surface',
           executable: {
             command: 'single-sided',
           },
           args: 'non-orientable',
-          shell: 'surface',
           installedRegex: 'boundry-curve=1',
           url: 'https://recycle.com',
           latestRegex: 'mobius strip',
         }),
         new Software({
           name: 'last to edit',
+          shell: 'psychology',
           executable: {
             command: 'cognitive',
           },
           args: 'shift',
-          shell: 'psychology',
           installedRegex: 'spaceflight',
           url: 'https://fragileballoflife.com',
           latestRegex: 'overview effect',

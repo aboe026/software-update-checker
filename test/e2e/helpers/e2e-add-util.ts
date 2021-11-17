@@ -2,6 +2,7 @@ import E2eBaseUtil, { BooleanPrompt, ChoicePrompt, StringPrompt } from './e2e-ba
 import { getExecutableName, KEYS } from './interactive-execute'
 import { isStatic } from '../../../src/software/executable'
 import Software from '../../../src/software/software'
+import TestUtil from '../../helpers/test-util'
 
 export enum ExecutableChoiceOption {
   Static = 'Static',
@@ -10,14 +11,13 @@ export enum ExecutableChoiceOption {
 
 export interface InstalledReconfiguration {
   name?: string
+  shell?: string
   directory?: string
   command?: string
   args?: string
-  shell?: string
   regex?: string
   error?: string
   version?: string
-  preVersionCheckError?: boolean
   confirmOrReconfigure?: boolean
 }
 
@@ -54,6 +54,9 @@ export default class E2eAddUtil extends E2eBaseUtil {
       `--url="${software.url}"`,
       `--latestRegex="${software.latestRegex}"`,
     ]
+    if (software.shell) {
+      args.push(`--shell="${software.shell}"`)
+    }
     if (software.directory) {
       args.push(`--directory="${software.directory}"`)
     }
@@ -65,9 +68,6 @@ export default class E2eAddUtil extends E2eBaseUtil {
     if (software.args) {
       args.push(`--args="${software.args}"`)
     }
-    if (software.shell) {
-      args.push(`--shell="${software.shell}"`)
-    }
     return args
   }
 
@@ -76,6 +76,11 @@ export default class E2eAddUtil extends E2eBaseUtil {
       ...E2eBaseUtil.getInputsPrompt({
         currentValue: software.name,
         defaultValue: defaults && defaults.name,
+      }),
+      ...E2eBaseUtil.getInputsPrompt({
+        currentValue: software.shell,
+        defaultValue: defaults && defaults.shell,
+        fallbackValue: KEYS.BACK_SPACE,
       }),
       ...E2eBaseUtil.getInputsPrompt({
         currentValue: software.directory,
@@ -90,11 +95,6 @@ export default class E2eAddUtil extends E2eBaseUtil {
       ...E2eBaseUtil.getInputsPrompt({
         currentValue: software.args,
         defaultValue: defaults && defaults.args,
-      }),
-      ...E2eBaseUtil.getInputsPrompt({
-        currentValue: software.shell,
-        defaultValue: defaults && defaults.shell,
-        fallbackValue: KEYS.BACK_SPACE,
       }),
       ...E2eBaseUtil.getInputsPrompt({
         currentValue: software.installedRegex,
@@ -126,14 +126,22 @@ export default class E2eAddUtil extends E2eBaseUtil {
     for (let i = 0; i < installed.length; i++) {
       const currentConfig = installed[i]
       const previousConfig = i === 0 ? defaults : installed[i - 1]
-      if (i === 0 || currentConfig.name) {
+      if (currentConfig.name !== undefined) {
         inputs.push(
           ...E2eBaseUtil.getInputsPrompt({
             currentValue: currentConfig.name,
           })
         )
       }
-      if (!currentConfig.preVersionCheckError || currentConfig.directory) {
+      if (currentConfig.shell !== undefined) {
+        inputs.push(
+          ...E2eBaseUtil.getInputsPrompt({
+            currentValue: currentConfig.shell,
+            defaultValue: previousConfig && previousConfig.shell,
+          })
+        )
+      }
+      if (currentConfig.directory !== undefined) {
         inputs.push(
           ...E2eBaseUtil.getInputsPrompt({
             currentValue: currentConfig.directory,
@@ -141,7 +149,7 @@ export default class E2eAddUtil extends E2eBaseUtil {
           })
         )
       }
-      if (!currentConfig.preVersionCheckError) {
+      if (currentConfig.command !== undefined) {
         inputs.push(
           KEYS.Enter, // static
           ...E2eBaseUtil.getInputsPrompt({
@@ -157,10 +165,6 @@ export default class E2eAddUtil extends E2eBaseUtil {
             defaultValue: previousConfig && previousConfig.args,
           }),
           ...E2eBaseUtil.getInputsPrompt({
-            currentValue: currentConfig.shell,
-            defaultValue: previousConfig && previousConfig.shell,
-          }),
-          ...E2eBaseUtil.getInputsPrompt({
             currentValue: currentConfig.regex,
             defaultValue: isSoftware(previousConfig)
               ? previousConfig.installedRegex
@@ -171,24 +175,22 @@ export default class E2eAddUtil extends E2eBaseUtil {
       }
     }
 
-    if (installed[installed.length - 1].confirmOrReconfigure) {
-      for (let i = 0; i < latest.length; i++) {
-        const currentConfig = latest[i]
-        const previousConfig = i === 0 ? defaults : latest[i - 1]
-        inputs.push(
-          ...E2eBaseUtil.getInputsPrompt({
-            currentValue: currentConfig.url,
-            defaultValue: previousConfig && previousConfig.url,
-          }),
-          ...E2eBaseUtil.getInputsPrompt({
-            currentValue: currentConfig.regex,
-            defaultValue: isSoftware(previousConfig)
-              ? previousConfig.latestRegex
-              : previousConfig && previousConfig.regex,
-          }),
-          ...(currentConfig.confirmOrReconfigure ? [KEYS.Enter] : ['No', KEYS.Enter])
-        )
-      }
+    for (let i = 0; i < latest.length; i++) {
+      const currentConfig = latest[i]
+      const previousConfig = i === 0 ? defaults : latest[i - 1]
+      inputs.push(
+        ...E2eBaseUtil.getInputsPrompt({
+          currentValue: currentConfig.url,
+          defaultValue: previousConfig && previousConfig.url,
+        }),
+        ...E2eBaseUtil.getInputsPrompt({
+          currentValue: currentConfig.regex,
+          defaultValue: isSoftware(previousConfig)
+            ? previousConfig.latestRegex
+            : previousConfig && previousConfig.regex,
+        }),
+        ...(currentConfig.confirmOrReconfigure ? [KEYS.Enter] : ['No', KEYS.Enter])
+      )
     }
 
     return inputs
@@ -226,6 +228,11 @@ export default class E2eAddUtil extends E2eBaseUtil {
         default: defaults && defaults.name,
       },
       {
+        question: `${E2eAddUtil.MESSAGES.Shell} ${E2eAddUtil.MESSAGES.ShellExample}`,
+        answer: software.shell,
+        default: defaults && defaults.shell,
+      },
+      {
         question: `${E2eAddUtil.MESSAGES.Directory} ${E2eAddUtil.getDirectoryExampleMessage({
           directory: executableDirectory,
         })}`,
@@ -249,11 +256,6 @@ export default class E2eAddUtil extends E2eBaseUtil {
         question: `${E2eAddUtil.MESSAGES.Arguments} ${E2eAddUtil.MESSAGES.ArgumentsExample}`,
         answer: software.args,
         default: defaults && defaults.args,
-      },
-      {
-        question: `${E2eAddUtil.MESSAGES.Shell} ${E2eAddUtil.MESSAGES.ShellExample}`,
-        answer: software.shell,
-        default: defaults && defaults.shell,
       },
       {
         question: `${E2eAddUtil.MESSAGES.InstalledRegex} ${E2eAddUtil.MESSAGES.InstalledRegexExample}`,
@@ -283,6 +285,52 @@ export default class E2eAddUtil extends E2eBaseUtil {
     ]
   }
 
+  static getPreviousValue({
+    property,
+    softwareProperty,
+    dependantProperty,
+    currentIndex,
+    reconfiguration,
+    convertToEmptyString,
+    defaults,
+  }: {
+    property: string
+    softwareProperty?: string
+    dependantProperty?: string
+    currentIndex: number
+    reconfiguration: InstalledReconfiguration[] | LatestReconfiguration[]
+    convertToEmptyString?: string
+    defaults?: Software
+  }): string | undefined {
+    let previousValue
+    if (currentIndex === 0 && defaults) {
+      previousValue = TestUtil.getNestedProperty({
+        obj: defaults,
+        property: softwareProperty || property,
+      })
+    } else {
+      for (let i = currentIndex - 1; i >= 0; i--) {
+        const possiblePreviousValue = TestUtil.getNestedProperty({
+          obj: reconfiguration[i],
+          property: isSoftware(reconfiguration[i]) ? softwareProperty : property,
+        })
+        const previousDepandantProperty = TestUtil.getNestedProperty({
+          obj: reconfiguration[i],
+          property: dependantProperty,
+        })
+        if (possiblePreviousValue !== undefined) {
+          if (!dependantProperty || previousDepandantProperty !== undefined) {
+            previousValue = possiblePreviousValue
+          }
+        }
+      }
+    }
+    if (convertToEmptyString && previousValue === convertToEmptyString) {
+      previousValue = ''
+    }
+    return previousValue
+  }
+
   static getChunksReconfigure({
     defaults,
     installed,
@@ -299,18 +347,7 @@ export default class E2eAddUtil extends E2eBaseUtil {
     const chunks: (string | StringPrompt | BooleanPrompt | ChoicePrompt)[] = []
     for (let i = 0; i < installed.length; i++) {
       const currentConfig = installed[i]
-      let previousConfig
-      if (i === 0) {
-        previousConfig = defaults
-      } else {
-        for (let j = i - 1; j >= 0; j--) {
-          // need to ignore directory errors, because they do not "persist" values to new config
-          if (!installed[j].preVersionCheckError) {
-            previousConfig = installed[j]
-          }
-        }
-      }
-      if (i === 0 || currentConfig.name) {
+      if (currentConfig.name !== undefined) {
         chunks.push(
           ...[
             {
@@ -321,7 +358,20 @@ export default class E2eAddUtil extends E2eBaseUtil {
           ]
         )
       }
-      if (!currentConfig.preVersionCheckError || currentConfig.directory) {
+      if (currentConfig.shell !== undefined) {
+        chunks.push({
+          question: `${E2eAddUtil.MESSAGES.Shell} ${E2eAddUtil.MESSAGES.ShellExample}`,
+          answer: currentConfig.shell === KEYS.BACK_SPACE ? '' : currentConfig.shell,
+          default: E2eAddUtil.getPreviousValue({
+            property: 'shell',
+            currentIndex: i,
+            reconfiguration: installed,
+            defaults,
+            convertToEmptyString: KEYS.BACK_SPACE,
+          }),
+        })
+      }
+      if (currentConfig.directory !== undefined) {
         chunks.push(
           ...[
             {
@@ -329,16 +379,19 @@ export default class E2eAddUtil extends E2eBaseUtil {
                 directory: executableDirectory,
               })}`,
               answer: currentConfig.directory === KEYS.BACK_SPACE ? '' : currentConfig.directory,
-              default: previousConfig
-                ? previousConfig.directory === KEYS.BACK_SPACE
-                  ? ''
-                  : previousConfig.directory
-                : undefined,
+              default: E2eAddUtil.getPreviousValue({
+                property: 'directory',
+                dependantProperty: 'command',
+                currentIndex: i,
+                reconfiguration: installed,
+                defaults,
+                convertToEmptyString: KEYS.BACK_SPACE,
+              }),
             },
           ]
         )
       }
-      if (!currentConfig.preVersionCheckError) {
+      if (currentConfig.command !== undefined) {
         chunks.push(
           ...[
             ...E2eAddUtil.MESSAGES.CommandTypes,
@@ -351,39 +404,41 @@ export default class E2eAddUtil extends E2eBaseUtil {
                 executableName: executableFile || getExecutableName(),
               })}`,
               answer: currentConfig.command,
-              default: isSoftware(previousConfig)
-                ? isStatic(previousConfig.executable)
-                  ? previousConfig.executable.command
-                  : undefined
-                : previousConfig && previousConfig.command,
+              default: E2eAddUtil.getPreviousValue({
+                property: 'command',
+                softwareProperty: 'executable.command',
+                currentIndex: i,
+                reconfiguration: installed,
+                defaults,
+              }),
             },
             {
               question: `${E2eAddUtil.MESSAGES.Arguments} ${E2eAddUtil.MESSAGES.ArgumentsExample}`,
               answer: currentConfig.args,
-              default: previousConfig && previousConfig.args,
-            },
-            {
-              question: `${E2eAddUtil.MESSAGES.Shell} ${E2eAddUtil.MESSAGES.ShellExample}`,
-              answer: currentConfig.shell === KEYS.BACK_SPACE ? '' : currentConfig.shell,
-              default: previousConfig
-                ? previousConfig.shell === KEYS.BACK_SPACE
-                  ? ''
-                  : previousConfig.shell
-                : undefined,
+              default: E2eAddUtil.getPreviousValue({
+                property: 'args',
+                currentIndex: i,
+                reconfiguration: installed,
+                defaults,
+              }),
             },
             {
               question: `${E2eAddUtil.MESSAGES.InstalledRegex} ${E2eAddUtil.MESSAGES.InstalledRegexExample}`,
               answer: currentConfig.regex,
-              default: isSoftware(previousConfig)
-                ? previousConfig.installedRegex
-                : previousConfig && previousConfig.regex,
+              default: E2eAddUtil.getPreviousValue({
+                property: 'regex',
+                softwareProperty: 'installedRegex',
+                currentIndex: i,
+                reconfiguration: installed,
+                defaults,
+              }),
             },
           ]
         )
       }
-      if (currentConfig.preVersionCheckError && currentConfig.name && !currentConfig.directory) {
+      if (currentConfig.name !== undefined && currentConfig.directory === undefined) {
         chunks.push(...[E2eAddUtil.getNameInUseMessage(currentConfig.name || '')])
-      } else if (currentConfig.preVersionCheckError) {
+      } else if (currentConfig.directory !== undefined && currentConfig.command === undefined) {
         chunks.push(...[E2eAddUtil.getPathDoesNotExistMesage(currentConfig.directory || '')])
       } else if (currentConfig.error) {
         chunks.push(
@@ -407,45 +462,53 @@ export default class E2eAddUtil extends E2eBaseUtil {
         )
       }
     }
-    if (installed[installed.length - 1].confirmOrReconfigure) {
-      for (let i = 0; i < latest.length; i++) {
-        const currentConfig = latest[i]
-        const previousConfig = i > 0 ? latest[i - 1] : defaults
+    for (let i = 0; i < latest.length; i++) {
+      const currentConfig = latest[i]
+      chunks.push(
+        ...[
+          {
+            question: `${E2eAddUtil.MESSAGES.Url} ${E2eAddUtil.MESSAGES.UrlExample}`,
+            answer: currentConfig.url,
+            default: E2eAddUtil.getPreviousValue({
+              property: 'url',
+              currentIndex: i,
+              reconfiguration: latest,
+              defaults,
+            }),
+          },
+          {
+            question: `${E2eAddUtil.MESSAGES.LatestRegex} ${E2eAddUtil.MESSAGES.LatestRegexExample}`,
+            answer: currentConfig.regex,
+            default: E2eAddUtil.getPreviousValue({
+              property: 'regex',
+              softwareProperty: 'latestRegex',
+              currentIndex: i,
+              reconfiguration: latest,
+              defaults,
+            }),
+          },
+        ]
+      )
+      if (currentConfig.error) {
         chunks.push(
           ...[
+            currentConfig.error,
             {
-              question: `${E2eAddUtil.MESSAGES.Url} ${E2eAddUtil.MESSAGES.UrlExample}`,
-              answer: currentConfig.url,
-              default: previousConfig && previousConfig.url,
-            },
-            {
-              question: `${E2eAddUtil.MESSAGES.LatestRegex} ${E2eAddUtil.MESSAGES.LatestRegexExample}`,
-              answer: currentConfig.regex,
-              default: isSoftware(previousConfig) ? previousConfig.latestRegex : previousConfig && previousConfig.regex,
+              question: 'Could not determine version due to error above. Reconfigure',
+              answer: currentConfig.confirmOrReconfigure === true,
             },
           ]
         )
-        if (currentConfig.error) {
-          chunks.push(
-            ...[
-              currentConfig.error,
-              {
-                question: 'Could not determine version due to error above. Reconfigure',
-                answer: currentConfig.confirmOrReconfigure === true,
-              },
-            ]
-          )
-        } else {
-          chunks.push(
-            ...[
-              `Latest version: "${currentConfig.version}"`,
-              {
-                question: 'Is the above version correct',
-                answer: currentConfig.confirmOrReconfigure === true,
-              },
-            ]
-          )
-        }
+      } else {
+        chunks.push(
+          ...[
+            `Latest version: "${currentConfig.version}"`,
+            {
+              question: 'Is the above version correct',
+              answer: currentConfig.confirmOrReconfigure === true,
+            },
+          ]
+        )
       }
     }
     return chunks

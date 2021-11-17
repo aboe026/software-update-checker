@@ -19,11 +19,11 @@ describe('Software List Unit Tests', () => {
     it('returns single software for single software array', () => {
       const software = new Software({
         name: 'sortByName single software',
+        shell: 'elf',
         executable: {
           command: 'ruler',
         },
         args: 'lothlorien',
-        shell: 'elf',
         installedRegex: 'Lady of Light',
         url: 'https://lovemeanddespair.com',
         latestRegex: 'Galadriel',
@@ -33,22 +33,22 @@ describe('Software List Unit Tests', () => {
     it('ignores case sensitivity', () => {
       const first = new Software({
         name: 'sortByName ignore case B',
+        shell: 'geomorphology',
         executable: {
           command: 'butte',
         },
         args: 'black hills',
-        shell: 'geomorphology',
         installedRegex: 'bear lodge butte',
         url: 'https://closeencounters.com',
         latestRegex: 'devils tower',
       })
       const last = new Software({
         name: 'sortByName ignore case a',
+        shell: 'sculpture',
         executable: {
           command: 'neoclassical',
         },
         args: 'copper',
-        shell: 'sculpture',
         installedRegex: 'new york harbor',
         url: 'https://thenewcolossus.com',
         latestRegex: 'statue of liberty',
@@ -58,24 +58,24 @@ describe('Software List Unit Tests', () => {
     it('does not modify original array', () => {
       const first = new Software({
         name: 'sortByName does not modify original b first',
+        shell: 'mammal',
         directory: 'ungulate',
         executable: {
           command: 'hooved',
         },
         args: 'american',
-        shell: 'mammal',
         installedRegex: 'heaviest',
         url: 'https://thunderontheplain.com',
         latestRegex: 'bison bison bison',
       })
       const last = new Software({
         name: 'sortByName does not modify original a last',
+        shell: 'paranormal',
         directory: 'ocean',
         executable: {
           command: 'region',
         },
         args: 'atlantic',
-        shell: 'paranormal',
         installedRegex: 'devils triangle',
         url: 'https://herebedragons.com',
         latestRegex: 'bermuda triangle',
@@ -87,33 +87,33 @@ describe('Software List Unit Tests', () => {
     it('preserves alphabetical order of multiple softwares', () => {
       const first = new Software({
         name: 'sortByName multiple alphabetical first',
+        shell: 'construct',
         executable: {
           command: 'unsc',
         },
         args: 'ai',
-        shell: 'construct',
         installedRegex: 'pillar of autumn',
         url: 'https://thiscaveisnotanaturalformation.com',
         latestRegex: 'cortana',
       })
       const middle = new Software({
         name: 'sortByName multiple alphabetical middle',
+        shell: 'organic',
         executable: {
           command: 'vessel',
         },
         args: 'embryotic',
-        shell: 'organic',
         installedRegex: 'zygote',
         url: 'https://whatcamefirst.com',
         latestRegex: 'egg',
       })
       const last = new Software({
         name: 'sortByName multiple alphabetical zlast',
+        shell: 'stephen king',
         executable: {
           command: 'antagonist',
         },
         args: 'nurse',
-        shell: 'stephen king',
         installedRegex: 'misery',
         url: 'https://imyournumberonefan.com',
         latestRegex: 'Annie Wilkes',
@@ -123,33 +123,33 @@ describe('Software List Unit Tests', () => {
     it('reverses anti-alphabetical order of multiple softwares', () => {
       const first = new Software({
         name: 'sortByName multiple anti-alphabetical c first',
+        shell: 'space',
         executable: {
           command: 'rocket',
         },
         args: 'super-heavy',
-        shell: 'space',
         installedRegex: 'apollo',
         url: 'https://gobigorgohome.com',
         latestRegex: 'saturn v',
       })
       const middle = new Software({
         name: 'sortByName multiple anti-alphabetical b middle',
+        shell: 'cinema',
         executable: {
           command: 'tycoon',
         },
         args: 'publishing',
-        shell: 'cinema',
         installedRegex: 'New York Daily Inquirer',
         url: 'https://rosebud.com',
         latestRegex: 'Charles Foster Kane',
       })
       const last = new Software({
         name: 'sortByName multiple anti-alphabetical a last',
+        shell: 'video game',
         executable: {
           command: 'cowboy',
         },
         args: 'Van der Linde gang',
-        shell: 'video game',
         installedRegex: 'tuberculosis',
         url: 'https://igaveyouallihad.com',
         latestRegex: 'arthur morgan',
@@ -273,11 +273,11 @@ describe('Software List Unit Tests', () => {
       jest.spyOn(SoftwareList, 'get').mockImplementation(() => [existingSoftwareOne, existingSoftwareTwo])
       const software: Software = new Software({
         name: 'middling double existing',
+        shell: 'planet',
         executable: {
           command: 'minor',
         },
         args: 'kuiper',
-        shell: 'planet',
         installedRegex: 'pluto',
         url: 'https://coldshouldered.com',
         latestRegex: '134340',
@@ -761,11 +761,11 @@ describe('Software List Unit Tests', () => {
     it('loads software if software list is single valid entry with all properties', async () => {
       const software = new Software({
         name: 'valid single with shell',
+        shell: 'mariokart',
         executable: {
           command: 'shell',
         },
         args: 'koopa',
-        shell: 'mariokart',
         installedRegex: 'leader',
         url: 'https://itsame.com',
         latestRegex: 'spiny shell',
@@ -818,10 +818,10 @@ describe('Software List Unit Tests', () => {
     it('loads software if software list is single valid entry without either args or shell', async () => {
       const software = new Software({
         name: 'valid single without args and with shell',
+        shell: 'force',
         executable: {
           command: 'attitudes',
         },
-        shell: 'force',
         installedRegex: 'unsparing',
         url: 'https://mywayorthehighway.com',
         latestRegex: 'obey',
@@ -837,10 +837,10 @@ describe('Software List Unit Tests', () => {
     it('loads software if software list is single valid dynamic executable without directory', async () => {
       const software = new Software({
         name: 'valid single dynamic without directory',
+        shell: 'standard',
         executable: {
           regex: 'film',
         },
-        shell: 'standard',
         installedRegex: '70mm',
         url: 'https://maximumimage.com',
         latestRegex: 'imax',

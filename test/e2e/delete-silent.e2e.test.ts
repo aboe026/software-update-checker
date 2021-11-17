@@ -46,11 +46,11 @@ describe('Delete Silent', () => {
     it('delete silent no existing command', async () => {
       const software = new Software({
         name: 'e2e delete silent no existing command',
+        shell: 'caffeine',
         executable: {
           command: 'coffee',
         },
         args: 'espresso',
-        shell: 'caffeine',
         installedRegex: 'marked',
         url: 'https://coffeewithadrop.com',
         latestRegex: 'caffe macchiato',
@@ -70,11 +70,11 @@ describe('Delete Silent', () => {
     it('delete silent only software', async () => {
       const software = new Software({
         name: 'e2e delete silent only',
+        shell: 'fruit',
         executable: {
           command: 'apple',
         },
         args: 'cultivar',
-        shell: 'fruit',
         installedRegex: 'UofM',
         url: 'https://anappleaday.com',
         latestRegex: 'Malus pumila',
@@ -89,22 +89,22 @@ describe('Delete Silent', () => {
     it('delete silent first of two softwares', async () => {
       const firstSoftware = new Software({
         name: 'e2e delete silent first of two first',
+        shell: 'drink',
         executable: {
           command: 'cocktail',
         },
         args: 'blended',
-        shell: 'drink',
         installedRegex: 'strained pineapple',
         url: 'https://gettingcaughtintherain.com',
         latestRegex: 'piña colada',
       })
       const lastSoftware = new Software({
         name: 'e2e delete silent first of two last',
+        shell: 'beverage',
         executable: {
           command: 'mixed',
         },
         args: 'buck',
-        shell: 'beverage',
         installedRegex: 'copper',
         url: 'https://fromrussiawithlime.com',
         latestRegex: 'moscow mule',
@@ -119,22 +119,22 @@ describe('Delete Silent', () => {
     it('delete silent last of two softwares', async () => {
       const firstSoftware = new Software({
         name: 'e2e delete silent last of two first',
+        shell: 'high-latitude',
         executable: {
           command: 'atmospheric',
         },
         args: 'ionization',
-        shell: 'high-latitude',
         installedRegex: 'northern lights',
         url: 'https://nightlightshow.com',
         latestRegex: 'aurora borealis',
       })
       const lastSoftware = new Software({
         name: 'e2e delete silent last of two last',
+        shell: 'unit',
         executable: {
           command: 'measurement',
         },
         args: 'length',
-        shell: 'unit',
         installedRegex: 'astronomical',
         url: 'https://partialparsec.com',
         latestRegex: 'sun.*earth',

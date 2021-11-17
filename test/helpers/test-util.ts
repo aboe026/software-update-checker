@@ -158,6 +158,18 @@ export default class TestUtil {
       expected: expectedDefault,
     })
   }
+
+  static getNestedProperty({ property, obj }: { property: string | undefined; obj: any }): string | undefined {
+    if (!property) {
+      return undefined
+    }
+    const nestedProps = property.split('.')
+    let value = obj[nestedProps[0]]
+    for (let i = 1; i < nestedProps.length && value; i++) {
+      value = value[nestedProps[i]]
+    }
+    return value
+  }
 }
 
 function getColorRegExp(string: string, color: colors.Color): RegExp {
@@ -182,7 +194,7 @@ export interface Response {
   value?: string | object | boolean // eslint-disable-line @typescript-eslint/ban-types
   throw?: string
   resolve?: string | object | boolean // eslint-disable-line @typescript-eslint/ban-types
-  reject?: string
+  reject?: string | Error
 }
 
 export type ExpectedCalls = string | object | undefined // eslint-disable-line @typescript-eslint/ban-types

@@ -1,5 +1,5 @@
-import fetch from 'node-fetch'
 import { ExecOptions } from 'child_process'
+import fetch from 'node-fetch'
 
 import { Dynamic, Static, isStatic, getDynamicExecutable } from './executable'
 import execute from '../util/execute-async'
@@ -7,29 +7,29 @@ import SelfReference from '../util/self-reference'
 
 export default class Software {
   readonly name: string
+  readonly shell?: string
   readonly directory?: string
   readonly executable: Dynamic | Static
   readonly args?: string
-  readonly shell?: string
   readonly installedRegex: string
   readonly url: string
   readonly latestRegex: string
 
   constructor({
     name,
+    shell,
     directory,
     executable,
     args,
-    shell,
     installedRegex,
     url,
     latestRegex,
   }: {
     name: string
+    shell?: string
     directory?: string
     executable: Dynamic | Static
     args?: string
-    shell?: string
     installedRegex: string
     url: string
     latestRegex: string
@@ -38,10 +38,10 @@ export default class Software {
       throw Error('Name must be non-empty')
     }
     this.name = name
+    this.shell = shell
     this.directory = directory
     this.executable = executable
     this.args = args
-    this.shell = shell
     this.installedRegex = installedRegex
     this.url = url
     this.latestRegex = latestRegex
@@ -51,13 +51,13 @@ export default class Software {
     const directory = this.directory || process.cwd()
     const command = await getCommand({
       executable: this.executable,
-      directory: directory,
+      directory,
     })
     const output = await getFromExecutable({
-      directory: directory,
+      shell: this.shell,
+      directory,
       command,
       args: this.args,
-      shell: this.shell,
     })
     return getFromRegex(output, new RegExp(this.installedRegex))
   }
@@ -85,15 +85,15 @@ export async function getCommand({
 }
 
 export async function getFromExecutable({
+  shell,
   directory,
   command,
   args,
-  shell,
 }: {
+  shell?: string
   directory?: string
   command: string
   args?: string
-  shell?: string
 }): Promise<string> {
   const defaultEntrypoint = (process as any).pkg?.defaultEntrypoint
   if (
@@ -104,11 +104,11 @@ export async function getFromExecutable({
     command = `${command} ${defaultEntrypoint}` // To get around self-reference/recursion issue: https://github.com/vercel/pkg/issues/376
   }
   const options: ExecOptions = {}
-  if (directory) {
-    options.cwd = directory
-  }
   if (shell) {
     options.shell = shell
+  }
+  if (directory) {
+    options.cwd = directory
   }
   const { stdout, stderr } = await execute(`${command} ${args}`, options)
   return `${stdout.trim()}${stderr.trim()}`

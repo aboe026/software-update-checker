@@ -24,10 +24,10 @@ export default class SoftwareList {
       clonedSoftwares.push(
         new Software({
           name: software.name,
+          shell: software.shell,
           directory: software.directory,
           executable: software.executable,
           args: software.args,
-          shell: software.shell,
           installedRegex: software.installedRegex,
           url: software.url,
           latestRegex: software.latestRegex,
@@ -159,10 +159,10 @@ export default class SoftwareList {
         softwares.push(
           new Software({
             name: obj.name,
+            shell: obj.shell,
             directory: obj.directory,
             executable: obj.executable,
             args: obj.args,
-            shell: obj.shell,
             installedRegex: obj.installedRegex,
             url: obj.url,
             latestRegex: obj.latestRegex,

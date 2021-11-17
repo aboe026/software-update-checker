@@ -37,6 +37,17 @@ export const AddOptions = {
       nargs: 1,
     },
   }),
+  Shell: new Option({
+    key: 'shell',
+    value: {
+      alias: ['s'],
+      description: 'Shell to use instead of system default shell (eg "pwsh")',
+      type: 'string',
+      demandOption: false,
+      requiresArg: true,
+      nargs: 1,
+    },
+  }),
   Directory: new Option({
     key: 'directory',
     value: {
@@ -53,17 +64,6 @@ export const AddOptions = {
     value: {
       alias: ['a', 'args'],
       description: 'Arguments to apply to executable to produce version (eg "--version")',
-      type: 'string',
-      demandOption: false,
-      requiresArg: true,
-      nargs: 1,
-    },
-  }),
-  Shell: new Option({
-    key: 'shell',
-    value: {
-      alias: ['s'],
-      description: 'Shell to use instead of system default shell (eg "pwsh")',
       type: 'string',
       demandOption: false,
       requiresArg: true,
