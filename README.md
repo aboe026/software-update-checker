@@ -32,7 +32,7 @@ Want to modify software-update-checker-cli yourself? Follow these steps below:
 
 ### Requirements
 
-- [Node.js](https://nodejs.org/) version 14
+- [Node.js](https://nodejs.org/) version 16
 
 ### Install Dependencies
 

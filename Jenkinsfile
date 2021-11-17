@@ -1,7 +1,7 @@
 node {
   def packageJson
   def workDir = "${WORKSPACE}/${env.BRANCH_NAME}-${env.BUILD_ID}"
-  def nodeImage = 'node:14'
+  def nodeImage = 'node:16'
   def version
   def exceptionThrown = false
   try {
