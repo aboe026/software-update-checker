@@ -84,7 +84,7 @@
   - arguments: `HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Select-Object DisplayName, DisplayVersion`
   - installed regex: `Notepad\+\+ \(64\-bit x64\)\s+(\S+)\s+`
   - latest URL: `https://notepad-plus-plus.org/downloads/`
-  - latest regex: `<strong>Current Version (.*)<\\/strong>`
+  - latest regex: `<strong>Current Version (.*)<\/strong>`
 
 - [NVM](https://github.com/coreybutler/nvm-windows)
 
