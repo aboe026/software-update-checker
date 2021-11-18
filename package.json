@@ -1,6 +1,6 @@
 {
   "name": "software-update-checker-cli",
-  "version": "0.8.1",
+  "version": "1.0.0",
   "author": "Adam Boe",
   "description": "A command line interface to check if local software installs have updates",
   "private": false,
@@ -30,10 +30,10 @@
     "detect:duplicate-test-resources": "ts-node scripts/detect-duplicate-test-resources.ts",
     "debug:record-and-reply": "ts-node scripts/debug-record-and-reply.ts",
     "dist": "npm run build && npm run pack",
-    "lint": "eslint . && prettier --check . && npm run detect:duplicate-test-resources && npm run lint:releases-json",
+    "lint": "eslint . && prettier --check . && npm run detect:duplicate-test-resources",
     "lint:fix": "eslint --fix . && prettier --write .",
-    "lint:releases-json": "ts-node scripts/lint-releases-json.ts",
     "pack": "pkg --targets=node16-linux-x64,node16-macos-x64,node16-win-x64 --out-path=dist --config=.pkg.config.json build/src/index.js",
+    "release": "ts-node scripts/release/release.ts",
     "run-mock-server": "ts-node scripts/run-mock-server.ts",
     "start": "ts-node src/index.ts",
     "test": "npm run lint && npm run test:unit && npm run test:func && npm run coverage:merge && npm run test:e2e",
@@ -55,6 +55,7 @@
     "yargs": "17.1.1"
   },
   "devDependencies": {
+    "@octokit/rest": "18.12.0",
     "@types/cli-progress": "3.9.2",
     "@types/colors": "1.2.1",
     "@types/concat-stream": "1.6.1",
@@ -68,6 +69,8 @@
     "@typescript-eslint/eslint-plugin": "5.4.0",
     "concat-stream": "2.0.0",
     "cross-env": "7.0.3",
+    "dotenv": "10.0.0",
+    "envalid": "7.2.2",
     "eslint": "8.2.0",
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-prettier": "4.0.0",

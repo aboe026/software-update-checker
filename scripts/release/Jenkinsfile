@@ -1,0 +1,140 @@
+properties([
+  parameters([
+    string(name: 'buildNumber', defaultValue: 'lastSuccessful', description: 'The number of the build to release. If "lastSuccessful", will resolve the number from the last successful build. For example: "19".')
+  ])
+])
+
+node {
+  def packageJson
+  def workDir = "${WORKSPACE}/${env.BRANCH_NAME}-${env.BUILD_ID}"
+  def nodeImage = 'node:16'
+  def resolvedBuildNumber
+  def versionToRelease
+  def downloadDir = 'binaries'
+  def exceptionThrown = false
+  try {
+    ansiColor('xterm') {
+      dir(workDir) {
+
+        stage('Checkout Code') {
+          git (
+            url: 'https://github.com/aboe026/software-update-checker-cli.git',
+            credentialsId: 'github',
+            branch: 'automated-release-rebased'
+          )
+        }
+
+        stage('Resolve Build Number') {
+          def buildName = '/software-update-checker-cli/software-update-checker-cli'
+          def buildBranch = 'master'
+          if (params.buildNumber == 'lastSuccessful') {
+            println "Resolving build number from the '${buildBranch}' branch of multi-branch job '${buildName}'..."
+            resolvedBuildNumber = Jenkins.instance.getItemByFullName(buildName).getItem(buildBranch).getLastSuccessfulBuild().number
+            println "...resolved build number to: '${resolvedBuildNumber}'"
+          } else {
+            resolvedBuildNumber = params.buildNumber
+            println "Using explicit build number provided by 'buildNumber' input parameter: '${resolvedBuildNumber}'"
+          }
+          versionToRelease = Jenkins.instance.getItemByFullName(buildName).getItem(buildBranch).getBuildByNumber(resolvedBuildNumber.toInteger()).getDisplayName()
+          println "Display name of build '${resolvedBuildNumber}': '${versionToRelease}'"
+          currentBuild.description = versionToRelease
+        }
+
+        stage('Download Nexus Binaries') {
+          dir(downloadDir) {
+            def nexusOptions = [
+                url: 'http://host.docker.internal:8081',
+                credentials: 'NEXUS_CREDENTIALS',
+                repo: 'software-update-checker-cli',
+                org: 'suc',
+                version: versionToRelease,
+            ]
+            downloadNexusArtifact(nexusOptions +
+                [ fileName: 'software-update-checker-win.exe' ]
+            )
+            downloadNexusArtifact(nexusOptions +
+                [ fileName: 'software-update-checker-linux' ]
+            )
+            downloadNexusArtifact(nexusOptions +
+                [ fileName: 'software-update-checker-macos' ]
+            )
+          }
+        }
+
+        stage('Pull Runtime Image') {
+          sh "docker pull ${nodeImage}"
+        }
+
+        docker.image(nodeImage).inside() {
+
+          stage('Verify Version') {
+            dir(downloadDir) {
+              sh 'chmod +x software-update-checker-linux'
+              def version = sh (
+                script: './software-update-checker-linux --version',
+                returnStdout: true
+              ).trim()
+              if (version != versionToRelease) {
+                error("Version '${version}' does not match version to release '${versionToRelease}'")
+              }
+            }
+          }
+
+          stage('Install Dependencies') {
+            sh 'npm ci'
+          }
+
+          stage('Release') {
+            withCredentials([
+              string(credentialsId: 'GITHUB_PERSONAL_ACCESS_TOKEN', variable: 'GITHUB_PERSONAL_ACCESS_TOKEN')
+            ]) {
+              withEnv([
+                "ASSETS_DIRECTORY=${workDir}/${downloadDir}"
+              ]) {
+                sh 'npm run release'
+              }
+            }
+          }
+
+        }
+      }
+    }
+  } catch (err) {
+    exceptionThrown = true
+    println 'Exception was caught in try block of jenkins job.'
+    println err
+  } finally {
+    stage('Cleanup') {
+      try {
+        sh "rm -rf ${workDir}"
+      } catch (err) {
+        println 'Exception deleting working directory'
+        println err
+      }
+      try {
+        sh "rm -rf ${workDir}@tmp"
+      } catch (err) {
+        println 'Exception deleting temporary working directory'
+        println err
+      }
+      if (exceptionThrown) {
+        error('Exception was thrown earlier')
+      }
+    }
+  }
+}
+
+def downloadNexusArtifact(Map params) {
+    def url = params.url
+    if (url.endsWith('/')) {
+        url = url.substring(0, url.length - 1)
+    }
+    url += "/repository/${params.repo}/${params.org}/${params.repo}/${params.version}/${params.fileName}"
+
+    httpRequest (
+      httpMode: 'GET',
+      url: url,
+      authentication: params.credentials,
+      outputFile: params.fileName
+    )
+}
