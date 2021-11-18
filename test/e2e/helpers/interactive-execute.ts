@@ -12,6 +12,7 @@ export default async function ({
   maxQuietPeriodMs = 1000,
   directory,
   file,
+  verboseToFile = true,
   debugRecordAndReplyChunk,
 }: {
   args?: string[]
@@ -21,6 +22,7 @@ export default async function ({
   maxQuietPeriodMs?: number
   directory?: string
   file?: string
+  verboseToFile?: boolean
   debugRecordAndReplyChunk?: string
 }): Promise<ExecutableResponse> {
   const workingDirectory = directory || E2eConfig.DIRECTORY.Executables
@@ -28,7 +30,7 @@ export default async function ({
   if (!executable.startsWith('./') && os.platform() !== 'win32') {
     executable = `./${executable}`
   }
-  if (!debugRecordAndReplyChunk) {
+  if (verboseToFile) {
     await E2eConfig.appendToDebugLog(`Directory: ${directory}`)
     await E2eConfig.appendToDebugLog(`File: ${executable}`)
     await E2eConfig.appendToDebugLog(`Arguments: ${JSON.stringify(args, null, 2)}`)
@@ -84,7 +86,7 @@ export default async function ({
   }
 
   function recordAndReply(chunk: string, prefix: string) {
-    if (!debugRecordAndReplyChunk) {
+    if (verboseToFile) {
       E2eConfig.appendToDebugLog(`${prefix}: ${JSON.stringify(chunk.toString())}`) // for some reason if this is awaited, chunks get read in incorrect order (stdout vs stderr)
     }
     const line = escapeChunk(chunk.toString(), !debugRecordAndReplyChunk)
@@ -179,7 +181,9 @@ export default async function ({
     if (proc) {
       proc.stdout.pipe(
         concat(async (result: Buffer) => {
-          await E2eConfig.appendToDebugLog(`Chunks: ${JSON.stringify(chunks, null, 2)}`)
+          if (verboseToFile) {
+            await E2eConfig.appendToDebugLog(`Chunks: ${JSON.stringify(chunks, null, 2)}`)
+          }
           resolve({
             stdout: result.toString(),
             chunks: chunks.filter((chunk) => chunk !== ''),
