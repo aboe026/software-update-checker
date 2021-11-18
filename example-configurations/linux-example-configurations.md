@@ -1,4 +1,4 @@
-- [Chromium](https://www.chromium.org/)
+- [Chrome](https://www.chromium.org/)
 
   - type: `Static`
   - command: `google-chrome`
