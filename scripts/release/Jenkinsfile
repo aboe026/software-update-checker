@@ -37,6 +37,7 @@ node {
           }
           versionToRelease = Jenkins.instance.getItemByFullName(buildName).getItem(buildBranch).getBuildByNumber(resolvedBuildNumber.toInteger()).getDisplayName()
           println "Display name of build '${resolvedBuildNumber}': '${versionToRelease}'"
+          currentBuild.description = versionToRelease
         }
 
         stage('Download Nexus Binaries') {

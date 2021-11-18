@@ -14,7 +14,7 @@ interface Release {
 
 const notes: Release[] = [
   {
-    version: '0.8.1',
+    version: '1.0.0',
     description: 'Initial public release.',
     features: [
       'Add a software configuration',
