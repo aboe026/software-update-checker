@@ -4,7 +4,7 @@ import { replaceInFile } from 'replace-in-file'
 import util from 'util'
 
 const execa = util.promisify(exec)
-const DENY_LIST: string[] = ['inquirer', 'node-fetch']
+const DENY_LIST: string[] = ['inquirer', 'node-fetch', '@types/node-fetch', 'yargs']
 ;(async () => {
   const outdated = await getOutdatedDependencies()
   for (const key in outdated) {
@@ -35,10 +35,10 @@ const DENY_LIST: string[] = ['inquirer', 'node-fetch']
   })
 
 async function getOutdatedDependencies(): Promise<OutdatedDependenciesList> {
-  let response
+  let response: any
   try {
     response = await execa('npm outdated --json')
-  } catch (err) {
+  } catch (err: any) {
     if (err && err.stderr === '' && err.stdout) {
       response = err
     } else {
@@ -51,7 +51,7 @@ async function getOutdatedDependencies(): Promise<OutdatedDependenciesList> {
   let outdatedJson
   try {
     outdatedJson = JSON.parse(response.stdout)
-  } catch (err) {
+  } catch (err: any) {
     throw new Error(`Error parsing outdated as JSON: ${err.message || err}`)
   }
   return outdatedJson
