@@ -149,3 +149,11 @@ npm run coverage:merge
 ```
 
 There is no code coverage for [e2e](#end-to-end-tests) tests as those do not run against source code, but binaries.
+
+To view code coverage in the browser, run
+
+```sh
+npm run coverage:view
+```
+
+Append `:unit` or `:func` to view coverage for [unit](#unit-tests) or [functional](#functional-tests) tests only, respectively.

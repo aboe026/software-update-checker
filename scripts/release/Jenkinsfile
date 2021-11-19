@@ -20,7 +20,7 @@ node {
           git (
             url: 'https://github.com/aboe026/software-update-checker-cli.git',
             credentialsId: 'github',
-            branch: 'automated-release-rebased'
+            branch: 'master'
           )
         }
 
