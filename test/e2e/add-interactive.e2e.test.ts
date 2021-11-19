@@ -621,7 +621,7 @@ describe('Add Interactive', () => {
     it('add interactive valid if using defaults', async () => {
       await E2eAddUtil.verifySoftwaresFileDoesNotExist()
       const installedVersion = version
-      const latestVersion = '1.2.1.0'
+      const latestVersion = '1.0.0'
       const software = new Software({
         name: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.NameExample),
         shell: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ShellExample),
@@ -652,7 +652,7 @@ describe('Add Interactive', () => {
         )
         await E2eAddUtil.verifySoftwaresFileDoesNotExist()
         const installedVersion = version
-        const latestVersion = '1.2.1.0'
+        const latestVersion = '1.0.0'
         const software = new Software({
           name: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.NameExample),
           shell: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ShellExample),
@@ -689,7 +689,7 @@ describe('Add Interactive', () => {
         )
         await E2eAddUtil.verifySoftwaresFileDoesNotExist()
         const installedVersion = version
-        const latestVersion = '1.2.1.0'
+        const latestVersion = '1.0.0'
         const software = new Software({
           name: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.NameExample),
           shell: E2eAddUtil.getExampleFromMessage(E2eAddUtil.MESSAGES.ShellExample),
