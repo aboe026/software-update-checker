@@ -1,0 +1,21 @@
+{
+  "extends": "recommended",
+  "rules": {
+    "CompileStatic": "off",
+    "DuplicateStringLiteral": "off",
+    "DuplicateNumberLiteral": "off",
+    "Indentation": {
+      "spacesPerIndentLevel": 4,
+      "severity": "info"
+    },
+    "LineLength": {
+      "length": 180
+    },
+    "MethodReturnTypeRequired": "off",
+    "NestedBlockDepth": "off",
+    "NoDef": "off",
+    "ThrowException": "off",
+    "UnnecessaryGetter": "off",
+    "VariableTypeRequired": "off"
+  }
+}
