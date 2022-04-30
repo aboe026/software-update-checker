@@ -219,8 +219,8 @@ function escapeChunk(chunk: string, stringify = true): string {
 }
 
 function stripAnsiChars(words: string): string {
-  let strippedWords = words.replace(/\\u001b\[39m\ \\u001b\[31m/g, ` ${ANSI_CHAR_REPLACEMENT.Red}`) // replace leading indicator for red to pick up in tests
-  strippedWords = strippedWords.replace(/\\u001b\[39m\ \\u001b\[32m/g, ` ${ANSI_CHAR_REPLACEMENT.Green}`) // replace leading indicator for greed to pick up in tests
+  let strippedWords = words.replace(/[\\u001b\[39m]?\ \\u001b\[31m/g, ` ${ANSI_CHAR_REPLACEMENT.Red}`) // replace leading indicator for red to pick up in tests
+  strippedWords = strippedWords.replace(/[\\u001b\[39m]?\ \\u001b\[32m/g, ` ${ANSI_CHAR_REPLACEMENT.Green}`) // replace leading indicator for greed to pick up in tests
   strippedWords = strippedWords.replace(/\\u001b\[\d?\d?\d?\w/g, '') // remove ansi chars
   return strippedWords
 }
