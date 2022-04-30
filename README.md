@@ -69,7 +69,7 @@ Executables will be created in the `dist` directory
 
 ### Lint
 
-This project is configured to be linted with [ESLint](https://eslint.org/) to make sure code is syntactially correct, and also uses [Prettier](https://prettier.io/) to make sure code is formatted consistently. Jenkinsfiles are linted with [npm-groovy-lint](https://www.npmjs.com/package/npm-groovy-lint)
+This project is configured to be linted with [ESLint](https://eslint.org/) to make sure code is syntactially correct, and also uses [Prettier](https://prettier.io/) to make sure code is formatted consistently. Jenkinsfiles are linted with [npm-groovy-lint](https://www.npmjs.com/package/npm-groovy-lint).
 
 To check code for proper syntax and formatting, run
 
