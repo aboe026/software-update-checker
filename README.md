@@ -1,5 +1,8 @@
 # software-update-checker-cli
 
+![build](https://img.shields.io/endpoint?url=https://aboe026.github.io/shields.io-badge-results/badge-results/software-update-checker-cli/main/build.json)
+![coverage](https://img.shields.io/endpoint?url=https://aboe026.github.io/shields.io-badge-results/badge-results/software-update-checker-cli/main/coverage.json)
+
 A command line interface to check if local software installs have updates.
 
 Tired of opening countless programs to check for updates? So was I, which is why I created this project, which acts as a centralized spot to not only get the versions of your locally installed software, but to get their latest versions, and compare that against your local version to see if you have an update available.
@@ -66,7 +69,7 @@ Executables will be created in the `dist` directory
 
 ### Lint
 
-This project is configured to be linted with [ESLint](https://eslint.org/) to make sure code is syntactially correct, and also uses [Prettier](https://prettier.io/) to make sure code is formatted consistently.
+This project is configured to be linted with [ESLint](https://eslint.org/) to make sure code is syntactially correct, and also uses [Prettier](https://prettier.io/) to make sure code is formatted consistently. Jenkinsfiles are linted with [npm-groovy-lint](https://www.npmjs.com/package/npm-groovy-lint)
 
 To check code for proper syntax and formatting, run
 
