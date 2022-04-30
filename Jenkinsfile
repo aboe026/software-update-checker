@@ -43,8 +43,6 @@ node {
             }
           )
 
-
-
           stage('Set Build Number') {
             packageJson = readJSON file: 'package.json'
             version = "${packageJson.version}+${env.BUILD_ID}"
@@ -58,7 +56,7 @@ node {
               file: buildJsonFile,
               pretty: 2 // doesn't seem to work if single element in JSON object :(
             )
-            sh 'npx prettier --write build.json' // TO prevent error from prettier during lint
+            sh 'npx prettier --write build.json' // To prevent error from prettier during lint
           }
 
           parallel (
@@ -138,7 +136,7 @@ node {
                 },
                 'upload': {
                   stage('Nexus Upload') {
-                    if (env.BRANCH_NAME == 'master') {
+                    if (env.BRANCH_NAME == 'main') {
                       def nexusOptions = [
                         url: 'http://host.docker.internal:8081',
                         credentials: 'NEXUS_CREDENTIALS',

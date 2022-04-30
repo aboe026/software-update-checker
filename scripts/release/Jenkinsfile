@@ -20,13 +20,13 @@ node {
           git (
             url: 'https://github.com/aboe026/software-update-checker-cli.git',
             credentialsId: 'github',
-            branch: 'master'
+            branch: 'main'
           )
         }
 
         stage('Resolve Build Number') {
           def buildName = '/software-update-checker-cli/software-update-checker-cli'
-          def buildBranch = 'master'
+          def buildBranch = 'main'
           if (params.buildNumber == 'lastSuccessful') {
             println "Resolving build number from the '${buildBranch}' branch of multi-branch job '${buildName}'..."
             resolvedBuildNumber = Jenkins.instance.getItemByFullName(buildName).getItem(buildBranch).getLastSuccessfulBuild().number
