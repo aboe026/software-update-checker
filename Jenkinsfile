@@ -127,7 +127,7 @@ node {
                                 'e2e': {
                                     stage('E2E Tests') {
                                         try {
-                                            sh 'npm run test:e2e:xml -t "add interactive valid software to middle with two existing softwares file"'
+                                            sh 'npm run test:e2e:xml'
                                         } catch (err) {
                                             exceptionThrown = true
                                             println 'Exception was caught in try block of e2e tests stage.'

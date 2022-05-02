@@ -37,7 +37,7 @@
     "run-mock-server": "ts-node scripts/run-mock-server.ts",
     "start": "ts-node src/index.ts",
     "test": "npm run lint && npm run test:unit && npm run test:func && npm run coverage:merge && npm run test:e2e",
-    "test:e2e": "jest test/e2e --runInBand --testTimeout=30000 --globalSetup=./test/e2e/helpers/_global_setup.ts --globalTeardown=./test/e2e/helpers/_global_teardown.ts --setupFilesAfterEnv=./test/e2e/helpers/_suite_setup_teardown.ts",
+    "test:e2e": "jest test/e2e --config=jest.config.e2e.ts",
     "test:e2e:xml": "cross-env JEST_JUNIT_CLASSNAME='e2e.{classname}' JEST_JUNIT_OUTPUT_NAME=e2e.xml npm run test:e2e -- --reporters=default --reporters=jest-junit",
     "test:func": "jest test/func --collectCoverage --coverageDirectory=coverage/func --runInBand",
     "test:func:xml": "cross-env JEST_JUNIT_CLASSNAME='func.{classname}' JEST_JUNIT_OUTPUT_NAME=func.xml npm run test:func -- --reporters=default --reporters=jest-junit",
