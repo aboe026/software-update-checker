@@ -259,7 +259,7 @@ export default class E2eBaseUtil {
             `${question}${expected.default !== undefined ? ` (${expected.default})` : ''}`
           )
           while (
-            condenseBackslashes(stripNewlines(actualChunks[actualIndex])).startsWith(question) &&
+            (condenseBackslashes(stripNewlines(actualChunks[actualIndex])) || '').startsWith(question) &&
             actualIndex < actualChunks.length
           ) {
             actualIndex++

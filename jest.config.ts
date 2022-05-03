@@ -1,4 +1,6 @@
-module.exports = {
+import type { Config } from '@jest/types'
+
+const config: Config.InitialOptions = {
   clearMocks: true,
   collectCoverageFrom: ['src/**/*'],
   coverageReporters: ['json', 'lcov'],
@@ -8,3 +10,5 @@ module.exports = {
   restoreMocks: true,
   testEnvironment: 'node',
 }
+
+export default config
