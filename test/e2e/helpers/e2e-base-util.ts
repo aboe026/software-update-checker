@@ -258,8 +258,10 @@ export default class E2eBaseUtil {
           expect(condenseBackslashes(stripNewlines(actual))).toBe(
             `${question}${expected.default !== undefined ? ` (${expected.default})` : ''}`
           )
-          const line = condenseBackslashes(stripNewlines(actualChunks[actualIndex]))
-          while (line && line.startsWith(question) && actualIndex < actualChunks.length) {
+          while (
+            (condenseBackslashes(stripNewlines(actualChunks[actualIndex])) || '').startsWith(question) &&
+            actualIndex < actualChunks.length
+          ) {
             actualIndex++
           }
           actual = condenseBackslashes(stripNewlines(actualChunks[actualIndex - 1]))
