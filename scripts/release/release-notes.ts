@@ -23,6 +23,11 @@ const notes: Release[] = [
       'Remove a software configuration',
     ],
   },
+  {
+    version: '1.0.1',
+    description: 'Depencency updates.',
+    fixes: ['Addressed security vulnerabilities by updating dependencies (#62)'],
+  },
 ]
 
 export function getDescription({ version, build }: { version: string; build?: string }): string {
