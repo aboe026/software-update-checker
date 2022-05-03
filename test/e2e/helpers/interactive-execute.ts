@@ -3,11 +3,12 @@ import concat from 'concat-stream'
 import os from 'os'
 
 import E2eConfig from './e2e-config'
+import jestConfig from '../../../jest.config.e2e'
 
 export default async function ({
   args = [],
   inputs = [],
-  timeoutMs = 15000,
+  timeoutMs = jestConfig.testTimeout,
   minQuietPeriodMs = 200,
   maxQuietPeriodMs = 1000,
   directory,

@@ -7,7 +7,7 @@ const e2eConfig: Config.InitialOptions = {
   globalTeardown: './test/e2e/helpers/_global_teardown.ts',
   maxWorkers: 1, // same as --runInBand
   setupFilesAfterEnv: ['./test/e2e/helpers/_suite_setup_teardown.ts'],
-  testTimeout: 20000,
+  testTimeout: 30000,
 }
 
 export default {
