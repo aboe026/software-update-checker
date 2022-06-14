@@ -28,6 +28,11 @@ const notes: Release[] = [
     description: 'Depencency updates.',
     fixes: ['Addressed security vulnerabilities by updating dependencies (#62)'],
   },
+  {
+    version: '1.0.2',
+    description: 'Unix improvements.',
+    fixes: ['Improve handling of self-references.'],
+  },
 ]
 
 export function getDescription({ version, build }: { version: string; build?: string }): string {
