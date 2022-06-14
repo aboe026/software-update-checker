@@ -256,7 +256,7 @@ describe('Software Unit Tests', () => {
       }
       it('adds default entrypoint to command if expected error thrown without directory at root', async () => {
         const command = 'adds-default-entrypoint-no-dir-root'
-        const getDirectoryReturn = TestUtil.getFilePath([])
+        const getDirectoryReturn = TestUtil.getFilePath([''])
         const args = 'cowbell'
         const stdout = 'default entrypoint no dir root'
         await testGetFromExecutable({
