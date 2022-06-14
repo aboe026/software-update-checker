@@ -1,8 +1,9 @@
 import { ExecOptions } from 'child_process'
 import fetch from 'node-fetch'
+import path from 'path'
 
 import { Dynamic, Static, isStatic, getDynamicExecutable } from './executable'
-import execute from '../util/execute-async'
+import execute, { ExecuteResponse } from '../util/execute-async'
 import SelfReference from '../util/self-reference'
 
 export default class Software {
@@ -95,14 +96,6 @@ export async function getFromExecutable({
   command: string
   args?: string
 }): Promise<string> {
-  const defaultEntrypoint = (process as any).pkg?.defaultEntrypoint
-  if (
-    (command === SelfReference.getName() || command === `./${SelfReference.getName()}`) &&
-    (directory === '.' || directory === SelfReference.getDirectory()) &&
-    defaultEntrypoint
-  ) {
-    command = `${command} ${defaultEntrypoint}` // To get around self-reference/recursion issue: https://github.com/vercel/pkg/issues/376
-  }
   const options: ExecOptions = {}
   if (shell) {
     options.shell = shell
@@ -110,8 +103,24 @@ export async function getFromExecutable({
   if (directory) {
     options.cwd = directory
   }
-  const { stdout, stderr } = await execute(`${command} ${args}`, options)
-  return `${stdout.trim()}${stderr.trim()}`
+  let response: ExecuteResponse
+  try {
+    response = await execute(`${command} ${args}`, options)
+  } catch (err: unknown) {
+    const defaultEntrypoint = (process as any).pkg?.defaultEntrypoint
+    if (
+      typeof err === 'string' &&
+      defaultEntrypoint &&
+      err.includes(`Error: Cannot find module '${path.join(directory || SelfReference.getDirectory(), args || '')}'`) &&
+      err.includes('at Function._resolveFilename (pkg/prelude/bootstrap.js')
+    ) {
+      // To get around self-reference/recursion issue: https://github.com/vercel/pkg/issues/376
+      response = await execute(`${command} ${defaultEntrypoint} ${args}`, options)
+    } else {
+      throw err
+    }
+  }
+  return `${response.stdout.trim()}${response.stderr.trim()}`
 }
 
 export async function getFromUrl(url: string): Promise<string> {

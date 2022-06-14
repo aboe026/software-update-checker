@@ -5,6 +5,7 @@ const config: Config.InitialOptions = {
   collectCoverageFrom: ['src/**/*'],
   coverageReporters: ['json', 'lcov'],
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
+  modulePathIgnorePatterns: ['<rootDir>/build'],
   preset: 'ts-jest',
   resetMocks: true,
   restoreMocks: true,

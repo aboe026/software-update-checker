@@ -236,145 +236,174 @@ describe('Software Unit Tests', () => {
       beforeEach(() => {
         ;(process as any).pkg = { defaultEntrypoint }
       })
-      it('appends default entrypoint if referencing self by name from current relative directory', async () => {
-        const command = 'appends-default-current-dir-name'
-        const args = '--version'
-        const stdout = 'cowbell'
-        const stderr = 'triangle'
-        jest.spyOn(SelfReference, 'getName').mockReturnValue(command)
+      const getRejection = (directory: string, args: string) => {
+        return `node:internal/modules/cjs/loader:936
+          throw err;
+          ^
+      
+          Error: Cannot find module '${directory}${directory.endsWith('/') ? '' : '/'}${args}'
+              at Function.Module._resolveFilename (node:internal/modules/cjs/loader:933:15)
+              at Function._resolveFilename (pkg/prelude/bootstrap.js:1966:46)
+              at Function.Module._load (node:internal/modules/cjs/loader:778:27)
+              at Function.runMain (pkg/prelude/bootstrap.js:1994:12)
+              at node:internal/main/run_main_module:17:47 {
+            code: 'MODULE_NOT_FOUND',
+            requireStack: []
+          }`
+      }
+      it('adds default entrypoint to command if expected error thrown without directory at root', async () => {
+        const command = 'adds-default-entrypoint-no-dir-root'
+        const directory = ''
+        const getDirectoryReturn = '/'
+        const args = 'cowbell'
+        const stdout = 'default entrypoint no dir root'
         await testGetFromExecutable({
           command,
-          directory: '.', // ignore-duplicate-test-resource
-          addDirectory: true,
-          expectedDirectory: true,
+          directory,
+          getDirectoryReturn,
           args,
+          shell: '',
           stdout,
-          stderr,
-          expectedExecCall: `${command} ${defaultEntrypoint} ${args}`,
+          rejection: getRejection(getDirectoryReturn, args),
+          expectedReturn: stdout,
+          expectedExecCalls: [
+            [`${command} ${args}`, {}],
+            [`${command} ${defaultEntrypoint} ${args}`, {}],
+          ],
+          expectedGetDirectoryCalls: [[]],
         })
       })
-      it('appends default entrypoint if referencing self by dot slashed name from current relative directory', async () => {
-        const command = 'appends-default-current-dir-dot-slash-name'
-        const args = 'dice'
-        const stdout = 'six-fives'
-        const stderr = 'liar!'
-        jest.spyOn(SelfReference, 'getName').mockReturnValue(command)
+      it('adds default entrypoint to command if expected error thrown without directory at non-root', async () => {
+        const command = 'adds-default-entrypoint-no-dir-non-root'
+        const directory = ''
+        const getDirectoryReturn = '/down/the/river'
+        const args = 'dawn'
+        const stdout = 'default entrypoint no dir non-root'
         await testGetFromExecutable({
-          command: `./${command}`,
-          directory: '.', // ignore-duplicate-test-resource
-          addDirectory: true,
-          expectedDirectory: true,
+          command,
+          directory,
+          getDirectoryReturn,
           args,
+          shell: '',
           stdout,
-          stderr,
-          expectedExecCall: `./${command} ${defaultEntrypoint} ${args}`,
+          rejection: getRejection(getDirectoryReturn, args),
+          expectedReturn: stdout,
+          expectedExecCalls: [
+            [`${command} ${args}`, {}],
+            [`${command} ${defaultEntrypoint} ${args}`, {}],
+          ],
+          expectedGetDirectoryCalls: [[]],
         })
       })
-      it('appends default entrypoint if referencing self by name from absolute directory', async () => {
-        const command = 'appends-default-absolute-dir-name'
-        const directory = '/path/to/self'
-        const args = 'version'
-        const stdout = 'bramble'
-        const stderr = 'jam'
-        jest.spyOn(SelfReference, 'getName').mockReturnValue(command)
-        jest.spyOn(SelfReference, 'getDirectory').mockReturnValue(directory)
+      it('adds default entrypoint to command if expected error thrown with root directory', async () => {
+        const command = 'adds-default-entrypoint-with-root-dir'
+        const directory = 'bramble'
+        const args = 'jam'
+        const stdout = 'default entrypoint with root dir'
         await testGetFromExecutable({
           command,
           directory,
           addDirectory: true,
-          expectedDirectory: true,
           args,
+          shell: '',
           stdout,
-          stderr,
-          expectedExecCall: `${command} ${defaultEntrypoint} ${args}`,
+          rejection: getRejection(directory, args),
+          expectedReturn: stdout,
+          expectedExecCalls: [
+            [
+              `${command} ${args}`,
+              {
+                cwd: directory,
+              },
+            ],
+            [
+              `${command} ${defaultEntrypoint} ${args}`,
+              {
+                cwd: directory,
+              },
+            ],
+          ],
         })
       })
-      it('appends default entrypoint if referencing self by dot slashed name from absolute directory', async () => {
-        const command = 'appends-default-absolute-dir-dot-slash-name'
-        const directory = 'deer'
-        const args = 'circumpolar'
-        const stdout = 'caribou'
-        const stderr = 'rangifer tarandus'
-        jest.spyOn(SelfReference, 'getName').mockReturnValue(command)
-        jest.spyOn(SelfReference, 'getDirectory').mockReturnValue(directory)
-        await testGetFromExecutable({
-          command: `./${command}`,
-          directory,
-          addDirectory: true,
-          expectedDirectory: true,
-          args,
-          stdout,
-          stderr,
-          expectedExecCall: `./${command} ${defaultEntrypoint} ${args}`,
-        })
-      })
-      it('does not append default entrypoint if command is not self from current relative directory', async () => {
-        const command = 'no-append-relative-dir'
-        const args = '-v'
-        const stdout = 'ebb'
-        const stderr = 'flow'
-        jest.spyOn(SelfReference, 'getName').mockReturnValue(command)
-        await testGetFromExecutable({
-          command: 'does not match',
-          directory: '.', // ignore-duplicate-test-resource
-          addDirectory: true,
-          expectedDirectory: true,
-          args,
-          stdout,
-          stderr,
-        })
-      })
-      it('does not append default entrypoint if command is not self from absolute directory', async () => {
-        const command = 'no-append-absolute-dir'
-        const directory = '/path/to/where/executed/at'
-        const args = 'v'
-        const stdout = 'flotsam'
-        const stderr = 'jetsam'
-        jest.spyOn(SelfReference, 'getName').mockReturnValue(command)
-        jest.spyOn(SelfReference, 'getDirectory').mockReturnValue(directory)
-        await testGetFromExecutable({
-          command: 'different',
-          directory,
-          addDirectory: true,
-          expectedDirectory: true,
-          args,
-          stdout,
-          stderr,
-        })
-      })
-      it('does not append default entrypoint if referencing self but not self directory', async () => {
-        const command = 'no-append-not-self-dir'
-        const directory = '/path/to/where/executable/resides'
-        const args = 'ver'
-        const stdout = 'give'
-        const stderr = 'take'
-        jest.spyOn(SelfReference, 'getName').mockReturnValue(command)
-        jest.spyOn(SelfReference, 'getDirectory').mockReturnValue(directory)
+      it('adds default entrypoint to command if expected error thrown with non-root directory no trailing slash', async () => {
+        const command = 'adds-default-entrypoint-with-non-root-dir-no-trailing-slash'
+        const directory = '/ebb'
+        const args = 'flow'
+        const stdout = 'default entrypoint with non root dir no trailing slash'
         await testGetFromExecutable({
           command,
-          directory: '/path/to/another/dir',
+          directory,
           addDirectory: true,
-          expectedDirectory: true,
           args,
+          shell: '',
           stdout,
-          stderr,
+          rejection: getRejection(directory, args),
+          expectedReturn: stdout,
+          expectedExecCalls: [
+            [
+              `${command} ${args}`,
+              {
+                cwd: directory,
+              },
+            ],
+            [
+              `${command} ${defaultEntrypoint} ${args}`,
+              {
+                cwd: directory,
+              },
+            ],
+          ],
         })
       })
-      it('does not append default entrypoint if no pkg env var', async () => {
-        ;(process as any).pkg = undefined
-        const command = 'no-pkg-env-var'
-        const args = 'sling'
-        const stdout = 'person'
-        const stderr = 'hammock'
-        jest.spyOn(SelfReference, 'getName').mockReturnValue(command)
+      it('adds default entrypoint to command if expected error thrown with non-root directory trailing slash', async () => {
+        const command = 'adds-default-entrypoint-with-non-root-dir-trailing-slash'
+        const directory = '/flotsam/'
+        const args = 'jetsam'
+        const stdout = 'default entrypoint with non root dir trailing slash'
         await testGetFromExecutable({
           command,
-          directory: '.', // ignore-duplicate-test-resource
+          directory,
           addDirectory: true,
-          expectedDirectory: true,
           args,
+          shell: '',
           stdout,
-          stderr,
+          rejection: getRejection(directory, args),
+          expectedReturn: stdout,
+          expectedExecCalls: [
+            [
+              `${command} ${args}`,
+              {
+                cwd: directory,
+              },
+            ],
+            [
+              `${command} ${defaultEntrypoint} ${args}`,
+              {
+                cwd: directory,
+              },
+            ],
+          ],
+        })
+      })
+      it('adds default entrypoint to command if expected error thrown without args', async () => {
+        const command = 'adds-default-entrypoint-no-args'
+        const directory = ''
+        const args = ''
+        const stdout = 'default entrypoint no args'
+        await testGetFromExecutable({
+          command,
+          directory,
+          getDirectoryReturn: '/',
+          args,
+          shell: '',
+          stdout,
+          rejection: getRejection(directory, args),
+          expectedReturn: stdout,
+          expectedExecCalls: [
+            [`${command} ${args}`, {}],
+            [`${command} ${defaultEntrypoint} ${args}`, {}],
+          ],
+          expectedGetDirectoryCalls: [[]],
         })
       })
     })
@@ -386,32 +415,46 @@ async function testGetFromExecutable({
   directory,
   addDirectory = false,
   expectedDirectory,
+  getDirectoryReturn,
   shell,
   addShell = false,
   expectedShell = false,
   args,
   stdout,
   stderr = '',
+  rejection,
   expectedReturn,
-  expectedExecCall,
+  expectedExecCalls,
+  expectedGetDirectoryCalls = [],
 }: {
   command: string
   directory?: string
   addDirectory?: boolean
   expectedDirectory?: boolean
+  getDirectoryReturn?: string
   shell?: string
   addShell?: boolean
   expectedShell?: boolean
   args?: string
   stdout: string
   stderr?: string
+  rejection?: string
   expectedReturn?: string
-  expectedExecCall?: string
+  expectedExecCalls?: (string[] | object)[]
+  expectedGetDirectoryCalls?: string[][]
 }) {
-  const executeSpy = jest.spyOn(execute, 'default').mockResolvedValue({
+  const executeSpy = jest.spyOn(execute, 'default')
+  if (rejection) {
+    executeSpy.mockRejectedValueOnce(rejection)
+  }
+  executeSpy.mockResolvedValueOnce({
     stdout,
     stderr,
   })
+  const getDirectorySpy = jest.spyOn(SelfReference, 'getDirectory')
+  if (getDirectoryReturn) {
+    getDirectorySpy.mockReturnValue(getDirectoryReturn)
+  }
   const options: any = {
     command,
     args,
@@ -424,6 +467,9 @@ async function testGetFromExecutable({
     options.shell = shell
   }
   await expect(getFromExecutable(options)).resolves.toBe(expectedReturn || `${stdout}${stderr}`)
+  if (expectedGetDirectoryCalls) {
+    expect(JSON.stringify(getDirectorySpy.mock.calls, null, 2)).toBe(JSON.stringify(expectedGetDirectoryCalls, null, 2))
+  }
   const expectedOptions: any = {}
   if (expectedDirectory) {
     expectedOptions.cwd = directory
@@ -432,6 +478,6 @@ async function testGetFromExecutable({
     expectedOptions.shell = shell
   }
   expect(JSON.stringify(executeSpy.mock.calls, null, 2)).toBe(
-    JSON.stringify([[expectedExecCall || `${command} ${args}`, expectedOptions]], null, 2)
+    JSON.stringify(expectedExecCalls || [[`${command} ${args}`, expectedOptions]], null, 2)
   )
 }
