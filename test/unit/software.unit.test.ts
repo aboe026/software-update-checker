@@ -1,7 +1,8 @@
 import * as executable from '../../src/software/executable'
+import * as execute from '../../src/util/execute-async'
 import SelfReference from '../../src/util/self-reference'
 import Software, { getCommand, getFromRegex, getFromExecutable } from '../../src/software/software'
-import * as execute from '../../src/util/execute-async'
+import TestUtil from '../helpers/test-util'
 
 describe('Software Unit Tests', () => {
   describe('constructor', () => {
@@ -240,8 +241,10 @@ describe('Software Unit Tests', () => {
         return `node:internal/modules/cjs/loader:936
           throw err;
           ^
-      
-          Error: Cannot find module '${directory}${directory.endsWith('/') ? '' : '/'}${args}'
+
+          Error: Cannot find module '${directory}${
+          directory.endsWith(TestUtil.DIRECTORY_SEPARATOR) ? '' : TestUtil.DIRECTORY_SEPARATOR
+        }${args}'
               at Function.Module._resolveFilename (node:internal/modules/cjs/loader:933:15)
               at Function._resolveFilename (pkg/prelude/bootstrap.js:1966:46)
               at Function.Module._load (node:internal/modules/cjs/loader:778:27)
@@ -253,13 +256,11 @@ describe('Software Unit Tests', () => {
       }
       it('adds default entrypoint to command if expected error thrown without directory at root', async () => {
         const command = 'adds-default-entrypoint-no-dir-root'
-        const directory = ''
-        const getDirectoryReturn = '/'
+        const getDirectoryReturn = TestUtil.getFilePath([])
         const args = 'cowbell'
         const stdout = 'default entrypoint no dir root'
         await testGetFromExecutable({
           command,
-          directory,
           getDirectoryReturn,
           args,
           shell: '',
@@ -275,13 +276,11 @@ describe('Software Unit Tests', () => {
       })
       it('adds default entrypoint to command if expected error thrown without directory at non-root', async () => {
         const command = 'adds-default-entrypoint-no-dir-non-root'
-        const directory = ''
-        const getDirectoryReturn = '/down/the/river'
+        const getDirectoryReturn = TestUtil.getFilePath(['down', 'the', 'river'])
         const args = 'dawn'
         const stdout = 'default entrypoint no dir non-root'
         await testGetFromExecutable({
           command,
-          directory,
           getDirectoryReturn,
           args,
           shell: '',
@@ -327,7 +326,7 @@ describe('Software Unit Tests', () => {
       })
       it('adds default entrypoint to command if expected error thrown with non-root directory no trailing slash', async () => {
         const command = 'adds-default-entrypoint-with-non-root-dir-no-trailing-slash'
-        const directory = '/ebb'
+        const directory = TestUtil.getFilePath(['ebb'])
         const args = 'flow'
         const stdout = 'default entrypoint with non root dir no trailing slash'
         await testGetFromExecutable({
@@ -357,7 +356,7 @@ describe('Software Unit Tests', () => {
       })
       it('adds default entrypoint to command if expected error thrown with non-root directory trailing slash', async () => {
         const command = 'adds-default-entrypoint-with-non-root-dir-trailing-slash'
-        const directory = '/flotsam/'
+        const directory = TestUtil.getFilePath(['flotsam', ''])
         const args = 'jetsam'
         const stdout = 'default entrypoint with non root dir trailing slash'
         await testGetFromExecutable({
@@ -387,17 +386,16 @@ describe('Software Unit Tests', () => {
       })
       it('adds default entrypoint to command if expected error thrown without args', async () => {
         const command = 'adds-default-entrypoint-no-args'
-        const directory = ''
+        const getDirectoryReturn = TestUtil.getFilePath([''])
         const args = ''
         const stdout = 'default entrypoint no args'
         await testGetFromExecutable({
           command,
-          directory,
-          getDirectoryReturn: '/',
+          getDirectoryReturn: getDirectoryReturn,
           args,
           shell: '',
           stdout,
-          rejection: getRejection(directory, args),
+          rejection: getRejection(getDirectoryReturn, args),
           expectedReturn: stdout,
           expectedExecCalls: [
             [`${command} ${args}`, {}],

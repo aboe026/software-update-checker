@@ -1,5 +1,7 @@
-import colors from '../../src/util/colors'
 import inquirer from 'inquirer'
+import os from 'os'
+
+import colors from '../../src/util/colors'
 
 export default class TestUtil {
   static readonly NEWLINE_CHARS: string = '\\\\n'
@@ -17,6 +19,15 @@ export default class TestUtil {
     BottomCenterBorder: '─',
     BottomSeparator: '┴',
     BottomRightBorder: '┘',
+  }
+  static readonly DIRECTORY_SEPARATOR = os.platform() === 'win32' ? '\\' : '/'
+
+  static getFilePath(parts: string[]): string {
+    let filePath = os.platform() === 'win32' ? 'C:' : ''
+    for (const part of parts) {
+      filePath += `${TestUtil.DIRECTORY_SEPARATOR}${part}`
+    }
+    return filePath
   }
 
   static validateTablePrintout(output: string, printouts: SoftwarePrintout[]): void {
