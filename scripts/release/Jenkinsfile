@@ -19,11 +19,7 @@ node {
         ansiColor('xterm') {
             dir(workDir) {
                 stage('Checkout Code') {
-                    git(
-                        url: 'https://github.com/aboe026/software-update-checker-cli.git',
-                        credentialsId: 'github',
-                        branch: 'main'
-                    )
+                    checkout scm
                 }
 
                 stage('Resolve Build Number') {

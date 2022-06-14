@@ -57,7 +57,10 @@ export default async function ({
 
   if (proc) {
     timeoutTimer = setTimeout(() => {
-      proc?.stdin?.end()
+      if (proc?.stdin) {
+        proc.stdin.end()
+        throw Error(`Process exceeded timeout of '${timeoutMs}' milliseconds.`)
+      }
     }, timeoutMs)
   }
 
