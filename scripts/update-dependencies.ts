@@ -9,7 +9,6 @@ const DENY_LIST: string[] = [
   'node-fetch', // v3 switches to ESM (not compatible with current CommonJS)
   '@types/node-fetch', // v3 switches to ESM (not compatible with current CommonJS)
   'yargs', // waiting on https://github.com/yargs/yargs/issues/2064
-  'jest', // waiting on https://github.com/kulshekhar/ts-jest/issues/3453
 ]
 ;(async () => {
   const outdated = await getOutdatedDependencies()
