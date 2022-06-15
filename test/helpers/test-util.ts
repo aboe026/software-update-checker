@@ -84,7 +84,11 @@ export default class TestUtil {
   }): void {
     expect(spy.mock.calls).toHaveLength(1)
     expect(spy.mock.calls[0]).toHaveLength(1)
-    expect(spy.mock.calls[0][0]).toHaveProperty(parameter, expected)
+    if (expected === undefined && !Object.keys(spy.mock.calls[0][0]).includes(parameter)) {
+      expect(spy.mock.calls[0][0]).not.toHaveProperty(parameter)
+    } else {
+      expect(spy.mock.calls[0][0]).toHaveProperty(parameter, expected)
+    }
   }
 
   static validateGetExistingSoftwareCalls({
