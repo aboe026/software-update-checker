@@ -17,7 +17,7 @@ export default async function (command: string, options?: ExecOptions): Promise<
   })
 }
 
-interface ExecuteResponse {
+export interface ExecuteResponse {
   stdout: string
   stderr: string
 }

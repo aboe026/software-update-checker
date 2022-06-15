@@ -3,13 +3,14 @@ import concat from 'concat-stream'
 import os from 'os'
 
 import E2eConfig from './e2e-config'
+import env from './env'
 import jestConfig from '../../../jest.config.e2e'
 
 export default async function ({
   args = [],
   inputs = [],
   timeoutMs = jestConfig.testTimeout,
-  minQuietPeriodMs = 200,
+  minQuietPeriodMs = env.E2E_EXEC_MIN_QUIET_PERIOD,
   maxQuietPeriodMs = 1000,
   directory,
   file,
@@ -56,7 +57,10 @@ export default async function ({
 
   if (proc) {
     timeoutTimer = setTimeout(() => {
-      proc?.stdin?.end()
+      if (proc?.stdin) {
+        proc.stdin.end()
+        throw Error(`Process exceeded timeout of '${timeoutMs}' milliseconds.`)
+      }
     }, timeoutMs)
   }
 

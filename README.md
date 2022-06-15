@@ -40,6 +40,7 @@ Want to modify software-update-checker-cli yourself? Follow these steps below:
 ### Requirements
 
 - [Node.js](https://nodejs.org/) version 16
+- [Powershell](https://docs.microsoft.com/en-us/powershell/) for [e2e tests](#end-to-end-tests)
 
 ### Install Dependencies
 
@@ -91,7 +92,7 @@ To test the project for regressions, run
 npm test
 ```
 
-This will [lint](#lint) the project, then run [unit](#unit-tests), [functional](#functional-tests), and [e2e](#end-to-end-tests) tests
+This will [lint](#lint) the project, then run [unit](#unit-tests), [functional](#functional-tests), and [e2e](#end-to-end-tests) tests.
 
 #### Unit Tests
 
@@ -142,6 +143,12 @@ npm run test:e2e -- -t 'test name'
 ```
 
 With spaces separating describe blocks and test names
+
+E2E test execution can be configured with the following environment variables:
+
+| Name                      | Required | Default | Description                                                                                                                  | Example(s) |
+| ------------------------- | -------- | ------- | ---------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| E2E_EXEC_MIN_QUIET_PERIOD | yes      | 250     | The minimum amount of time (in milliseconds) that the E2E interactive execution should wait before sending prompt responses. | 300        |
 
 ### Code Coverage
 
