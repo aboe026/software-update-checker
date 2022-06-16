@@ -31,7 +31,11 @@ const notes: Release[] = [
   {
     version: '1.0.2',
     description: 'Unix improvements.',
-    fixes: ['Improved handling of self-references (#66)', 'Updated dependencies (#67)'],
+    fixes: [
+      'Improved handling of self-references (#66)',
+      'Updated dependencies (#67)',
+      'Version option no longer global (#68)',
+    ],
   },
 ]
 
