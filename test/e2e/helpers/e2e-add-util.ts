@@ -49,24 +49,24 @@ export default class E2eAddUtil extends E2eBaseUtil {
     const args: string[] = [
       'add',
       isStatic(software.executable) ? 'static' : 'dynamic',
-      `--name="${software.name}"`,
-      `--installedRegex="${software.installedRegex}"`,
-      `--url="${software.url}"`,
-      `--latestRegex="${software.latestRegex}"`,
+      `--name=${software.name}`,
+      `--installedRegex=${software.installedRegex}`,
+      `--url=${software.url}`,
+      `--latestRegex=${software.latestRegex}`,
     ]
     if (software.shell) {
-      args.push(`--shell="${software.shell}"`)
+      args.push(`--shell=${software.shell}`)
     }
     if (software.directory) {
-      args.push(`--directory="${software.directory}"`)
+      args.push(`--directory=${software.directory}`)
     }
     if (isStatic(software.executable)) {
-      args.push(`--command="${software.executable.command}"`)
+      args.push(`--command=${software.executable.command}`)
     } else {
-      args.push(`--regex="${software.executable.regex}"`)
+      args.push(`--regex=${software.executable.regex}`)
     }
     if (software.args) {
-      args.push(`--args="${software.args}"`)
+      args.push(`--args=${software.args}`)
     }
     return args
   }

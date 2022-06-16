@@ -2,7 +2,7 @@ import yargs, { Arguments, Argv } from 'yargs'
 
 import HelpCommand from '../../src/actions/help/help-command'
 
-describe('View Command Unit Tests', () => {
+describe('Help Command Unit Tests', () => {
   describe('getCommand', () => {
     it('builder returns without modifications', () => {
       const builder = HelpCommand.getCommand().builder as (yargs: Argv) => Argv

@@ -25,18 +25,6 @@ export class Command {
 }
 
 export const BaseOptions = {
-  Version: new Option({
-    key: 'version',
-    value: {
-      alias: ['v'],
-      description: 'Show version number',
-      type: 'boolean',
-      default: false,
-      demandOption: false,
-      requiresArg: false,
-      group: GROUP.Globals,
-    },
-  }),
   Help: new Option({
     key: 'help',
     value: {

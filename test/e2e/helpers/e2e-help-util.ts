@@ -25,7 +25,6 @@ export default class E2eHelpUtil extends E2eBaseUtil {
   static getGlobalsChunks(): string[] {
     return [
       'Globals:',
-      `  -v, --version                ${E2eHelpUtil.MESSAGES.ShowVersion}  [boolean] [default: false]`,
       `  -h, --help                   ${E2eHelpUtil.MESSAGES.ShowHelp}  [boolean] [default: false]`,
       '  -p, --prompt, --interactive  Whether or not terminal should wait for user input if needed, or exit/error as necessary  [boolean] [default: false]',
     ]
@@ -48,6 +47,9 @@ export default class E2eHelpUtil extends E2eBaseUtil {
       `  ${executableName} help                       ${E2eHelpUtil.MESSAGES.ShowHelp}`,
       '',
       ...this.getGlobalsChunks(),
+      '',
+      'Options:',
+      `  -v, --version  ${E2eHelpUtil.MESSAGES.ShowVersion}  [boolean] [default: false]`,
     ]
   }
 

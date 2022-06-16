@@ -15,6 +15,18 @@ describe('Edit Command Unit Tests', () => {
       builder(yargs)
       expect(showHelpOnFailSpy.mock.calls).toEqual([[true]])
       expect(optionsSpy.mock.calls).toHaveLength(1)
+      expect(Object.keys(optionsSpy.mock.calls[0][0])).toEqual([
+        'arguments',
+        'command',
+        'directory',
+        'installedRegex',
+        'latestRegex',
+        'name',
+        'regex',
+        'shell',
+        'type',
+        'url',
+      ])
       expect(positionalSpy.mock.calls).toEqual([
         [
           'existing',

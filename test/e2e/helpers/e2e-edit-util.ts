@@ -26,34 +26,34 @@ export default class E2eEditUtil extends E2eBaseUtil {
       args.push(existingName)
     }
     if (newSoftware.name !== undefined) {
-      args.push(`--name="${newSoftware.name}"`)
+      args.push(`--name=${newSoftware.name}`)
     }
     if (newSoftware.shell !== undefined) {
-      args.push(`--shell="${newSoftware.shell}"`)
+      args.push(`--shell=${newSoftware.shell}`)
     }
     if (newSoftware.directory !== undefined) {
-      args.push(`--directory="${newSoftware.directory}"`)
+      args.push(`--directory=${newSoftware.directory}`)
     }
     if (newSoftware.type !== undefined) {
-      args.push(`--type="${newSoftware.type}"`)
+      args.push(`--type=${newSoftware.type}`)
     }
     if (newSoftware.command !== undefined) {
-      args.push(`--command="${newSoftware.command}"`)
+      args.push(`--command=${newSoftware.command}`)
     }
     if (newSoftware.regex !== undefined) {
-      args.push(`--regex="${newSoftware.regex}"`)
+      args.push(`--regex=${newSoftware.regex}`)
     }
     if (newSoftware.args !== undefined) {
-      args.push(`--args="${newSoftware.args}"`)
+      args.push(`--args=${newSoftware.args}`)
     }
     if (newSoftware.installedRegex !== undefined) {
-      args.push(`--installedRegex="${newSoftware.installedRegex}"`)
+      args.push(`--installedRegex=${newSoftware.installedRegex}`)
     }
     if (newSoftware.url !== undefined) {
-      args.push(`--url="${newSoftware.url}"`)
+      args.push(`--url=${newSoftware.url}`)
     }
     if (newSoftware.latestRegex !== undefined) {
-      args.push(`--latestRegex="${newSoftware.latestRegex}"`)
+      args.push(`--latestRegex=${newSoftware.latestRegex}`)
     }
     return args
   }
