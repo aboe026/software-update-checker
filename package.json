@@ -1,17 +1,17 @@
 {
-  "name": "software-update-checker-cli",
-  "version": "1.0.2",
+  "name": "software-update-checker",
+  "version": "1.0.3",
   "author": "Adam Boe",
   "description": "A command line interface to check if local software installs have updates",
   "private": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/aboe026/software-update-checker-cli.git"
+    "url": "https://github.com/aboe026/software-update-checker.git"
   },
   "bugs": {
-    "url": "https://github.com/aboe026/software-update-checker-cli/issues"
+    "url": "https://github.com/aboe026/software-update-checker/issues"
   },
-  "homepage": "https://github.com/aboe026/software-update-checker-cli",
+  "homepage": "https://github.com/aboe026/software-update-checker",
   "engines": {
     "node": ">=16.13.0",
     "npm": ">=8.1.0"

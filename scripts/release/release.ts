@@ -7,12 +7,12 @@ import { getDescription } from './release-notes'
 import interactiveExecute, { getExecutableName } from '../../test/e2e/helpers/interactive-execute'
 
 const owner = 'aboe026'
-const repo = 'software-update-checker-cli'
+const repo = 'software-update-checker'
 
 ;(async () => {
   const github = new Octokit({
     auth: env.GITHUB_PERSONAL_ACCESS_TOKEN,
-    userAgent: 'software-update-checker-cli',
+    userAgent: 'software-update-checker',
   })
   const assetsDir = path.isAbsolute(env.ASSETS_DIRECTORY)
     ? env.ASSETS_DIRECTORY
