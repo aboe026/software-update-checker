@@ -23,7 +23,7 @@ node {
                 }
 
                 stage('Resolve Build Number') {
-                    def buildName = '/software-update-checker-cli/software-update-checker-cli'
+                    def buildName = '/software-update-checker/software-update-checker'
                     def buildBranch = 'main'
                     if (params.buildNumber == 'lastSuccessful') {
                         println "Resolving build number from the '${buildBranch}' branch of multi-branch job '${buildName}'..."
@@ -43,7 +43,7 @@ node {
                         def nexusOptions = [
                             url: 'http://host.docker.internal:8081',
                             credentials: 'NEXUS_CREDENTIALS',
-                            repo: 'software-update-checker-cli',
+                            repo: 'software-update-checker',
                             org: 'suc',
                             version: versionToRelease,
                         ]

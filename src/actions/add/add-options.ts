@@ -87,7 +87,7 @@ export const AddOptions = {
     value: {
       alias: ['u'],
       description:
-        'URL to call for latest version (eg "https://github.com/aboe026/software-update-checker-cli/releases/latest")',
+        'URL to call for latest version (eg "https://github.com/aboe026/software-update-checker/releases/latest")',
       type: 'string',
       demandOption: true,
       requiresArg: true,

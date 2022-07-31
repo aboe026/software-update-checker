@@ -8,7 +8,7 @@ node {
     def nodeImage = 'node:16'
     def version
     def exceptionThrown = false
-    def badges = new ShieldsIoBadges(this, 'software-update-checker-cli')
+    def badges = new ShieldsIoBadges(this, 'software-update-checker')
     def uploadBadges = env.BRANCH_NAME == 'main'
 
     try {
@@ -147,7 +147,7 @@ node {
                                             def nexusOptions = [
                                                 url: 'http://host.docker.internal:8081',
                                                 credentials: 'NEXUS_CREDENTIALS',
-                                                repo: 'software-update-checker-cli',
+                                                repo: 'software-update-checker',
                                                 org: 'suc',
                                                 version: version,
                                             ]

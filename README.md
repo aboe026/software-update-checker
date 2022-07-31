@@ -1,7 +1,7 @@
-# software-update-checker-cli
+# software-update-checker
 
-![build](https://img.shields.io/endpoint?url=https://aboe026.github.io/shields.io-badge-results/badge-results/software-update-checker-cli/main/build.json)
-![coverage](https://img.shields.io/endpoint?url=https://aboe026.github.io/shields.io-badge-results/badge-results/software-update-checker-cli/main/coverage.json)
+![build](https://img.shields.io/endpoint?url=https://aboe026.github.io/shields.io-badge-results/badge-results/software-update-checker/main/build.json)
+![coverage](https://img.shields.io/endpoint?url=https://aboe026.github.io/shields.io-badge-results/badge-results/software-update-checker/main/coverage.json)
 
 A command line interface to check if local software installs have updates.
 
@@ -35,7 +35,7 @@ Reference the following files for what software configurations should look like 
 
 ## Development
 
-Want to modify software-update-checker-cli yourself? Follow these steps below:
+Want to modify software-update-checker yourself? Follow these steps below:
 
 ### Requirements
 

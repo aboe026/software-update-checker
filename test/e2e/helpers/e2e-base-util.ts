@@ -46,7 +46,7 @@ export default class E2eBaseUtil {
     LatestRegexExample: '(eg "releases\\/tag\\/v(.*?)&quot;")',
     Regex: 'Regex pattern applied to files in directory for singling out executable file to use',
     Url: 'URL to call for latest version',
-    UrlExample: '(eg "https://github.com/aboe026/software-update-checker-cli/releases/latest")',
+    UrlExample: '(eg "https://github.com/aboe026/software-update-checker/releases/latest")',
     NoSoftwaresToDelete: 'No softwares to delete. Please add a software to have something to delete.',
     NoSoftwaresToEdit: 'No softwares to edit. Please add a software to have something to edit.',
     NoSoftwaresToView: 'No softwares to view. Please add a software to have something to view.',
