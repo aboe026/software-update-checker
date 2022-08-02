@@ -185,6 +185,32 @@ export default class TestUtil {
     }
     return value
   }
+
+  static async retry<T extends (...arg0: any[]) => any>({
+    method,
+    args,
+    retries = 3,
+  }: {
+    method: T
+    args: Parameters<T>
+    retries: number
+  }): Promise<ReturnType<T>> {
+    let result
+    let succeeded = false
+    while (!succeeded && retries > 0) {
+      try {
+        result = await method(...args)
+        succeeded = true
+      } catch (error: unknown) {
+        if (retries <= 0) {
+          throw error
+        }
+      } finally {
+        retries--
+      }
+    }
+    return result
+  }
 }
 
 function getColorRegExp(string: string, color: colors.Color): RegExp {

@@ -6,6 +6,7 @@ import E2eConfig from './helpers/e2e-config'
 import E2eTestUtil from './helpers/e2e-test-util'
 import { getExecutableName } from './helpers/interactive-execute'
 import Software from '../../src/software/software'
+import TestUtil from '../helpers/test-util'
 import { version } from '../../package.json'
 import Website from '../helpers/website'
 
@@ -571,7 +572,14 @@ describe('Add Silent', () => {
         await E2eAddUtil.verifySoftwares([software])
       } finally {
         if (await fs.pathExists(dirWithSpaces)) {
-          await fs.remove(dirWithSpaces)
+          // for some reason, this retry was needed to prevent
+          // EPERM: operation not permitted, unlink 'software-update-checker\test\e2e\.temp-work-dir\path with spaces\software-update-checker-win.exe'
+          // on Windows machines. Possibly due to some handling of the installer that isn't properly awaited above?
+          await TestUtil.retry({
+            method: fs.remove,
+            args: [dirWithSpaces],
+            retries: 3,
+          })
         }
       }
     })

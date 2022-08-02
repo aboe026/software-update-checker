@@ -37,6 +37,14 @@ const notes: Release[] = [
       'Version option no longer global (#68)',
     ],
   },
+  {
+    version: '1.0.3',
+    description: 'Rename repository.',
+    fixes: [
+      'Renamed repository from "software-update-checker-cli" to just "software-update-checker" (#71)',
+      'Updated dependencies (#72)',
+    ],
+  },
 ]
 
 export function getDescription({ version, build }: { version: string; build?: string }): string {
