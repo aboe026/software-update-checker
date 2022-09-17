@@ -45,6 +45,11 @@ const notes: Release[] = [
       'Updated dependencies (#72)',
     ],
   },
+  {
+    version: '1.0.4',
+    description: 'Self-reference restriction relaxation',
+    fixes: ['References to itself relaxes restrictions on error messages, making it more reliable (#74). '],
+  },
 ]
 
 export function getDescription({ version, build }: { version: string; build?: string }): string {
