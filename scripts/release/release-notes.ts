@@ -48,7 +48,7 @@ const notes: Release[] = [
   {
     version: '1.0.4',
     description: 'Self-reference restriction relaxation',
-    fixes: ['References to itself relaxes restrictions on error messages, making it more reliable (#73). '],
+    fixes: ['References to itself relaxes restrictions on error messages, making it more reliable (#74). '],
   },
 ]
 
