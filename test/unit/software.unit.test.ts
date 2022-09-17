@@ -271,7 +271,7 @@ describe('Software Unit Tests', () => {
             [`${command} ${args}`, {}],
             [`${command} ${defaultEntrypoint} ${args}`, {}],
           ],
-          expectedGetDirectoryCalls: [[]],
+          expectedGetDirectoryCalls: [],
         })
       })
       it('adds default entrypoint to command if expected error thrown without directory at non-root', async () => {
@@ -291,7 +291,7 @@ describe('Software Unit Tests', () => {
             [`${command} ${args}`, {}],
             [`${command} ${defaultEntrypoint} ${args}`, {}],
           ],
-          expectedGetDirectoryCalls: [[]],
+          expectedGetDirectoryCalls: [],
         })
       })
       it('adds default entrypoint to command if expected error thrown with root directory', async () => {
@@ -401,7 +401,7 @@ describe('Software Unit Tests', () => {
             [`${command} ${args}`, {}],
             [`${command} ${defaultEntrypoint} ${args}`, {}],
           ],
-          expectedGetDirectoryCalls: [[]],
+          expectedGetDirectoryCalls: [],
         })
       })
     })

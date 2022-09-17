@@ -1,10 +1,8 @@
 import { ExecOptions } from 'child_process'
 import fetch from 'node-fetch'
-import path from 'path'
 
 import { Dynamic, Static, isStatic, getDynamicExecutable } from './executable'
 import execute, { ExecuteResponse } from '../util/execute-async'
-import SelfReference from '../util/self-reference'
 
 export default class Software {
   readonly name: string
@@ -111,7 +109,7 @@ export async function getFromExecutable({
     if (
       typeof err === 'string' &&
       defaultEntrypoint &&
-      err.includes(`Error: Cannot find module '${path.join(directory || SelfReference.getDirectory(), args || '')}'`) &&
+      err.includes(`Error: Cannot find module '`) &&
       err.includes('at Function._resolveFilename (pkg/prelude/bootstrap.js')
     ) {
       // To get around self-reference/recursion issue: https://github.com/vercel/pkg/issues/376
