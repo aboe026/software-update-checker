@@ -5,6 +5,7 @@ import util from 'util'
 
 const execa = util.promisify(exec)
 const DENY_LIST: string[] = [
+  '@types/inquirer', // waiting on https://github.com/SBoudrias/Inquirer.js/issues/1029
   'inquirer', // waiting on https://github.com/SBoudrias/Inquirer.js/issues/1029
   'node-fetch', // v3 switches to ESM (not compatible with current CommonJS)
   '@types/node-fetch', // v3 switches to ESM (not compatible with current CommonJS)
