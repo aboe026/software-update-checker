@@ -13,8 +13,8 @@
   },
   "homepage": "https://github.com/aboe026/software-update-checker",
   "engines": {
-    "node": ">=16.13.0",
-    "npm": ">=8.1.0"
+    "node": ">=18",
+    "npm": ">=9"
   },
   "main": "src/index.ts",
   "scripts": {
@@ -32,7 +32,7 @@
     "dist": "npm run build && npm run pack",
     "lint": "eslint . && prettier --check . && npm-groovy-lint --ignorepattern **/node_modules/** --failon info && npm run detect:duplicate-test-resources",
     "lint:fix": "eslint --fix . && prettier --write . && npm-groovy-lint --ignorepattern **/node_modules/** --failon info --fix",
-    "pack": "pkg --targets=node16-linux-x64,node16-macos-x64,node16-win-x64 --out-path=dist --config=.pkg.config.json build/src/index.js",
+    "pack": "pkg --targets=node18-linux-x64,node18-macos-x64,node18-win-x64 --out-path=dist --config=.pkg.config.json build/src/index.js",
     "release": "ts-node scripts/release/release.ts",
     "run-mock-server": "ts-node scripts/run-mock-server.ts",
     "start": "ts-node src/index.ts",

@@ -83,7 +83,7 @@ describe('Add Interactive', () => {
             {
               url,
               regex: 'latest: v(.*)',
-              error: `request to ${url} failed, reason: connect ECONNREFUSED 127.0.0.1:${port}`,
+              error: `request to ${url} failed, reason: connect ECONNREFUSED ::1:${port}`,
               confirmOrReconfigure: false,
             },
           ],

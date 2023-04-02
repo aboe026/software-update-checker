@@ -222,9 +222,7 @@ describe('Edit Silent', () => {
               latestRegex: 'latest: v(.*)',
             },
           }),
-          error: E2eAddUtil.getLatestErrorMessage(
-            `request to ${url} failed, reason: connect ECONNREFUSED 127.0.0.1:${port}`
-          ),
+          error: E2eAddUtil.getLatestErrorMessage(`request to ${url} failed, reason: connect ECONNREFUSED ::1:${port}`),
         })
         await E2eEditUtil.verifySoftwares([software])
       } finally {

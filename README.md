@@ -39,7 +39,7 @@ Want to modify software-update-checker yourself? Follow these steps below:
 
 ### Requirements
 
-- [Node.js](https://nodejs.org/) version 16
+- [Node.js](https://nodejs.org/)
 - [Powershell](https://docs.microsoft.com/en-us/powershell/) for [e2e tests](#end-to-end-tests)
 
 ### Install Dependencies
