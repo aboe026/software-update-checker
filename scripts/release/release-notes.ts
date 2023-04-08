@@ -53,6 +53,11 @@ const notes: Release[] = [
       'Update dependencies (#75)',
     ],
   },
+  {
+    version: '1.0.5',
+    description: 'Upgrade Node.js',
+    fixes: ['Incremented Node.js version to 18'],
+  },
 ]
 
 export function getDescription({ version, build }: { version: string; build?: string }): string {
