@@ -2,6 +2,7 @@ import { CommandType } from '../../src/software/executable'
 import E2eAddUtil from './helpers/e2e-add-util'
 import E2eEditUtil from './helpers/e2e-edit-util'
 import E2eTestUtil from './helpers/e2e-test-util'
+import env from './helpers/env'
 import Software from '../../src/software/software'
 import Website from '../helpers/website'
 
@@ -222,7 +223,9 @@ describe('Edit Silent', () => {
               latestRegex: 'latest: v(.*)',
             },
           }),
-          error: E2eAddUtil.getLatestErrorMessage(`request to ${url} failed, reason: connect ECONNREFUSED ::1:${port}`),
+          error: E2eAddUtil.getLatestErrorMessage(
+            `request to ${url} failed, reason: connect ECONNREFUSED ${env.E2E_LOCAL_IP_ADDRESS}:${port}`
+          ),
         })
         await E2eEditUtil.verifySoftwares([software])
       } finally {

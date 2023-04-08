@@ -146,9 +146,10 @@ With spaces separating describe blocks and test names
 
 E2E test execution can be configured with the following environment variables:
 
-| Name                      | Required | Default | Description                                                                                                                  | Example(s) |
-| ------------------------- | -------- | ------- | ---------------------------------------------------------------------------------------------------------------------------- | ---------- |
-| E2E_EXEC_MIN_QUIET_PERIOD | yes      | 250     | The minimum amount of time (in milliseconds) that the E2E interactive execution should wait before sending prompt responses. | 300        |
+| Name                      | Required | Default   | Description                                                                                                                  | Example(s) |
+| ------------------------- | -------- | --------- | ---------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| E2E_EXEC_MIN_QUIET_PERIOD | yes      | 250       | The minimum amount of time (in milliseconds) that the E2E interactive execution should wait before sending prompt responses. | 300        |
+| E2E_LOCAL_IP_ADDRESS      | yes      | 127.0.0.1 | The IP address of the machine running the E2E tests                                                                          | ::1        |
 
 ### Code Coverage
 
