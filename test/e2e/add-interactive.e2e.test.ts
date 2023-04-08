@@ -4,6 +4,7 @@ import path from 'path'
 import E2eAddUtil from './helpers/e2e-add-util'
 import E2eConfig from './helpers/e2e-config'
 import E2eTestUtil from './helpers/e2e-test-util'
+import env from './helpers/env'
 import { getExecutableName, KEYS } from './helpers/interactive-execute'
 import Software from '../../src/software/software'
 import { version } from '../../package.json'
@@ -83,7 +84,7 @@ describe('Add Interactive', () => {
             {
               url,
               regex: 'latest: v(.*)',
-              error: `request to ${url} failed, reason: connect ECONNREFUSED 127.0.0.1:${port}`,
+              error: `request to ${url} failed, reason: connect ECONNREFUSED ${env.E2E_LOCAL_IP_ADDRESS}:${port}`,
               confirmOrReconfigure: false,
             },
           ],

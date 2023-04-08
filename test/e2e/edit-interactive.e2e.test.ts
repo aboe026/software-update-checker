@@ -1,5 +1,6 @@
 import E2eEditUtil from './helpers/e2e-edit-util'
 import E2eTestUtil from './helpers/e2e-test-util'
+import env from './helpers/env'
 import { KEYS } from './helpers/interactive-execute'
 import Software from '../../src/software/software'
 import Website from '../helpers/website'
@@ -137,7 +138,7 @@ describe('Edit Interactive', () => {
             {
               url,
               regex: 'latest: (.*)',
-              error: `request to ${url} failed, reason: connect ECONNREFUSED 127.0.0.1:${port}`,
+              error: `request to ${url} failed, reason: connect ECONNREFUSED ${env.E2E_LOCAL_IP_ADDRESS}:${port}`,
               confirmOrReconfigure: false,
             },
           ],
