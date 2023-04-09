@@ -45,7 +45,7 @@ describe('Executable Unit Tests', () => {
         const directory = 'hobbit'
         const regex = 'hole'
         fs.pathExists = jest.fn().mockResolvedValue(true)
-        fs.readdir = jest.fn().mockResolvedValue(['dwarf', 'cave'])
+        jest.spyOn(fs, 'readdir').mockImplementation(() => Promise.resolve(['dwarf', 'cave']))
         await expect(
           getDynamicExecutable({
             directory,
@@ -56,7 +56,7 @@ describe('Executable Unit Tests', () => {
       it('match from single with explicit directory gets returned', async () => {
         const file = 'tower'
         fs.pathExists = jest.fn().mockResolvedValue(true)
-        fs.readdir = jest.fn().mockResolvedValue([file])
+        jest.spyOn(fs, 'readdir').mockImplementation(() => Promise.resolve([file]))
         await expect(
           getDynamicExecutable({
             directory: 'wizard',
@@ -67,7 +67,7 @@ describe('Executable Unit Tests', () => {
       it('match first of many with explicit directory gets returned', async () => {
         const file = 'tonic'
         fs.pathExists = jest.fn().mockResolvedValue(true)
-        fs.readdir = jest.fn().mockResolvedValue([file, 'rum', 'coke'])
+        jest.spyOn(fs, 'readdir').mockImplementation(() => Promise.resolve([file, 'rum', 'coke']))
         await expect(
           getDynamicExecutable({
             directory: 'gin',
@@ -78,7 +78,7 @@ describe('Executable Unit Tests', () => {
       it('match middle of many with explicit directory gets returned', async () => {
         const file = 'peanut'
         fs.pathExists = jest.fn().mockResolvedValue(true)
-        fs.readdir = jest.fn().mockResolvedValue(['butter', file, 'jelly'])
+        jest.spyOn(fs, 'readdir').mockImplementation(() => Promise.resolve(['butter', file, 'jelly']))
         await expect(
           getDynamicExecutable({
             directory: 'sandwhich',
@@ -89,7 +89,7 @@ describe('Executable Unit Tests', () => {
       it('match last of many with explicit directory gets returned', async () => {
         const file = 'halloween'
         fs.pathExists = jest.fn().mockResolvedValue(true)
-        fs.readdir = jest.fn().mockResolvedValue(['thanksgiving', 'newyears', file])
+        jest.spyOn(fs, 'readdir').mockImplementation(() => Promise.resolve(['thanksgiving', 'newyears', file]))
         await expect(
           getDynamicExecutable({
             directory: 'independence',
@@ -100,7 +100,7 @@ describe('Executable Unit Tests', () => {
       it('subsequent match gets ignored with explicit directory', async () => {
         const file = 'chain'
         fs.pathExists = jest.fn().mockResolvedValue(true)
-        fs.readdir = jest.fn().mockResolvedValue([file, `${file}2`])
+        jest.spyOn(fs, 'readdir').mockImplementation(() => Promise.resolve([file, `${file}2`]))
         await expect(
           getDynamicExecutable({
             directory: 'ball',
@@ -125,7 +125,7 @@ describe('Executable Unit Tests', () => {
         const regex = 'the.*'
         jest.spyOn(process, 'cwd').mockReturnValue(directory)
         fs.pathExists = jest.fn().mockResolvedValue(true)
-        fs.readdir = jest.fn().mockResolvedValue(['plank'])
+        jest.spyOn(fs, 'readdir').mockImplementation(() => Promise.resolve(['plank']))
         const filesSpy = jest.spyOn(fs, 'readdir')
         await expect(
           getDynamicExecutable({
@@ -140,7 +140,7 @@ describe('Executable Unit Tests', () => {
         const file = 'ho'
         jest.spyOn(process, 'cwd').mockReturnValue(directory)
         fs.pathExists = jest.fn().mockResolvedValue(true)
-        fs.readdir = jest.fn().mockResolvedValue([file])
+        jest.spyOn(fs, 'readdir').mockImplementation(() => Promise.resolve([file]))
         const filesSpy = jest.spyOn(fs, 'readdir')
         await expect(
           getDynamicExecutable({
@@ -154,7 +154,7 @@ describe('Executable Unit Tests', () => {
         const file = 'me'
         jest.spyOn(process, 'cwd').mockReturnValue(directory)
         fs.pathExists = jest.fn().mockResolvedValue(true)
-        fs.readdir = jest.fn().mockResolvedValue([file, 'timbers', 'matey'])
+        jest.spyOn(fs, 'readdir').mockImplementation(() => Promise.resolve([file, 'timbers', 'matey']))
         const filesSpy = jest.spyOn(fs, 'readdir')
         await expect(
           getDynamicExecutable({
@@ -168,7 +168,7 @@ describe('Executable Unit Tests', () => {
         const file = 'thar'
         jest.spyOn(process, 'cwd').mockReturnValue(directory)
         fs.pathExists = jest.fn().mockResolvedValue(true)
-        fs.readdir = jest.fn().mockResolvedValue(['she', file, 'blows'])
+        jest.spyOn(fs, 'readdir').mockImplementation(() => Promise.resolve(['she', file, 'blows']))
         const filesSpy = jest.spyOn(fs, 'readdir')
         await expect(
           getDynamicExecutable({
@@ -182,7 +182,7 @@ describe('Executable Unit Tests', () => {
         const file = 'jones'
         jest.spyOn(process, 'cwd').mockReturnValue(directory)
         fs.pathExists = jest.fn().mockResolvedValue(true)
-        fs.readdir = jest.fn().mockResolvedValue(['locker', 'savvy', file])
+        jest.spyOn(fs, 'readdir').mockImplementation(() => Promise.resolve(['locker', 'savvy', file]))
         const filesSpy = jest.spyOn(fs, 'readdir')
         await expect(
           getDynamicExecutable({
@@ -196,7 +196,7 @@ describe('Executable Unit Tests', () => {
         const file = 'ho'
         jest.spyOn(process, 'cwd').mockReturnValue(directory)
         fs.pathExists = jest.fn().mockResolvedValue(true)
-        fs.readdir = jest.fn().mockResolvedValue([file, `${file}2`])
+        jest.spyOn(fs, 'readdir').mockImplementation(() => Promise.resolve([file, `${file}2`]))
         const filesSpy = jest.spyOn(fs, 'readdir')
         await expect(
           getDynamicExecutable({
