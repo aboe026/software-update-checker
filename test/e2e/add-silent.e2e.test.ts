@@ -578,7 +578,7 @@ describe('Add Silent', () => {
           // on Windows machines. Possibly due to some handling of the installer that isn't properly awaited above?
           await TestUtil.retry({
             method: fs.remove,
-            args: [dirWithSpaces],
+            args: [dirWithSpaces, () => {}], // eslint-disable-line @typescript-eslint/no-empty-function
             retries: 3,
           })
         }

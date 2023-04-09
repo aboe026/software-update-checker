@@ -10,7 +10,7 @@ jest.mock('fs-extra')
 describe('Software List Unit Tests', () => {
   beforeEach(() => {
     fs.ensureDir = jest.fn().mockResolvedValue(true)
-    fs.writeFile = jest.fn().mockResolvedValue(true)
+    jest.spyOn(fs, 'writeFile').mockImplementation(() => Promise.resolve(true))
   })
   describe('sortByName', () => {
     it('returns empty array for empty array', () => {
@@ -548,68 +548,74 @@ describe('Software List Unit Tests', () => {
       await expect(SoftwareList.load()).resolves.toEqual([])
     })
     it('loads empty list if save file is empty', async () => {
-      fs.readFile = jest.fn().mockResolvedValue('')
+      jest.spyOn(fs, 'readFile').mockImplementation(() => Promise.resolve(''))
       await expect(SoftwareList.load()).resolves.toEqual([])
     })
     it('throws error if file contents cannot be read', async () => {
       const error = 'permission denied'
-      fs.readFile = jest.fn().mockRejectedValue(error)
+      jest.spyOn(fs, 'readFile').mockImplementation(() => Promise.reject(error))
       await expect(SoftwareList.load()).rejects.toThrow(`Cannot read contents of file "${file}": "${error}"`)
     })
     it('throws error if save file does not contain valid json', async () => {
-      fs.readFile = jest.fn().mockResolvedValue('i am not valid JSON')
+      jest.spyOn(fs, 'readFile').mockImplementation(() => Promise.resolve('i am not valid JSON'))
       await expect(SoftwareList.load()).rejects.toThrow(
         `Cannot parse saved file "${file}" as JSON: Unexpected token i in JSON at position 0`
       )
     })
     it('throws error if save file does not contain json object', async () => {
-      fs.readFile = jest.fn().mockResolvedValue(10)
+      jest.spyOn(fs, 'readFile').mockImplementation(() => Promise.resolve(10))
       await expect(SoftwareList.load()).rejects.toThrow(
         `Saved file "${file}" JSON must be of type "object", received type "number"`
       )
     })
     it('throws error if save file does not contain softwares property', async () => {
-      fs.readFile = jest.fn().mockResolvedValue(
-        JSON.stringify({
-          hello: 'world',
-        })
+      jest.spyOn(fs, 'readFile').mockImplementation(() =>
+        Promise.resolve(
+          JSON.stringify({
+            hello: 'world',
+          })
+        )
       )
       await expect(SoftwareList.load()).rejects.toThrow(
         `Saved file "${file}" does not contain required "softwares" property`
       )
     })
     it('throws error if software property is not an array', async () => {
-      fs.readFile = jest.fn().mockResolvedValue(
-        JSON.stringify({
-          softwares: {
-            name: 'i am not a json array',
-            executable: {
-              command: 'shells',
+      jest.spyOn(fs, 'readFile').mockImplementation(() =>
+        Promise.resolve(
+          JSON.stringify({
+            softwares: {
+              name: 'i am not a json array',
+              executable: {
+                command: 'shells',
+              },
+              args: 'conch',
+              installedRegex: 'queen',
+              url: 'https://shells.com',
+              latestRegex: 'lobatus gigas',
             },
-            args: 'conch',
-            installedRegex: 'queen',
-            url: 'https://shells.com',
-            latestRegex: 'lobatus gigas',
-          },
-        })
+          })
+        )
       )
       await expect(SoftwareList.load()).rejects.toThrow(`Saved file "${file}" property "softwares" is not an array`)
     })
     it('throws error if save file has software without a name', async () => {
-      fs.readFile = jest.fn().mockResolvedValue(
-        JSON.stringify({
-          softwares: [
-            {
-              executable: {
-                command: 'name',
+      jest.spyOn(fs, 'readFile').mockImplementation(() =>
+        Promise.resolve(
+          JSON.stringify({
+            softwares: [
+              {
+                executable: {
+                  command: 'name',
+                },
+                args: 'given',
+                installedRegex: 'nemo',
+                url: 'https://firstnames.com',
+                latestRegex: 'forename',
               },
-              args: 'given',
-              installedRegex: 'nemo',
-              url: 'https://firstnames.com',
-              latestRegex: 'forename',
-            },
-          ],
-        })
+            ],
+          })
+        )
       )
       await expect(SoftwareList.load()).rejects.toThrow(
         `Saved file "${file}" contains an invalid software entry that does not have a name`
@@ -617,18 +623,20 @@ describe('Software List Unit Tests', () => {
     })
     it('throws error if save file has software without an executable', async () => {
       const name = 'no executable'
-      fs.readFile = jest.fn().mockResolvedValue(
-        JSON.stringify({
-          softwares: [
-            {
-              name,
-              args: 'nada',
-              installedRegex: 'niltch',
-              url: 'https://nothing.com',
-              latestRegex: 'nix',
-            },
-          ],
-        })
+      jest.spyOn(fs, 'readFile').mockImplementation(() =>
+        Promise.resolve(
+          JSON.stringify({
+            softwares: [
+              {
+                name,
+                args: 'nada',
+                installedRegex: 'niltch',
+                url: 'https://nothing.com',
+                latestRegex: 'nix',
+              },
+            ],
+          })
+        )
       )
       await expect(SoftwareList.load()).rejects.toThrow(
         `Saved file "${file}" contains an invalid software entry "${name}" that does not have an executable`
@@ -636,20 +644,22 @@ describe('Software List Unit Tests', () => {
     })
     it('throws error if save file has empty executable', async () => {
       const name = 'dynamic no regex'
-      fs.readFile = jest.fn().mockResolvedValue(
-        JSON.stringify({
-          softwares: [
-            {
-              name,
-              directory: 'tree',
-              executable: {},
-              args: 'deciduous',
-              installedRegex: 'willow',
-              url: 'https://trees.com',
-              latestRegex: 'salix babylonica',
-            },
-          ],
-        })
+      jest.spyOn(fs, 'readFile').mockImplementation(() =>
+        Promise.resolve(
+          JSON.stringify({
+            softwares: [
+              {
+                name,
+                directory: 'tree',
+                executable: {},
+                args: 'deciduous',
+                installedRegex: 'willow',
+                url: 'https://trees.com',
+                latestRegex: 'salix babylonica',
+              },
+            ],
+          })
+        )
       )
       await expect(SoftwareList.load()).rejects.toThrow(
         `Saved file "${file}" contains an invalid software entry "${name}" whose executable is neither static nor dynamic`
@@ -657,20 +667,22 @@ describe('Software List Unit Tests', () => {
     })
     it('throws error if save file has software without an installed regex', async () => {
       const name = 'no installed regex'
-      fs.readFile = jest.fn().mockResolvedValue(
-        JSON.stringify({
-          softwares: [
-            {
-              name,
-              executable: {
-                command: 'colors',
+      jest.spyOn(fs, 'readFile').mockImplementation(() =>
+        Promise.resolve(
+          JSON.stringify({
+            softwares: [
+              {
+                name,
+                executable: {
+                  command: 'colors',
+                },
+                args: 'white',
+                url: 'https://paintbynumbers.com',
+                latestRegex: 'eggshell',
               },
-              args: 'white',
-              url: 'https://paintbynumbers.com',
-              latestRegex: 'eggshell',
-            },
-          ],
-        })
+            ],
+          })
+        )
       )
       await expect(SoftwareList.load()).rejects.toThrow(
         `Saved file "${file}" contains an invalid software entry "${name}" that does not have an installedRegex`
@@ -678,20 +690,22 @@ describe('Software List Unit Tests', () => {
     })
     it('throws error if save file has software without a url', async () => {
       const name = 'no url'
-      fs.readFile = jest.fn().mockResolvedValue(
-        JSON.stringify({
-          softwares: [
-            {
-              name,
-              executable: {
-                command: 'pre',
+      jest.spyOn(fs, 'readFile').mockImplementation(() =>
+        Promise.resolve(
+          JSON.stringify({
+            softwares: [
+              {
+                name,
+                executable: {
+                  command: 'pre',
+                },
+                args: 'internet',
+                installedRegex: 'coding',
+                latestRegex: 'how',
               },
-              args: 'internet',
-              installedRegex: 'coding',
-              latestRegex: 'how',
-            },
-          ],
-        })
+            ],
+          })
+        )
       )
       await expect(SoftwareList.load()).rejects.toThrow(
         `Saved file "${file}" contains an invalid software entry "${name}" that does not have a url`
@@ -699,30 +713,34 @@ describe('Software List Unit Tests', () => {
     })
     it('throws error if save file has software without a latest regex', async () => {
       const name = 'no latest regex'
-      fs.readFile = jest.fn().mockResolvedValue(
-        JSON.stringify({
-          softwares: [
-            {
-              name,
-              executable: {
-                command: 'relatively',
+      jest.spyOn(fs, 'readFile').mockImplementation(() =>
+        Promise.resolve(
+          JSON.stringify({
+            softwares: [
+              {
+                name,
+                executable: {
+                  command: 'relatively',
+                },
+                args: 'after',
+                installedRegex: 'late',
+                url: 'https://latest.com',
               },
-              args: 'after',
-              installedRegex: 'late',
-              url: 'https://latest.com',
-            },
-          ],
-        })
+            ],
+          })
+        )
       )
       await expect(SoftwareList.load()).rejects.toThrow(
         `Saved file "${file}" contains an invalid software entry "${name}" that does not have a latestRegex`
       )
     })
     it('passes current version as zero if no version property', async () => {
-      fs.readFile = jest.fn().mockResolvedValue(
-        JSON.stringify({
-          softwares: [],
-        })
+      jest.spyOn(fs, 'readFile').mockImplementation(() =>
+        Promise.resolve(
+          JSON.stringify({
+            softwares: [],
+          })
+        )
       )
       jest.spyOn(allUpgrades, 'default').mockReturnValue([])
       const upgraderSpy = jest.spyOn(Upgrader, 'run')
@@ -738,11 +756,13 @@ describe('Software List Unit Tests', () => {
       ])
     })
     it('passes current version as version if explicit version property', async () => {
-      fs.readFile = jest.fn().mockResolvedValue(
-        JSON.stringify({
-          version: 1,
-          softwares: [],
-        })
+      jest.spyOn(fs, 'readFile').mockImplementation(() =>
+        Promise.resolve(
+          JSON.stringify({
+            version: 1,
+            softwares: [],
+          })
+        )
       )
       const upgrades = [jest.fn().mockResolvedValue([]), jest.fn().mockResolvedValue([])]
       jest.spyOn(allUpgrades, 'default').mockReturnValue(upgrades)
@@ -770,10 +790,12 @@ describe('Software List Unit Tests', () => {
         url: 'https://itsame.com',
         latestRegex: 'spiny shell',
       })
-      fs.readFile = jest.fn().mockResolvedValue(
-        JSON.stringify({
-          softwares: [software],
-        })
+      jest.spyOn(fs, 'readFile').mockImplementation(() =>
+        Promise.resolve(
+          JSON.stringify({
+            softwares: [software],
+          })
+        )
       )
       jest.spyOn(allUpgrades, 'default').mockReturnValue([])
       await expect(SoftwareList.load()).resolves.toEqual([software])
@@ -788,10 +810,12 @@ describe('Software List Unit Tests', () => {
         url: 'https://flobots.com',
         latestRegex: 'fight with tools',
       })
-      fs.readFile = jest.fn().mockResolvedValue(
-        JSON.stringify({
-          softwares: [software],
-        })
+      jest.spyOn(fs, 'readFile').mockImplementation(() =>
+        Promise.resolve(
+          JSON.stringify({
+            softwares: [software],
+          })
+        )
       )
       jest.spyOn(allUpgrades, 'default').mockReturnValue([])
       await expect(SoftwareList.load()).resolves.toEqual([software])
@@ -807,10 +831,12 @@ describe('Software List Unit Tests', () => {
         url: 'https://ahoy.com',
         latestRegex: 'dinghy',
       })
-      fs.readFile = jest.fn().mockResolvedValue(
-        JSON.stringify({
-          softwares: [software],
-        })
+      jest.spyOn(fs, 'readFile').mockImplementation(() =>
+        Promise.resolve(
+          JSON.stringify({
+            softwares: [software],
+          })
+        )
       )
       jest.spyOn(allUpgrades, 'default').mockReturnValue([])
       await expect(SoftwareList.load()).resolves.toEqual([software])
@@ -826,10 +852,12 @@ describe('Software List Unit Tests', () => {
         url: 'https://mywayorthehighway.com',
         latestRegex: 'obey',
       })
-      fs.readFile = jest.fn().mockResolvedValue(
-        JSON.stringify({
-          softwares: [software],
-        })
+      jest.spyOn(fs, 'readFile').mockImplementation(() =>
+        Promise.resolve(
+          JSON.stringify({
+            softwares: [software],
+          })
+        )
       )
       jest.spyOn(allUpgrades, 'default').mockReturnValue([])
       await expect(SoftwareList.load()).resolves.toEqual([software])
@@ -845,10 +873,12 @@ describe('Software List Unit Tests', () => {
         url: 'https://maximumimage.com',
         latestRegex: 'imax',
       })
-      fs.readFile = jest.fn().mockResolvedValue(
-        JSON.stringify({
-          softwares: [software],
-        })
+      jest.spyOn(fs, 'readFile').mockImplementation(() =>
+        Promise.resolve(
+          JSON.stringify({
+            softwares: [software],
+          })
+        )
       )
       jest.spyOn(allUpgrades, 'default').mockReturnValue([])
       await expect(SoftwareList.load()).resolves.toEqual([software])
@@ -874,10 +904,12 @@ describe('Software List Unit Tests', () => {
         url: 'https://seamyshanty.com',
         latestRegex: 'south australia',
       })
-      fs.readFile = jest.fn().mockResolvedValue(
-        JSON.stringify({
-          softwares: [firstSoftware, lastSoftware],
-        })
+      jest.spyOn(fs, 'readFile').mockImplementation(() =>
+        Promise.resolve(
+          JSON.stringify({
+            softwares: [firstSoftware, lastSoftware],
+          })
+        )
       )
       jest.spyOn(allUpgrades, 'default').mockReturnValue([])
       await expect(SoftwareList.load()).resolves.toEqual([firstSoftware, lastSoftware])
@@ -903,10 +935,12 @@ describe('Software List Unit Tests', () => {
         url: 'https://automimmunes.com',
         latestRegex: 'diabetes mellitus',
       })
-      fs.readFile = jest.fn().mockResolvedValue(
-        JSON.stringify({
-          softwares: [lastSoftware, firstSoftware],
-        })
+      jest.spyOn(fs, 'readFile').mockImplementation(() =>
+        Promise.resolve(
+          JSON.stringify({
+            softwares: [lastSoftware, firstSoftware],
+          })
+        )
       )
       jest.spyOn(allUpgrades, 'default').mockReturnValue([])
       await expect(SoftwareList.load()).resolves.toEqual([firstSoftware, lastSoftware])
@@ -932,10 +966,12 @@ describe('Software List Unit Tests', () => {
         url: 'https://capitaloftheworld.com',
         latestRegex: 'new york city',
       })
-      fs.readFile = jest.fn().mockResolvedValue(
-        JSON.stringify({
-          softwares: [lastSoftware, firstSoftware],
-        })
+      jest.spyOn(fs, 'readFile').mockImplementation(() =>
+        Promise.resolve(
+          JSON.stringify({
+            softwares: [lastSoftware, firstSoftware],
+          })
+        )
       )
       jest.spyOn(allUpgrades, 'default').mockReturnValue([])
       await expect(SoftwareList.load()).resolves.toEqual([firstSoftware, lastSoftware])
