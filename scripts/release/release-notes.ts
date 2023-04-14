@@ -56,7 +56,7 @@ const notes: Release[] = [
   {
     version: '1.0.5',
     description: 'Upgrade Node.js',
-    fixes: ['Incremented Node.js version to 18 (#76)', 'Update dependencies (#77)'],
+    fixes: ['Incremented Node.js version to 18 (#76)', 'Update dependencies (#77)', 'Update dependencies (#78)'],
   },
 ]
 

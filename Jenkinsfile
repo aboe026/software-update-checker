@@ -105,9 +105,18 @@ node {
                             } finally {
                                 stage('Coverage') {
                                     sh 'npm run coverage:merge'
-                                    cobertura coberturaReportFile: 'coverage/merged/cobertura-coverage.xml'
+                                    recordCoverage(
+                                        skipPublishingChecks: true,
+                                        sourceCodeRetention: 'EVERY_BUILD',
+                                        tools: [
+                                            [
+                                                parser: 'COBERTURA',
+                                                pattern: 'coverage/merged/cobertura-coverage.xml'
+                                            ]
+                                        ]
+                                    )
                                     if (uploadBadges) {
-                                        badges.uploadCoberturaCoverageResult(
+                                        badges.uploadCoverageResult(
                                             branch: env.BRANCH_NAME
                                         )
                                     }
