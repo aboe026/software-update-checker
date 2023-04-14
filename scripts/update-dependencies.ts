@@ -9,6 +9,7 @@ const DENY_LIST: string[] = [
   'inquirer', // waiting on https://github.com/SBoudrias/Inquirer.js/issues/1029
   'node-fetch', // v3 switches to ESM (not compatible with current CommonJS)
   '@types/node-fetch', // v3 switches to ESM (not compatible with current CommonJS)
+  'open', // v9 switches to ESM (not compatible with current CommonJS)
 ]
 ;(async () => {
   const outdated = await getOutdatedDependencies()
